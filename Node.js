@@ -2,7 +2,7 @@ function Node(){
 	this.position = (function(){
 		var pos = PointMake(0,0);
 		return function(position){
-			return position == null ? pos : (pos = position);
+			return position == null ? pos : pos = position;
 		}
 	})();
 	this.size = (function(){
@@ -23,7 +23,7 @@ function Node(){
 			return images == null ? _images : _images = images;
 		}
 	})();
-	this.imageIndex:0;
+	this.imageIndex = 0;
 	this.zindex = (function(){
 		var _index = 0;
 		return function(index){
@@ -72,4 +72,22 @@ function Node(){
 			return transform == null ? _transform : _transform = transform;
 		};
 	})();
+    this.pause = (function(){
+        var _paused;
+        return function(paused){
+            return paused == null ? _paused: _paused = paused;
+        }
+    })();
+    this.stop = function(){
+        this.pause(true);
+    };
+    this.resume = function(){
+        this.pause(false);
+    };
+    this.children = (function(){
+        var _children = [];
+        return function(children){
+            return children == null ? _children: _children = children;
+        }
+    })();
 }

@@ -73,21 +73,21 @@ Application.prototype.resetEvents = function(){
 	EventSystem.resetEvents();
 };
 Application.prototype.currentScene = function(scene){
-	return scene ? this._currentScene || (function(){
+	return scene ? this._currentScene : (function(){
 		var toClear = this._currentScene;
 		this._currentScene = scene;
 		toClear && toClear.clear && toClear.clear();
 	}).call(this);
 };
 Application.prototype.nextScene = function(scene){
-	return scene? this._nextScene || (function(){
+	return scene? this._nextScene : (function(){
 		var toClear = this._nextScene;
 		this._nextScene = scene;
 		toClear && toClear.clear && toClear.clear();
 	}).call(this);
 };
 Application.prototype.clear = function(){
-	Debugger.error('Could add code to implement Application''s clear function');
+	Debugger.error("Could add code to implement Application's clear function");
 };
 Application.prototype.initial = function(config){
 	MixIn(config,this);

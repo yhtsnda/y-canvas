@@ -1,4 +1,4 @@
-function SizeMake(width,heiht){
+function SizeMake(width,height){
 	return {w:width,h:height};
 }
 function SizeZero(){

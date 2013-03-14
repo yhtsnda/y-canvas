@@ -2,8 +2,9 @@ function Scene() {
 	this.init();
 }
 
-Scene.prototype = new BaseNode;
+Scene.prototype = new BaseObject;
 Scene.prototype.init = function(){
+    Node.apply(this,arguments);
 	var _layers = [];
 	this.getLayers = function(){
 		return _layers;
