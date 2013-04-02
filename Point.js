@@ -5,8 +5,8 @@ function PointZero(){
 	return PointMake(0,0);
 }
 function PointEqual(pointA,pointB){
-	return pointA.x === pointB.x && pointA.y === pointB.y;
+	return pointA === pointB || (pointA.x === pointB.x && pointA.y === pointB.y);
 }
 function PointInRect(point,rect){
-	return point.x > rect.x && point.x < (rect.x + rect.w) && point.y > rect.y && point.y < (rect.y + rect.h)
+	return point && rect && point.x > rect.x && point.x < (rect.x + rect.w) && point.y > rect.y && point.y < (rect.y + rect.h)
 }
