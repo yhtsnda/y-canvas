@@ -3,7 +3,18 @@ function Sprite(){
 }
 Sprite.prototype = new BaseObject;
 Sprite.prototype.init = function(){
-    this.onInit();
+    Node.apply(this,arguments);
+    this.exec('onInit');
 };
-Sprite.prototype.update = function(){};
-Sprite.prototype.render = function(){};
+Sprite.prototype.update = function(){
+    this.exec('onUpdate');
+    this.exec('afterUpdate');
+};
+Sprite.prototype.render = function(){
+    this.exec('onRender');
+    this.exec('afterRender');
+};
+Sprite.prototype.clear = function(){
+    this.exec('onClear');
+	this.exec('afterClear');
+};

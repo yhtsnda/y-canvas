@@ -5,35 +5,44 @@ function Scene() {
 Scene.prototype = new BaseObject;
 Scene.prototype.init = function(){
     Node.apply(this,arguments);
-	var _layers = [];
-	this.getLayers = function(){
-		return _layers;
+	this.layers = (function(){
+		var _layers = [];
+		return function(layers){
+			return layers === undefined ? _layers : _layers = layers;
+		}
+	})();
+	this.layersWithoutEmpty = function(){
+		return this.layers() && this.layers().removeNullVal();
 	};
 	this.resetLayers = function(){
-		return _layers = [];
+		return this.layers([]);
 	};
 	this.clearLayers = function(){
-		_layers = null;
+		return this.layers(null);
 	};
 	this.getLayerByTag = function(){
-		for (var i = 0; i < _layers.length; i++) {
-			if (_layers[i] && _layers[i].tag == tag) {
-				return _layers[i];
+		var layers = this.layers();
+		for (var i = 0; i < layers.length; i++) {
+			if (layers[i] && layers[i].tag == tag) {
+				return layers[i];
 			}
 		}
 	};
 	this.addLayer = function (layer) {
-		_layers.push(layer);
+		var layers = this.layers() || this.resetLayers();
+		return layers.push(layer) && layers;
 	};
 	
 	this.removeLastLayer = function () {
-		_layers.pop();
+		var layers = this.layers();
+		return layers && layers.pop() && layers;
 	};	
 };
 Scene.prototype.clear = function(){
 	this.unSubscribe();
-	this.getLayers().forEach(function(layer){
-		layer && layer.clear && layer.clear();
+	this.layers().forEach(function(layer){
+		BaseObject.prototype.exec.call(layer,'clear');
+		//layer && layer.clear && layer.clear();
 	});
 	this.clearLayers();
 	for (var prop in this) {
@@ -42,14 +51,16 @@ Scene.prototype.clear = function(){
 	}
 };
 Scene.prototype.update = function(context){
-	this.getLayers() && this.getLayers().removeNullVal().sort(function (a, b) {
+	var layers = this.layersWithoutEmpty();
+	layers && layers.sort(function (a, b) {
 		return a.index > b.index;
 	}).forEach(function (layer) {
 		layer.update(context || getContext());
 	});
 };
 Scene.prototype.pause = function(){
-	this.getLayers() && this.getLayers().forEach(function (layer) {
+	var layers = this.layers();
+	layers && layers.forEach(function (layer) {
 		layer.pause();
 	});
 };
@@ -57,12 +68,14 @@ Scene.prototype.stop = function(){
 	this.pause();
 };
 Scene.prototype.resume = function(){
-	this.getLayers() && this.getLayers().forEach(function (layer) {
+	var layers = this.layers();
+	layers && layers.forEach(function (layer) {
 		layer.resume();
 	});
 };
 Scene.prototype.handleEvent = function (event) {
-	this.getLayers() && this.getLayers().some(function(layer){
+	var layers = this.layers();
+	layers && layers.some(function(layer){
 		return layer.handleEvent(event);
 	});
 };
