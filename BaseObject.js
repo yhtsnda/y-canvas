@@ -8,6 +8,6 @@ BaseObject.prototype.subscribe = function(topic, handler) {
 BaseObject.prototype.unSubscribe = function(topic, handler) {
     MessageCenter.onUnSubscribe(this, topic, handler);
 };
-BaseObject.prototype.exec = function(functionName) {
-    return this && this[functionName] && this[functionName](Array.prototype.slice.call(arguments,1));
+BaseObject.prototype.exec = function(functionName,args) {
+    return this && this[functionName] && this[functionName].apply(this, Array.prototype.slice.call(args));
 };
