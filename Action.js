@@ -1,17 +1,25 @@
-function Action(duration, callback) {
-    this.duration = duration;
+function Action() {
+    this.duration = argument.length >=2 ? arguments[arguments.length - 2] : 0;
+    this.callback = argument.length >=2 ? arguments[arguments.length - 1] : 0;
     this.isDone = false;
     this.elapsed = 0;
-    this.callback = callback;
     this.init(arguments);
 }
 Action.prototype = new BaseObject;
 Action.prototype.step = function (dt) {
-    this.elapsed = Math.min(this.duration, this.elapsed + dt);
-    if (this.elapsed >= this.duration) {
+    if (this.hasDone(dt)) {
         this.done();
     } else {
         this.update();
+    }
+};
+Action.prototype.hasDone = function(dt){
+    if(this.isDone){
+        return true;
+    }
+    this.elapsed = Math.min(this.duration, this.elapsed + dt);
+    if(this.elapsed >= this.duration){
+        return true;
     }
 };
 Action.prototype.done = function () {
@@ -23,7 +31,7 @@ Action.prototype.done = function () {
 };
 Action.prototype.init = function () {
     this.exec('onInit', arguments);
-    this.exec('_init', Array.prototype.slice.call(arguments, 2));
+    this.exec('_init', arguments);
     this.exec('afterInit', arguments);
 };
 Action.prototype.update = function () {
@@ -207,7 +215,32 @@ function Delay() {
 }
 Delay.prototype = new Action;
 
-function Sequence() {}
+function Sequence() {
+    
+}
+
+Sequence.withActions = function(){
+    return new Sequence(arguments.push(0,null) && arguments);
+};
+Sequence.prototype = new Action;
+Sequence.prototype._init = function(){
+    this.actions = this.actions || function(){
+        var _actions = [];
+        return function(actions){
+            return actions === undefined ? _actions : _actions = actions;
+        }
+    }();
+    forEach(arguments,function(v,k,o){
+        this.actions().push(v);
+    });
+};
+Sequence.prototype.getRunningAction = function(){
+    forEach(this.actions,function(action,k,o){
+        if(action.hasDone()){
+            
+        }
+    });
+};
 function Repeat() {}
 function Spawn() {}
 function RepeatForever() {}
