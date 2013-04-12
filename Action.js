@@ -1,9 +1,9 @@
 function Action() {
-    this.duration = argument.length >=2 ? arguments[arguments.length - 2] : 0;
-    this.callback = argument.length >=2 ? arguments[arguments.length - 1] : 0;
+    this.duration = argument.length >= 2 ? arguments[arguments.length - 2] : 0;
+    this.callback = argument.length >= 2 ? arguments[arguments.length - 1] : null;
     this.isDone = false;
     this.elapsed = 0;
-    this.init(arguments);
+    this.exec('init', arguments);
 }
 Action.prototype = new BaseObject;
 Action.prototype.step = function (dt) {
@@ -13,12 +13,12 @@ Action.prototype.step = function (dt) {
         this.update();
     }
 };
-Action.prototype.hasDone = function(dt){
-    if(this.isDone){
+Action.prototype.hasDone = function (dt) {
+    if (this.isDone) {
         return true;
     }
     this.elapsed = Math.min(this.duration, this.elapsed + dt);
-    if(this.elapsed >= this.duration){
+    if (this.elapsed >= this.duration) {
         return true;
     }
 };
@@ -28,6 +28,25 @@ Action.prototype.done = function () {
         this.callback();
         this.callback = null;
     }
+};
+Action.prototype.reset = function () {
+    /*this.duration = 0;
+    this.callback = null;
+    this.isDone = false;
+    this.elapsed = 0;*/
+    this.exec('onReset', arguments);
+    this.exec('_reset', arguments);
+    this.exec('afterReset', arguments);
+};
+Action.prototype.clear = function () {
+    /*delete this.duration;
+    delete this.callback;
+    delete this.isDone;
+    delete this.elapsed;*/
+    this.exec('onClear', arguments);
+    this.exec('_clear', arguments);
+    delete this.target;
+    this.exec('afterClear', arguments);
 };
 Action.prototype.init = function () {
     this.exec('onInit', arguments);
@@ -43,6 +62,7 @@ Action.prototype.startWithTarget = function (target) {
     this.target = target;
     this.exec('_startWithTarget', arguments);
 };
+
 function MoveTo() {
     Action.apply(this, arguments);
 }
@@ -57,12 +77,22 @@ MoveTo.prototype._startWithTarget = function () {
 MoveTo.prototype._update = function () {
     this.target.position(PointSum(this.startPosition, this.deltaPosition * this.elapsed));
 };
+MoveTo.prototype._reset = function () {
+    /*this.toPosition = null;
+    this.startPosition = null;
+    this.deltaPosition = null;*/
+};
+MoveTo.prototype._clear = function () {
+    delete this.toPosition;
+    delete this.startPosition;
+    delete this.deltaPosition;
+};
 function MoveBy() {
     Action.apply(this, arguments);
 }
 MoveBy.prototype = new Action;
 MoveBy.prototype._init = function () {
-    MoveTo.apply(this, arguments);
+    MoveTo.prototype._init.apply(this, arguments);
 };
 MoveBy.prototype._startWithTarget = function () {
     this.startPosition = this.target.position();
@@ -71,6 +101,13 @@ MoveBy.prototype._startWithTarget = function () {
 MoveBy.prototype._update = function () {
     MoveTo.prototype._update.apply(this, arguments);
 };
+MoveBy.prototype._reset = function () {
+    MoveTo.prototype._reset.apply(this, arguments);
+};
+MoveBy.prototype._clear = function () {
+    MoveTo.prototype._clear.apply(this, arguments);
+};
+
 function ScaleTo() {
     Action.apply(this, arguments);
 }
@@ -84,6 +121,16 @@ ScaleTo.prototype._startWithTarget = function () {
 };
 ScaleTo.prototype._update = function () {
     this.target.scale(PointSum(this.startScale, this.deltaScale * this.elapsed));
+};
+ScaleTo.prototype._reset = function () {
+    /*this.scaleTo = null;
+    this.startScale = null;
+    this.deltaScale = null;*/
+};
+ScaleTo.prototype._clear = function () {
+    delete this.scaleTo;
+    delete this.startScale;
+    delete this.deltaScale;
 };
 function ScaleBy() {
     Action.apply(this, arguments);
@@ -99,6 +146,13 @@ ScaleBy.prototype._startWithTarget = function () {
 ScaleBy.prototype._update = function () {
     ScaleTo.prototype._update.apply(this, arguments);
 };
+ScaleBy.prototype._reset = function () {
+    ScaleTo.prototype._reset.apply(this, arguments);
+};
+ScaleBy.prototype._clear = function () {
+    ScaleTo.prototype._clear.apply(this, arguments);
+};
+
 function RotateTo() {
     Action.apply(this, arguments);
 }
@@ -112,6 +166,16 @@ RotateTo.prototype._startWithTarget = function () {
 };
 RotateTo.prototype._update = function () {
     this.target.rotate(PointSum(this.startRotate, this.deltaRotate * this.elapsed));
+};
+RotateTo.prototype._reset = function () {
+    /*this.rotateTo = null;
+    this.startRotate = null;
+    this.deltaRotate = null;*/
+};
+RotateTo.prototype._clear = function () {
+    delete this.rotateTo;
+    delete this.startRotate;
+    delete this.deltaRotate;
 };
 function RotateBy() {
     Action.apply(this, arguments);
@@ -127,36 +191,45 @@ RotateBy.prototype._startWithTarget = function () {
 RotateBy.prototype._update = function () {
     RotateTo.prototype._update.apply(this, arguments);
 };
+RotateBy.prototype._reset = function () {
+    RotateTo.prototype._reset.apply(this, arguments);
+};
+RotateBy.prototype._clear = function () {
+    RotateTo.prototype._clear.apply(this, arguments);
+};
+/*
+TODO implement Tint
 function TintTo() {
-    Action.apply(this, arguments);
+Action.apply(this, arguments);
 }
 TintTo.prototype = new Action;
 TintTo.prototype._init = function (tintTo) {
-    this.tintTo = tintTo;
+this.tintTo = tintTo;
 };
 TintTo.prototype._startWithTarget = function () {
-    //TODO add tint support to Sprite
-    //this.startTint = this.target.tint();
-    //this.deltaTint =
+//TODO add tint support to Sprite
+//this.startTint = this.target.tint();
+//this.deltaTint =
 };
 TintTo.prototype._update = function () {
-    //TODO support update here
+//TODO support update here
 };
 function TintBy() {
-    Action.apply(this, arguments);
+Action.apply(this, arguments);
 }
 TintBy.prototype = new Action;
 TintBy.prototype._init = function () {
-    TintTo.prototype._init.apply(this, arguments);
+TintTo.prototype._init.apply(this, arguments);
 };
 TintBy.prototype._startWithTarget = function () {
-    //TODO add tint support to Sprite
-    //this.startTint = this.target.tint();
-    //this.deltaTint =
+//TODO add tint support to Sprite
+//this.startTint = this.target.tint();
+//this.deltaTint =
 };
 TintBy.prototype._update = function () {
-    TintTo.prototype._update.apply(this, arguments);
+TintTo.prototype._update.apply(this, arguments);
 };
+ */
 function FadeTo() {
     Action.apply(this, arguments);
 }
@@ -170,6 +243,16 @@ FadeTo.prototype._startWithTarget = function () {
 };
 FadeTo.prototype._update = function () {
     this.target.alpha(this.startFade + this.deltaFade * this.elapsed);
+};
+FadeTo.prototype._reset = function () {
+    /*this.fadeTo = null;
+    this.startFade = null;
+    this.deltaFade = null;*/
+};
+FadeTo.prototype._clear = function () {
+    delete this.fadeTo;
+    delete this.startFade;
+    delete this.deltaFade;
 };
 function FadeBy() {
     Action.apply(this, arguments);
@@ -185,6 +268,10 @@ FadeBy.prototype._startWithTarget = function () {
 FadeBy.prototype._update = function () {
     this.target.alpha(this.startFade + this.deltaFade * this.elapsed);
 };
+FadeBy.prototype._reset = function () {
+    FadeTo.prototype._reset.apply(this, arguments);
+};
+
 function FadeIn() {
     Action.apply(this, arguments);
 }
@@ -198,6 +285,12 @@ FadeIn.prototype._startWithTarget = function () {
 FadeIn.prototype._update = function () {
     FadeTo.prototype._update.apply(this, arguments);
 };
+FadeIn.prototype._reset = function () {
+    FadeTo.prototype._reset.apply(this, arguments);
+};
+FadeIn.prototype._clear = function () {
+    FadeTo.prototype._clear.apply(this, arguments);
+};
 function FadeOut() {
     Action.apply(this, arguments);
 }
@@ -210,37 +303,86 @@ FadeOut.prototype._startWithTarget = function () {
 FadeOut.prototype._update = function () {
     FadeIn.prototype._update.apply(this, arguments);
 };
+FadeOut.prototype._reset = function () {
+    FadeTo.prototype._reset.apply(this, arguments);
+};
+FadeOut.prototype._clear = function () {
+    FadeTo.prototype._clear.apply(this, arguments);
+};
+
 function Delay() {
-    Action.apply(this,arguments);
+    Action.apply(this, arguments);
 }
 Delay.prototype = new Action;
 
 function Sequence() {
-    
+    Action.apply(this, arguments);
 }
-
-Sequence.withActions = function(){
-    return new Sequence(arguments.push(0,null) && arguments);
-};
 Sequence.prototype = new Action;
-Sequence.prototype._init = function(){
-    this.actions = this.actions || function(){
+Sequence.prototype._init = function () {
+    this.actions = function () {
         var _actions = [];
-        return function(actions){
+        return function (actions) {
             return actions === undefined ? _actions : _actions = actions;
         }
     }();
-    forEach(arguments,function(v,k,o){
-        this.actions().push(v);
+    forEach(arguments, function (action) {
+        this.actions().push(action);
     });
 };
-Sequence.prototype.getRunningAction = function(){
-    forEach(this.actions,function(action,k,o){
-        if(action.hasDone()){
-            
+Sequence.prototype.getRunningAction = function () {
+    var actions = this.actions();
+    for (var i = actions.length - 1; i >= 0; i--) {
+        if (actions[i].hasDone()) {
+            actions.splice(i, 1);
         }
+    }
+    return actions.length && actions[0];
+};
+Sequence.prototype.hasDone = function () {
+    return this.actions().length;
+};
+function Repeat() {
+    Action.apply(this, arguments);
+}
+Repeat.prototype = new Action;
+Repeat.prototype._init = function (action, repeatTotal) {
+    this.action = action;
+    this.repeatTotal = repeattotal;
+    this.hasRepeat = 0;
+};
+Repeat.prototype._update = function () {
+    this.action._update.apply(this, arguments);
+};
+/*
+Repeat.prototype.getRunningAction = function () {
+return this.action;
+};*/
+Repeat.prototype.hasDone = function () {
+    return this.action.hasDone();
+};
+Repeat.prototype._reset = function () {};
+Repeat.prototype._clear = function () {
+    this.actions(null);
+};
+
+function Spawn() {}
+Spawn.prototype = new Action;
+Spawn.prototype._init = function () {
+    this.actions = function () {
+        var _actions = [];
+        return function (actions) {
+            return actions === undefined ? _actions : _actions = actions;
+        };
+    }();
+    forEach(arguments, function (action) {
+        this.actions().push(action);
+    })
+};
+Spawn.prototype._update = function () {
+    var arg = arguments;
+    forEach(this.actions(), function (action) {
+        action.update.apply(action, arg);
     });
 };
-function Repeat() {}
-function Spawn() {}
 function RepeatForever() {}

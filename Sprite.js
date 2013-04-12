@@ -1,20 +1,21 @@
 function Sprite(){
-    this.init();
+    Node.apply(this,arguments);
 }
 Sprite.prototype = new BaseObject;
 Sprite.prototype.init = function(){
-    Node.apply(this,arguments);
-    this.exec('onInit');
+    this.exec('onInit',arguments);
+    this.exec('_init',arguments);
+    this.exec('afterInit',arguments);
 };
 Sprite.prototype.update = function(){
-    this.exec('onUpdate');
-    this.exec('afterUpdate');
+    this.exec('onUpdate',arguments);
+    this.exec('afterUpdate',arguments);
 };
 Sprite.prototype.render = function(){
-    this.exec('onRender');
-    this.exec('afterRender');
+    this.exec('onRender',arguments);
+    this.exec('afterRender',arguments);
 };
 Sprite.prototype.clear = function(){
-    this.exec('onClear');
-	this.exec('afterClear');
+    this.exec('onClear',arguments);
+    this.exec('afterClear',arguments);
 };

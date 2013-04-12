@@ -113,4 +113,5 @@ function Node() {
             return children === undefined ? _children : _children = children;
         }
     }();
+    exec.call(this, 'init', arguments);
 }
