@@ -29,6 +29,9 @@ Action.prototype.done = function () {
         this.callback = null;
     }
 };
+Action.prototype.stop = function(){};
+Action.prototype.pause = function(){};
+Action.prototype.resume = function(){};
 Action.prototype.reset = function () {
     /*this.duration = 0;
     this.callback = null;
@@ -385,4 +388,21 @@ Spawn.prototype._update = function () {
         action.update.apply(action, arg);
     });
 };
-function RepeatForever() {}
+function RepeatForever() {
+    Action.apply(this, arguments);
+}
+RepeatForever.prototype = new Action;
+RepeatForever.prototype._init = function(action){
+    this.action = action;
+};
+RepeatForever.prototype._update = function(){
+    this.action._update.apply(this, arguments);
+};
+RepeatForever.prototype._reset = function(){
+};
+RepeatForever.prototype._clear = function(){
+    this.action = null;
+};
+RepeatForever.prototype.hasDone = function(){
+    return false;
+};
