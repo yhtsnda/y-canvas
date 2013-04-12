@@ -10,7 +10,7 @@ Action.prototype.step = function (dt) {
     if (this.hasDone(dt)) {
         this.done();
     } else {
-        this.update();
+        this.update(this.elapsed);
     }
 };
 Action.prototype.hasDone = function (dt) {
