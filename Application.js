@@ -5,8 +5,16 @@ function getDom(){
 	return Global().app.dom;
 }
 function Application(){
-	this.initial(arguments[0]);
+	this.init.apply(this,arguments);
 }
+Application.prototype = new BaseObject;
+Application.prototype.init = function(dom){
+    this.dom = dom;
+    this.currentScene = null;
+    this.nextScene = null;
+    this.scenes = [];
+    Global().app = this;
+};
 Application.prototype.getContext = function(){
 	return this.dom.getContext(this.supportOpenGLES()?'opengles':'2d');
 };
@@ -14,14 +22,14 @@ Application.prototype.supportOpenGLES = function(){
 	return false;
 };
 Application.prototype.run = function(){
-	this.pause(false);
-	EventSystem.initial();
-	this._update();
+	this.resume();
+	EventSystem.init();
+	this.update();
 };
 Application.prototype.pause = function(pause){
 	return pause != undefined ? (function(pause){
-		this.currentScene() && this.currentScene().pause(pause);
-		this.nextScene() && this.nextScene().pause(pause);
+        this.exec.call(this.currentScene,'pause',pause);
+        this.exec.call(this.nextScene,'pause',pause);
 		return this._paused = pause;
 	}).call(this,pause) : this._paused;
 };
@@ -32,15 +40,19 @@ Application.prototype.resume = function(){
 	this.pause(false);
 };
 Application.prototype.clear = function(){
-	this.currentScene() && this.currentScene().clear();
-	this.nextScene() && this.nextScene().clear();
+    this.exec(this.currentScene,'clear');
+    this.exec(this.nextScene,'clear');
 	this.clear();
 };
 Application.prototype.update = function(){
-	this.handleEvents();
-	this.currentScene() && this.currentScene().update();
-	this.nextScene() && this.nextScene().update();
-	this.resetEvents();
+    var me = this;
+	me.handleEvents();
+    this.exec.call(me.currentScene,'update');
+    this.exec.call(me.nextScene,'update');
+	me.resetEvents();
+    requestAnimFrame(function(){
+        me.update();
+    });
 };
 Application.prototype.showFPS = function(){
 	this._currentFrameCount = (this._currentFrameCount++ || this._currentFrameCount = 0) % 10;
@@ -63,28 +75,15 @@ Application.prototype.showFPS = function(){
 	}
 };
 Application.prototype.handleEvents = function(){
+    var me = this;
 	EventSystem.deallingEvents(true);
-	EventSystem.events().forEach(function(event){
-		this.currentScene() && this.currentScene().handleEvent(event);
-		this.nextScene() && this.nextScene().handleEvent(event);
+	forEach(EventSystem.events(),function(event){
+        this.exec.call(me.currentScene,'handleEvent',event);
+        this.exec.call(me.nextScene,'handleEvent',event);
 	});
 };
 Application.prototype.resetEvents = function(){
 	EventSystem.resetEvents();
-};
-Application.prototype.currentScene = function(scene){
-	return scene ? this._currentScene : (function(){
-		var toClear = this._currentScene;
-		this._currentScene = scene;
-		toClear && toClear.clear && toClear.clear();
-	}).call(this);
-};
-Application.prototype.nextScene = function(scene){
-	return scene? this._nextScene : (function(){
-		var toClear = this._nextScene;
-		this._nextScene = scene;
-		toClear && toClear.clear && toClear.clear();
-	}).call(this);
 };
 Application.prototype.clear = function(){
 	Debugger.error("Could add code to implement Application's clear function");

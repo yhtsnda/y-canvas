@@ -9,13 +9,16 @@ Sprite.prototype.init = function(){
 };
 Sprite.prototype.update = function(){
     this.exec('onUpdate',arguments);
+    this.exec('_update',arguments);
     this.exec('afterUpdate',arguments);
 };
 Sprite.prototype.render = function(){
     this.exec('onRender',arguments);
+    this.exec('_render',arguments);
     this.exec('afterRender',arguments);
 };
 Sprite.prototype.clear = function(){
     this.exec('onClear',arguments);
+    this.exec('_clear',arguments);
     this.exec('afterClear',arguments);
 };

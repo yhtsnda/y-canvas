@@ -1,25 +1,25 @@
-window.requestAnimFrame = (function () {
-	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+Global().requestAnimFrame = (function () {
+	return Global().requestAnimationFrame || Global().webkitRequestAnimationFrame || Global().mozRequestAnimationFrame || Global().oRequestAnimationFrame || Global().msRequestAnimationFrame ||
 	function (callback) {
-		window.setTimeout(callback, Math.round(1000 / 60));
+		Global().setTimeout(callback, Math.round(1000 / 60));
 	};
 })();
-window.cancelAnimationFrame = (function () {
-	return window.cancelAnimationFrame || window.webkitCancelRequestAnimationFrame || window.mozCancelRequestAnimationFrame || window.oCancelRequestAnimationFrame || window.msCancelRequestAnimationFram || clearTimeout;
+Global().cancelAnimationFrame = (function () {
+	return Global().cancelAnimationFrame || Global().webkitCancelRequestAnimationFrame || Global().mozCancelRequestAnimationFrame || Global().oCancelRequestAnimationFrame || Global().msCancelRequestAnimationFram || clearTimeout;
 })();
-window.setTimeRequest = function (callback, time) {
+Global().setTimeRequest = function (callback, time) {
 	if (time == 0) {
 		callback && callback();
 		return;
 	}
 	var tick = 0;
-	var timeRequest = window.requestAnimFrame(function () {
+	var timeRequest = Global().requestAnimFrame(function () {
 			tick++;
-			window.cancelAnimationFrame(timeRequest);
+			Global().cancelAnimationFrame(timeRequest);
 			if (tick == time) {
 				callback && callback();
 			} else {
-				timeRequest = window.requestAnimFrame(arguments.callee);
+				timeRequest = Global().requestAnimFrame(arguments.callee);
 			}
 		});
 };

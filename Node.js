@@ -86,7 +86,7 @@ function Node() {
     this.skew = function () {
         var _skew = PointMake(1, 1);
         return function (skew) {
-            return skew === undefined ? _skew ? _skew = skew;
+            return skew === undefined ? _skew : _skew = skew;
         }
     }();
     this.transform = function () {
