@@ -9,7 +9,7 @@ var EventSystem = {
         ["touchstart", "touchmove", "touchend", "touchcancel"]
     ]
 };
-EventSystem.initial = function () {
+EventSystem.init = function () {
     var MOUSEEVTINDEX = 0,
         KEYBOARDEVTINDEX = 1,
         TOUCHEVTINDEX = 2;
@@ -48,6 +48,7 @@ EventSystem.initial = function () {
             this.events[TOUCHEVTINDEX].push(e);
         }
     };
+    var me = this;
     function _gainEvent(e) {
         if (!e || me.deallingEvents())
             return;

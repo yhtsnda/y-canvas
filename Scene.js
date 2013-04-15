@@ -1,10 +1,10 @@
 function Scene() {
-	this.init();
+	Node.apply(this,arguments);
 }
 
 Scene.prototype = new BaseObject;
 Scene.prototype.init = function(){
-    Node.apply(this,arguments);
+    this.exec('onInit',arguments);
 	this.layers = (function(){
 		var _layers = [];
 		return function(layers){
@@ -34,35 +34,46 @@ Scene.prototype.init = function(){
 	};
 	
 	this.removeLastLayer = function () {
-		var layers = this.layers();
-		return layers && layers.pop() && layers;
-	};	
+		if(this.layers()){
+            this.layers().pop();
+        }
+		return this.layers();
+	};
+    this.exec('_init',arguments);
+    this.exec('afterInit',arguments);
 };
 Scene.prototype.clear = function(){
+    this.exec('onClear',arguments);
 	this.unSubscribe();
 	this.layers().forEach(function(layer){
-		BaseObject.prototype.exec.call(layer,'clear');
-		//layer && layer.clear && layer.clear();
+		exec.call(layer,'clear');
 	});
 	this.clearLayers();
 	for (var prop in this) {
-		this[prop] = null;
 		delete this[prop];
 	}
+    this.exec('_clear',arguments);
+    this.exec('afterClear',arguments);
 };
 Scene.prototype.update = function(context){
+    this.exec('onUpdate',arguments);
 	var layers = this.layersWithoutEmpty();
 	layers && layers.sort(function (a, b) {
 		return a.index > b.index;
 	}).forEach(function (layer) {
 		layer.update(context || getContext());
 	});
+    this.exec('_update',arguments);
+    this.exec('afterUpdate',arguments);
 };
 Scene.prototype.pause = function(){
+    this.exec('onPause',arguments);
 	var layers = this.layers();
 	layers && layers.forEach(function (layer) {
 		layer.pause();
 	});
+    this.exec('_pause',arguments);
+    this.exec('afterPause',arguments);
 };
 Scene.prototype.stop = function(){
 	this.pause();
@@ -70,7 +81,7 @@ Scene.prototype.stop = function(){
 Scene.prototype.resume = function(){
 	var layers = this.layers();
 	layers && layers.forEach(function (layer) {
-		layer.resume();
+        exec.call(layer,'resume');
 	});
 };
 Scene.prototype.handleEvent = function (event) {
