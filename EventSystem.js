@@ -26,6 +26,7 @@ EventSystem.init = function () {
                 x : e.offsetX != null ? e.offsetX : e.layerX,
                 y : e.offsetY != null ? e.offsetY : e.layerY
             };
+            //console.log(e.absolutePosition);
             this.events()[MOUSEEVTINDEX].push(e);
         },
         'key' : function (e) {
@@ -80,7 +81,7 @@ EventSystem.removeEvent = function (e) {
 EventSystem.events = (function () {
     var _events = [[],[],[]];
     return function(events){
-        return events ? _events : _events;
+        return events === undefined ? _events : _events = events;
     };
 })();
 EventSystem.deallingEvents = (function(){
