@@ -21,7 +21,7 @@ function forEach(obj, fn) {
     if (obj.some) {
         return obj.some.apply(obj, Array.prototype.slice.call(arguments, 1));
     } else if (obj.length !== undefined) {
-        for (var i = 0, i < obj.length; i++) {
+        for (var i = 0; i < obj.length; i++) {
             if (fn.call(global, obj[i], i, obj) === true) {
                 return true;
             }
@@ -56,4 +56,4 @@ forEach(['Array', 'Object', 'Function', 'Arguments', 'Number', 'Date', 'Boolean'
         return Object.prototype.toString.call(obj) === '[object ' + v + ']';
     };
 });
-curring('exec', BaseObject.prototype);
+currying('exec', BaseObject.prototype);

@@ -34,8 +34,11 @@ function forEach(obj, fn) {
     }
 }
 function currying(func, source, context) {
-    (context || this)[func] = function (obj,fun,arg) {
-        return source[func].call(obj, fun,arg);
+    (context || this)[func] = function (obj,fun) {
+        if(obj === null || obj === undefined){
+            return;
+        }
+        return source[func].apply(obj, Array.prototype.slice.call(arguments,1));
     }
 }
 forEach(['push', 'pop', 'slice', 'splice', 'concat', 'shift', 'unshift', 'sort', 'reverse', 'join'], function (v, k) {

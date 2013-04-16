@@ -16,17 +16,17 @@ EventSystem.init = function () {
     
     var gainEvent = {
         'mouse' : function (e) {
-            this.events[MOUSEEVTINDEX].some(function (event, index, originalE) {
+            this.events()[MOUSEEVTINDEX].some(function (event, index, originalE) {
                 if (event.type === e.type) {
                     originalE = null;
                 }
             });
-            this.events[MOUSEEVTINDEX].removeNullVal();
+            this.events()[MOUSEEVTINDEX].removeNullVal();
             e.absolutePosition = {
-                x : e.offsetX ? e.offsetX : e.layerX,
-                y : e.offsetY ? e.offsetY : e.layerY
+                x : e.offsetX != null ? e.offsetX : e.layerX,
+                y : e.offsetY != null ? e.offsetY : e.layerY
             };
-            this.events[MOUSEEVTINDEX].push(e);
+            this.events()[MOUSEEVTINDEX].push(e);
         },
         'key' : function (e) {
             //var code = e.keyCode || e.which;
@@ -35,17 +35,17 @@ EventSystem.init = function () {
             Debugger.error('this function need to be implmented');
         },
         'touch' : function (e) {
-            this.events[TOUCHEVTINDEX].some(function (event, index, originalE) {
+            this.events()[TOUCHEVTINDEX].some(function (event, index, originalE) {
                 if (event.type === e.type) {
                     originalE = null;
                 }
             });
-            this.events[TOUCHEVTINDEX].removeNullVal();
+            this.events()[TOUCHEVTINDEX].removeNullVal();
             e.absolutePosition = {
                 x : e.touches[0].clientX,
                 y : e.touches[0].clientY
             };
-            this.events[TOUCHEVTINDEX].push(e);
+            this.events()[TOUCHEVTINDEX].push(e);
         }
     };
     var me = this;
@@ -78,11 +78,11 @@ EventSystem.removeEvent = function (e) {
     });
 };
 EventSystem.events = (function () {
-    var _events;
+    var _events = [[],[],[]];
     return function(events){
         return events ? _events : _events;
     };
-});
+})();
 EventSystem.deallingEvents = (function(){
     var _inDealingEvents;
     return function (inDealling) {
