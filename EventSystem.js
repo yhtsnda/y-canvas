@@ -46,6 +46,7 @@ EventSystem.init = function () {
                 x : e.touches[0].clientX,
                 y : e.touches[0].clientY
             };
+            console.log(e.absolutePosition);
             this.events()[TOUCHEVTINDEX].push(e);
         }
     };
