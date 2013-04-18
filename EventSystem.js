@@ -11,8 +11,8 @@ var EventSystem = {
 };
 EventSystem.init = function () {
     var MOUSEEVTINDEX = 0,
-        KEYBOARDEVTINDEX = 1,
-        TOUCHEVTINDEX = 2;
+    KEYBOARDEVTINDEX = 1,
+    TOUCHEVTINDEX = 2;
     
     var gainEvent = {
         'mouse' : function (e) {
@@ -23,8 +23,8 @@ EventSystem.init = function () {
             });
             this.events()[MOUSEEVTINDEX].removeNullVal();
             e.absolutePosition = {
-                x : e.offsetX != null ? e.offsetX : e.layerX,
-                y : e.offsetY != null ? e.offsetY : e.layerY
+                x : e.offsetX != null ? e.offsetX : e.pageX - e.target.offsetLeft,
+                y : e.offsetY != null ? e.offsetY : e.pageY - e.target.offsetTop
             };
             //console.log(e.absolutePosition);
             this.events()[MOUSEEVTINDEX].push(e);
@@ -42,11 +42,18 @@ EventSystem.init = function () {
                 }
             });
             this.events()[TOUCHEVTINDEX].removeNullVal();
+            var touch = e.touches[0];
+            /*
+            pageX:距页面左上顶点的距离
+            clientX:距页面可见范围的左上顶点的距离
+            screenX:距屏幕左上顶点的距离
+            offsetX:IE特有,距当前事件元素的左上顶点的距离，不计算border，如果有border，点击border时的offsetX值可以为负值
+            layerX:火狐特有,鼠标距离事件元素一直往上，找到position为absolute或relative的元素的左上顶点的距离,如果设置当前元素postion为absolute或relative，则值与layerX相同
+             */
             e.absolutePosition = {
-                x : e.touches[0].clientX,
-                y : e.touches[0].clientY
+                x : touch ? (touch.pageX - touch.target.offsetLeft) : 0,
+                y : touch ? (touch.pageY - touch.target.offsetTop) : 0
             };
-            console.log(e.absolutePosition);
             this.events()[TOUCHEVTINDEX].push(e);
         }
     };
@@ -80,12 +87,12 @@ EventSystem.removeEvent = function (e) {
     });
 };
 EventSystem.events = (function () {
-    var _events = [[],[],[]];
-    return function(events){
+    var _events = [[], [], []];
+    return function (events) {
         return events === undefined ? _events : _events = events;
     };
 })();
-EventSystem.deallingEvents = (function(){
+EventSystem.deallingEvents = (function () {
     var _inDealingEvents;
     return function (inDealling) {
         return inDealling == null ? _inDealingEvents : _inDealingEvents = inDealling;
