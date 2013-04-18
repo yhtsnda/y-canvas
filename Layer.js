@@ -38,7 +38,7 @@ Layer.prototype.removeChildByTag = function (tag) {
 Layer.prototype.update = function (context) {
 	this.exec('onUpdate');
 	this.children().removeNullVal().sort(function (a, b) {
-		return a.index() > b.index();
+		return a.index() - b.index();
 	}).forEach(function (child) {
 		child.update(context || getContext());
 	});

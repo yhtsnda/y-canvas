@@ -59,30 +59,6 @@ function Node() {
             return scale === undefined ? _scale : _scale = scale;
         }
     }();
-    /*this.scaleX = function () {
-    var _scaleX = 1;
-    return function (scaleX) {
-    return scaleX === undefined ? _scaleX : _scaleX = scaleX;
-    };
-    }();
-    this.scaleY = function () {
-    var _scaleY = 1;
-    return function (scaleY) {
-    return scaleY === undefined ? _scaleY : _scaleY = scaleY;
-    };
-    }();*/
-    /*this.skewX = function () {
-    var _skewX = 0;
-    return function (skewX) {
-    return skewX === undefined ? _skewX : _skewX = skewX;
-    };
-    }();
-    this.skewY = function () {
-    var _skewY = 0;
-    return function (skewY) {
-    return skewY === undefined ? _skewY : _skewY = skewY;
-    };
-    }();*/
     this.skew = function () {
         var _skew = PointMake(1, 1);
         return function (skew) {
@@ -113,5 +89,5 @@ function Node() {
             return children === undefined ? _children : _children = children;
         }
     }();
-    exec.call(this, 'init', arguments);
+    exec(this, 'init', arguments);
 }
