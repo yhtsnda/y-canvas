@@ -9,5 +9,5 @@ BaseObject.prototype.unSubscribe = function(topic, handler) {
     MessageCenter.onUnSubscribe(this, topic, handler);
 };
 BaseObject.prototype.exec = function(functionName) {
-    return this && this[functionName] && (arguments.length > 1 ? this[functionName].apply(this, Array.prototype.slice.apply(arguments, 1)) : this[functionName].apply(this)); // !== undefined && args !== null && Array.prototype.slice.call(args));
+    return this && this[functionName] && (arguments.length > 1 ? this[functionName].apply(this, Array.prototype.slice.call(arguments, 1)) : this[functionName].apply(this)); // !== undefined && args !== null && Array.prototype.slice.call(args));
 };
