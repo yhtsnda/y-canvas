@@ -5,6 +5,9 @@ function Node() {
             return position === undefined ? pos : pos = position;
         }
     }();
+    this.actualPosition = function(){
+        return this.position();
+    };
     this.size = function () {
         var _size = PointMake(0, 0);
         return function (size) {
@@ -28,6 +31,9 @@ function Node() {
         return function(index){
             return index === undefined ? _index : _index = index;
         }
+    };
+    this.getImage = function(){
+        return this.images[this.imageIndex()];
     };
     this.zIndex = function () {
         var _index = 0;
@@ -87,6 +93,18 @@ function Node() {
         var _children = [];
         return function (children) {
             return children === undefined ? _children : _children = children;
+        }
+    }();
+    this.width = function(){
+        var _width = 0;
+        return function(width){
+            return width === undefined ? _width : _width = width;
+        }
+    }();
+    this.height = function(){
+        var _height = 0;
+        return function(height){
+            return height === undefined ? _height : _height = height;
         }
     }();
     exec(this, 'init', arguments);
