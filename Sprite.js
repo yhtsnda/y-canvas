@@ -55,6 +55,4 @@ Sprite.prototype.drawWithImage = function(ctx, image){
     ctx.drawImage(image);
     ctx.restore();
 };
-Sprite.prototype.drawWithoutImage = function(ctx){
-    
-};
+Sprite.prototype.drawWithoutImage = function(ctx){};

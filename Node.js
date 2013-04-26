@@ -8,10 +8,10 @@ function Node() {
     this.actualPosition = function(){
         return this.position();
     };
-    this.size = function () {
-        var _size = PointMake(0, 0);
-        return function (size) {
-            return size === undefined ? _size : _size = size;
+    this.rect = function () {
+        var _rect = PointMake(0, 0);
+        return function (rect) {
+            return rect === undefined ? _rect : _rect = rect;
         }
     }();
     this.visible = function () {
@@ -20,12 +20,30 @@ function Node() {
             return visible === undefined ? _visible : _visible = visible;
         }
     }();
+    this.display = function () {
+        var _display = true;
+        return function (display) {
+            return display === undefined ? _display : _display = display;
+        }
+    }();
     this.images = function () {
         var _images = [];
         return function (images) {
             return images === undefined ? _images : _images = images;
         }
     }();
+    this.imageSizes = function(){
+        var _imageSizes = [];
+        return function(imageSizes){
+            return imageSizes === undefined ? _imageSizes : _imageSizes = imageSizes;
+        }
+    }();
+    this.getImageSize = function(){
+        //context.drawImage(img,x,y);
+        //context.drawImage(img,x,y,width,height);
+        //context.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
+        var imageSize = this.imageSizes[this.imageIndex()];
+    };
     this.imageIndex = function(){
         var _index = 0;
         return function(index){
