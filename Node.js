@@ -38,12 +38,12 @@ function Node() {
             return imageSizes === undefined ? _imageSizes : _imageSizes = imageSizes;
         }
     }();
-    this.getImageSize = function(){
+    /* this.getImageSize = function(){
         //context.drawImage(img,x,y);
         //context.drawImage(img,x,y,width,height);
         //context.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
         var imageSize = this.imageSizes[this.imageIndex()];
-    };
+    }; */
     this.imageIndex = function(){
         var _index = 0;
         return function(index){
@@ -125,5 +125,11 @@ function Node() {
             return height === undefined ? _height : _height = height;
         }
     }();
+    this.onKey = [],
+    this.onMouse = [],
+    this.onTouch = [];
+    this.handleEvents = function(){
+        
+    };
     exec(this, 'init', arguments);
 }
