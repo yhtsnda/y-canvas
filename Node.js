@@ -107,19 +107,58 @@ function Node() {
     this.resume = function () {
         this.pause(false);
     };
-    this.children = function () {
+    this.children = (function () {
         var _children = [];
         return function (children) {
             return children === undefined ? _children : _children = children;
         }
-    }();
-    this.width = function(){
+    })();
+    this.childrenWithoutEmpty = function () {
+        return this.children() && this.children().removeNullVal();
+    };
+    this.resetChildren = function () {
+        return this.children([]);
+    };
+    this.clearChildren = function () {
+        return this.children(null);
+    };
+    this.getChildByTag = function () {
+        var children = this.children();
+        for (var i = 0; i < children.length; i++) {
+            if (children[i] && children[i].tag == tag) {
+                return children[i];
+            }
+        }
+    };
+    this.addChild = function (child) {
+        return this.children().push(child), this.children();
+    };
+    this.removeLastChild = function () {
+        return this.children().pop(), this.children();
+    };
+    this.updateChildren = function (context) {
+        var children = this.children();
+        children.sort(function (a, b) {
+            return b.index - a.index;
+        });
+        var len = children.length;
+        for (var i = len - 1; i >= 0; i--) {
+            if (children[i] === null || children[i].destoryed) {
+                len--;
+                children[i] = children[len];
+                continue;
+            }
+            children[i].update(context);
+        }
+        children.length = len;
+    };
+    this.width = function () {
         var _width = 0;
-        return function(width){
+        return function (width) {
             return width === undefined ? _width : _width = width;
         }
     }();
-    this.height = function(){
+    this.height = function () {
         var _height = 0;
         return function(height){
             return height === undefined ? _height : _height = height;
@@ -128,8 +167,8 @@ function Node() {
     this.onKey = [],
     this.onMouse = [],
     this.onTouch = [];
-    this.handleEvents = function(){
+    this.handleEvents = function () {
         
     };
-    exec(this, 'init', arguments);
+    arguments.length ? exec(this, 'init', arguments) : exec(this, 'init');
 }

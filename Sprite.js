@@ -10,9 +10,12 @@ Sprite.prototype.init = function () {
 Sprite.prototype.update = function () {
     this.exec('onUpdate', arguments);
     this.exec('_update', arguments);
+    this.exec('updateChildren', arguments);
+    this.exec('render', arguments);
     this.exec('afterUpdate', arguments);
 };
 Sprite.prototype.render = function () {
+    //console.log('render');
     this.exec('onRender', arguments);
     this.exec('_render', arguments);
     this.exec('afterRender', arguments);
@@ -26,7 +29,7 @@ Sprite.prototype._render = function(ctx){
     if(this.getImage()){
         this.drawWithImage(ctx, this.getImage());
     }else{
-        return this.drawWithoutImage(ctx);
+        return this.draw(ctx);
     }
 };
 Sprite.prototype.performTransform = function(ctx){
@@ -77,4 +80,4 @@ Sprite.prototype.drawWithImage = function(ctx, image){
         height    可选。要使用的图像的高度。（伸展或缩小图像）
     */
 };
-Sprite.prototype.drawWithoutImage = function(ctx){};
+Sprite.prototype.draw = function(ctx){};

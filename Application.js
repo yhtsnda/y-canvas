@@ -24,12 +24,12 @@ Application.prototype.supportOpenGLES = function () {
 Application.prototype.run = function () {
     this.resume();
     EventSystem.init();
-    this.update();
+    this.update(this.getContext());
 };
 Application.prototype.pause = function (pause) {
     return pause != undefined ? (function (pause) {
-        this.exec.call(this.currentScene, 'pause', pause);
-        this.exec.call(this.nextScene, 'pause', pause);
+        exec(this.currentScene, 'pause', pause);
+        exec(this.nextScene, 'pause', pause);
         return this._paused = pause;
     }).call(this, pause) : this._paused;
 };
@@ -44,14 +44,14 @@ Application.prototype.clear = function () {
     exec(this.nextScene, 'clear');
     this.clear();
 };
-Application.prototype.update = function () {
+Application.prototype.update = function (context) {
     var me = this;
     me.handleEvents();
-    exec(me.currentScene, 'update');
-    exec(me.nextScene, 'update');
+    exec(me.currentScene, 'update', context);
+    exec(me.nextScene, 'update', context);
     me.resetEvents();
     requestAnimFrame(function () {
-        me.update();
+        me.update(context);
     });
 };
 Application.prototype.showFPS = function () {
@@ -77,10 +77,13 @@ Application.prototype.showFPS = function () {
 Application.prototype.handleEvents = function () {
     var me = this;
     EventSystem.deallingEvents(true);
-    forEach(EventSystem.events(), function (event) {
-        exec(me.currentScene, 'handleEvent', event);
-        exec(me.nextScene, 'handleEvent', event);
+    forEach(EventSystem.events(), function (events) {
+        forEach(events, function (event) {
+            exec(me.currentScene, 'handleEvent', event);
+            exec(me.nextScene, 'handleEvent', event);
+        });
     });
+    EventSystem.deallingEvents(false);
 };
 Application.prototype.resetEvents = function () {
     EventSystem.resetEvents();

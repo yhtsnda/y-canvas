@@ -24,7 +24,16 @@
     <canvas id="app" width='1024' height='768'></canvas>
     <script type="text/javascript">
         domReady(function(){
-            var app = new Application(document.getElementById('app'));
+            var app = new Application(document.getElementById('app')),
+                scene = new Scene,
+                layer = new Layer,
+                sprite = new Sprite;
+            sprite.draw = function (context){
+                
+            };
+            app.currentScene = scene;
+            scene.addChild(layer);
+            layer.addChild(sprite);
             app.run();
         });
     </script>

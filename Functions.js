@@ -38,7 +38,7 @@ function currying(func, source, context) {
         if(obj === null || obj === undefined){
             return;
         }
-        return source[func].apply(obj, Array.prototype.slice.call(arguments,1));
+        return arguments.length > 1 ? source[func].apply(obj, Array.prototype.slice.call(arguments,1)) : source[func].call(obj);
     }
 }
 forEach(['push', 'pop', 'slice', 'splice', 'concat', 'shift', 'unshift', 'sort', 'reverse', 'join'], function (v, k) {

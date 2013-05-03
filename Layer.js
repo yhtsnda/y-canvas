@@ -11,7 +11,7 @@ Layer.prototype.clear = function () {
     this.exec('onClear');
     this.unSubscribe();
     this.children().forEach(function (child) {
-        exec.call(child, 'clear');
+        exec(child, 'clear');
     });
     this.exec('afterClear');
 };
@@ -36,13 +36,11 @@ Layer.prototype.removeChildByTag = function (tag) {
     });
 };
 Layer.prototype.update = function (context) {
-    this.exec('onUpdate');
-    this.children().removeNullVal().sort(function (a, b) {
-        return a.index() - b.index();
-    }).forEach(function (child) {
-        child.update(context || getContext());
-    });
-    this.exec('afterUpdate');
+    this.exec('onUpdate', context);
+    this.exec('_update', context);
+    this.exec('updateChildren', context);
+    this.exec('render', context);
+    this.exec('afterUpdate', context);
 };
 Layer.prototype.render = function (context) {
     this.exec('onRender');
