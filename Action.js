@@ -1,6 +1,6 @@
 function Action() {
-    this.duration = argument.length >= 2 ? arguments[arguments.length - 2] : 0;
-    this.callback = argument.length >= 2 ? arguments[arguments.length - 1] : null;
+    this.duration = arguments.length >= 2 ? arguments[arguments.length - 2] : 0;
+    this.callback = arguments.length >= 2 ? arguments[arguments.length - 1] : null;
     this.isDone = false;
     this.elapsed = 0;
     this.exec('init', arguments);

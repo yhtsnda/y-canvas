@@ -1,21 +1,23 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title></title>
-	<script src="Global.js"></script>
-	<script src="Debugger.js"></script>
-	<script src="Array_Util.js"></script>
-	<script src="Device.js"></script>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title></title>
+    <script src="Global.js"></script>
+    <script src="Debugger.js"></script>
+    <script src="Array_Util.js"></script>
+    <script src="Device.js"></script>
     <script src="BaseObject.js"></script>
-	<script src="Functions.js"></script>
+    <script src="Functions.js"></script>
     <script src="Node.js"></script>
-	<script src="Application.js"></script>
-	<script src="Scene.js"></script>
+    <script src="Application.js"></script>
+    <script src="Scene.js"></script>
     <script src="Layer.js"></script>
     <script src="Sprite.js"></script>
-	<script src="EventSystem.js"></script>
-	<script src="MessageCenter.js"></script>
+    <script src="ActionManager.js"></script>
+    <script src="Action.js"></script>
+    <script src="EventSystem.js"></script>
+    <script src="MessageCenter.js"></script>
     <script src="Point.js"></script>
     <script src="Size.js"></script>
     <script src="Rect.js"></script>
@@ -27,7 +29,12 @@
             var app = new Application(document.getElementById('app')),
                 scene = new Scene,
                 layer = new Layer,
-                sprite = new Sprite;
+                sprite = new Sprite,
+                img = new Image;
+            img.src = "http://www.mhtml5.com/wp-content/themes/windPaled/images/sitetitle.png"; 
+            img.onload = function () {
+                sprite.images().push(this);
+            };
             sprite.draw = function (context){
                 
             };

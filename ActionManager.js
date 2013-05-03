@@ -1,14 +1,14 @@
-function ActionManger() {
-    this.init(arguments);
+function ActionManager() {
+    this.init.apply(this, arguments);
 }
 ActionManager.prototype = new BaseObject;
-ActionManger.prototype.init = function () {
+ActionManager.prototype.init = function () {
     this.exec('onInit');
     this.addActionManagerSupport();
-    
+    this.exec('_init');
     this.exec('afterInit');
 };
-ActionManger.prototype.clear = function () {
+ActionManager.prototype.clear = function () {
     this.exec('onClear');
     this.exec('removeActionManagerSupport');
     this.exec('afterClear');
@@ -31,13 +31,20 @@ ActionManager.prototype.addActionManagerSupport = function () {
         return this.actions() && this.actions().removeNullVal();
     };
     this.addAction = function (action) {
-        return (this.actions() || this.resetActions()).push(action) && this.actions();
+        return (this.actions() || this.resetActions()).push(action), this.actions();
     };
     this.resetActions = function () {
         return this.actions([]);
     };
-    this.currentAction = function () {
-        return null;
+    this.currentAction = null;
+    this.getNextAction = function () {
+        
     };
-    this.getNextAction = function () {};
+    this.actionIndex = function () {
+        var _actionIndex = 0;
+        return function (actionIndex) {
+            return actionIndex === undefined ? _actionIndex : _actionIndex = actionIndex;
+        }
+    }();
+    this.target = null;
 };

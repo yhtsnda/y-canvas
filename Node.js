@@ -49,9 +49,9 @@ function Node() {
         return function(index){
             return index === undefined ? _index : _index = index;
         }
-    };
+    }();
     this.getImage = function(){
-        return this.images[this.imageIndex()];
+        return this.images()[this.imageIndex()];
     };
     this.zIndex = function () {
         var _index = 0;
@@ -160,9 +160,15 @@ function Node() {
     }();
     this.height = function () {
         var _height = 0;
-        return function(height){
+        return function (height){
             return height === undefined ? _height : _height = height;
         }
+    }();
+    this.actionManager = function () {
+        var _actionManager;
+        return function (actionManager) {
+            return actionManager === undefined ? _actionManager : _actionManager = actionManager;
+        };
     }();
     this.onKey = [],
     this.onMouse = [],
