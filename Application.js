@@ -47,32 +47,28 @@ Application.prototype.clear = function () {
 Application.prototype.update = function (context) {
     var me = this;
     me.handleEvents();
+    me.getContext().clearRect(0, 0, this.dom.width, this.dom.height);
     exec(me.currentScene, 'update', context);
     exec(me.nextScene, 'update', context);
     me.resetEvents();
+    me.showFPS(context);
     requestAnimFrame(function () {
         me.update(context);
     });
 };
-Application.prototype.showFPS = function () {
-    this._currentFrameCount = (this._currentFrameCount++ || this._currentFrameCount = 0) % 10;
-    
-    if (!this._currentFrameCount) {
+Application.prototype.showFPS = function (context) {
+    this._currentFrameCount = this._currentFrameCount || 0;
+    if (this._currentFrameCount % 10 === 0) {
         var now = (new Date).valueOf();
         this._fpsText = Math.round(100000 / (now - this._lastDate)) / 10;
         this._lastDate = now;
     }
-    if (!this.supportOpenGLES()) {
-        var context = arguments[0] || getContext();
-        this._fpsFillStyle = this._fpsFillStyle || '#589B2A';
-        this._fpsFont = this._fpsFont || "30px sans-serif bold";
-        this._fpsPos = this._fpsPos || PointMake(300, 30);
-        context.save();
-        context.fillStyle = this._fpsFillStyle;
-        context.font = this._fpsFont;
-        context.fillText(this._fpsText, this._fpsPos.x, this._fpsPos.y);
-        context.restore();
-    }
+    context.save();
+    context.fillStyle = '#589B2A';
+    context.font = "30px sans-serif bold";
+    context.fillText(this._fpsText, this.dom.width / 2, 30);
+    context.restore();
+    this._currentFrameCount++;
 };
 Application.prototype.handleEvents = function () {
     var me = this;
