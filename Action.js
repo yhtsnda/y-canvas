@@ -1,37 +1,54 @@
 function Action() {
     this.duration = arguments.length >= 2 ? arguments[arguments.length - 2] : 0;
     this.callback = arguments.length >= 2 ? arguments[arguments.length - 1] : null;
-    this.isDone = false;
     this.elapsed = 0;
-    this.exec('init', arguments);
+    
+    this.done = function () {
+        var _done = false;
+        return function(done){
+            return done === undefined ? _done : _done = done;
+        };
+    }();
+    
+    this.callback = function () {
+        var _callbacks = [];
+        return function (callback){
+            return callback === undefined ? _callbacks : _callbacks = callback; 
+        };
+    }();
+    
+    this.pause = function(){
+        var _pause = false;
+        return function(pause){
+            return pause === undefined ? _pause : _pause = pause;
+        };
+    }();
+    this.init.apply(this, arguments);
 }
 Action.prototype = new BaseObject;
 Action.prototype.step = function (dt) {
-    if (this.hasDone(dt)) {
-        this.done();
-    } else {
-        this.update(this.elapsed);
+    if(this.pause() || this.done()){
+        return;
+    }
+    
+    this.update(this.elapsed + dt);
+    this.done(this.elapsed + dt >= this.duration);
+    if(this.done()){
+        this.emitCallback();
     }
 };
-Action.prototype.hasDone = function (dt) {
-    if (this.isDone) {
-        return true;
-    }
-    this.elapsed = Math.min(this.duration, this.elapsed + dt);
-    if (this.elapsed >= this.duration) {
-        return true;
-    }
+Action.prototype.emitCallback = function (){
+    forEach(this.callback(),function(callback,index){
+        callback && callback();
+    });
+    this.callback(null);
 };
-Action.prototype.done = function () {
-    this.isDone = true;
-    if (this.callback) {
-        this.callback();
-        this.callback = null;
-    }
+Action.prototype.stop = function(){
+    this.pause(true);
 };
-Action.prototype.stop = function(){};
-Action.prototype.pause = function(){};
-Action.prototype.resume = function(){};
+Action.prototype.resume = function(){
+    this.pause(false);
+};
 Action.prototype.reset = function () {
     /*this.duration = 0;
     this.callback = null;

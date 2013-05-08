@@ -164,17 +164,14 @@ function Node() {
             return height === undefined ? _height : _height = height;
         }
     }();
-    this.actionManager = function () {
-        var _actionManager;
-        return function (actionManager) {
-            return actionManager === undefined ? _actionManager : _actionManager = actionManager;
-        };
-    }();
+    this.actionManager = new ActionManager();
     this.onKey = [],
     this.onMouse = [],
     this.onTouch = [];
     this.handleEvents = function () {
-        
+    };
+    this.runAction = function(){
+        exec(this.actionManager,'runAction',arguments);
     };
     arguments.length ? exec(this, 'init', arguments) : exec(this, 'init');
 }

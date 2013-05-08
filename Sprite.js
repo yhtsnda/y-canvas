@@ -15,7 +15,6 @@ Sprite.prototype.update = function () {
 	this.exec('afterUpdate', arguments);
 };
 Sprite.prototype.render = function () {
-	//console.log('render');
 	this.exec('onRender', arguments);
 	this.exec('_render', arguments);
 	this.exec('afterRender', arguments);
