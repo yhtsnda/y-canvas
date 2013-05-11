@@ -9,6 +9,7 @@ Sprite.prototype.init = function () {
 };
 Sprite.prototype.update = function () {
 	this.exec('onUpdate', arguments);
+    this.exec('performAction', arguments);
 	this.exec('_update', arguments);
 	this.exec('updateChildren', arguments);
 	this.exec('render', arguments);
@@ -51,6 +52,9 @@ Sprite.prototype.performTransform = function (ctx) {
 	if (this.transform() && this.transform().length >= 6) {
 		ctx.transform(this.transform()[0], this.transform()[1], this.transform()[2], this.transform()[3], this.transform()[4], this.transform()[5]);
 	}
+};
+Sprite.prototype.performAction = function (ctx) {
+    exec(this.actionManager,'update');
 };
 Sprite.prototype.drawWithImage = function (ctx, image) {
 	var imageSize = this.imageSizes()[this.imageIndex()],

@@ -164,7 +164,7 @@ function Node() {
             return height === undefined ? _height : _height = height;
         }
     }();
-    this.actionManager = new ActionManager();
+    this.actionManager = new ActionManager(this);
     this.onKey = [],
     this.onMouse = [],
     this.onTouch = [];

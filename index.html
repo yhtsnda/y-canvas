@@ -34,6 +34,16 @@
             img.src = "http://www.mhtml5.com/wp-content/themes/windPaled/images/sitetitle.png"; 
             img.onload = function () {
                 sprite.images().push(this);
+                var move = new MoveTo({x:300,y:400});/*,1000,function(){
+                    console.log(1);
+                },function(){
+                    console.log(2);
+                });*/
+                move.duration = 5000;
+                move.callback().push(function(){
+                    console.log(3);
+                });
+                sprite.runAction(move);
             };
             sprite.draw = function (context){
                 

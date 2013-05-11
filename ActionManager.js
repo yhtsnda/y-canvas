@@ -39,16 +39,18 @@ ActionManager.prototype.addActionManagerSupport = function () {
 	};
 	this.currentAction = null;
 	this.getNextAction = function () {
-        var action = null;
+        var nextAction = null;
 		forEach(this.actions(), function (action, index) {
-			if (!action.isDone()) {
+			if (!action.done()) {
+                nextAction = action.getCurrentAction();
                 return true;
             }
 		});
-        return action;
+        return nextAction;
 	};
     this.runAction = function(action){
-        
+        this.actions().push(action);
+        action.startWithTarget(this.target);
     };
 	this.actionIndex = function () {
 		var _actionIndex = 0;
@@ -60,8 +62,8 @@ ActionManager.prototype.addActionManagerSupport = function () {
 ActionManager.prototype.update = function () {
 	var hasNull = false;
 	forEach(this.actions(), function (action, index, actions) {
-		if (!action.hasDone()) {
-			action.update();
+		if (!action.done()) {
+			action.step(1000/60);
 			return true;
 		} else {
 			actions[index] = null;
