@@ -1,88 +1,123 @@
-var AudioEngine = (function(){
-    var engine;
-    function create(){
-        
-    }
-    return function(){
-        return engine || create();
-    };
-})();
-var AudioEngine = {},
-isIE = /msie/i.test(navigator.userAgent),
-isSafari = -1 < navigator.userAgent.indexOf("Safari") && 1 > navigator.userAgent.indexOf("Chrome"),
-supportMp3 = isIE || isSafari;
-AudioEngine.sharedEngine = function () {
-    var c = window.audioEngine;
-    if (c) {
-        return c;
-    }
-    var d = function (c) {
-        var d = document.createElement("audio");
-        d || console.log("Your browser doesn't support audio tag!");
-        d.autoplay = false;
-        d.preload = "auto";
-		d.volumn = 0.00001;
-        var h = c.substr(c.length - 4).toLowerCase();
-        supportMp3 && ".ogg" == h ? (c = c.substr(0, c.length - 4) + ".mp3") : !supportMp3 && ".mp3" == h && (c = c.substr(0, c.length - 4) + ".ogg");
-        d.src = c;
-        d.onLoaded = function () {
-            d.loaded || this.callback && this.callback(this);
-            d.loaded = true;
-        };
-        d.setCallback = function (c) {
-            this.callback = c;
-        };
-        addEventHandler(d, "canplaythrough",
-            function () {
-            d.onLoaded();
-        });
-        return d;
-    },
-    c = {
-        cacheAudio : [],
-        stopEffect : function (f) {
-            (f = c.contains(f)) && f.loaded && f.pause();
-        },
-        playEffect : function (f, d) {
-            var h = c.contains(f);
-            h ? h.loaded && h.play() : c.preLoadAudio(f,
-                function (c) {
-                d && ("loop" in c ? (c.loop = true) : addEventHandler(c, "ended",
-                        function () {
-                        setTimeout(function () {
-                        c.currentTime = 0;
-                    },
-                    200);
-                }));
-                c.play();
-            });
-        },
-        preLoadAudio : function (f, g) {
-            if (f) {
-                if (f instanceof Array) {
-                    for (var h = 0; h < f.length; h++) {
-                        c.preLoadAudio(f[h]);
-                    }
-                } else {
-                    c.contains(f) || (h = new d(f, g), g && h.setCallback(g), c.cacheAudio[f] = h);
-                }
-            }
-        },
-        contains : function (c) {
-            for (var d in this.cacheAudio) {
-                if (d == c || this.cacheAudio[d].src == c) {
-                    return this.cacheAudio[d];
-                }
-            }
-            return null;
-        },
-        play : function (c) {
-            c.play();
-        },
-        pause : function (c) {
-            c.pause();
+var AudioEngine = function(){
+    var audioEngine = {},
+        isIPad = navigator.userAgent.indexOf('iPad') != -1,
+        isIE = navigator.userAgent.indexOf('MSIE') != -1,
+        isSafari = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1,
+        caches = [];
+    audioEngine.canPlayMP3 = (function(){
+        return false;//isIE || isSafari;
+    })();
+    audioEngine.canPlayOGG = (function(){
+        return false;
+    })();
+    audioEngine.audioContext = (function(){
+        if ('AudioContext' in window) {
+            return new AudioContext();
+        } else if ('webkitAudioContext' in window) {
+            return new webkitAudioContext();
+        }
+    })();
+    audioEngine.loadAudio = function(url,callback){
+        if(this.canPlayMP3){
+            return audioEngine.getAudio(url, 'mp3', callback);
+        }else if(this.canPlayOGG){
+            return audioEngine.getAudio(url, 'ogg', callback);
+        }else if(this.audioContext){
+            return audioEngine.getAudio(url, 'js', callback);
         }
     };
-    window.audioEngine = c;
-    return window.audioEngine;
-};
+    audioEngine.getAudio = function(url, type, callback){
+        var cache = caches[url + '.' + type];
+        if(cache){
+            if(isArray(callback)){
+                if(cache.loaded){
+                    forEach(callback,function(fn){
+                        fn && fn.call(cache);
+                    });
+                }else{
+                    forEach(callback,function(fn){
+                        cache.callback.push(fn);
+                    });
+                }
+            }else{
+                if(cache.loaded){
+                    callback && callback.call(cache);
+                }else{ 
+                    callback && cache.callback.push(fn);
+                }
+            }
+            return cache;
+        }else{
+            return this.load(url, type, callback);
+        }
+    };
+    audioEngine.load = function(url, type, callback){
+        var src = url + '.' + type;
+        if(type === 'mp3' || type === 'ogg'){
+            var audio = document.createElement("audio");
+            caches[src] = audio;
+            audio.src = src;
+            audio.autoplay = false;
+            audio.preload = "auto";
+            audio.callback = [];
+            if(isArray(callback)){
+                forEach(callback,function(fn){
+                    fn && audio.callback.push(fn);
+                });
+            }else{
+                callback && audio.callback.push(callback);
+            }
+            addEventHandler(audio, "canplaythrough", function () {
+                this.loaded = true;
+                forEach(audio.callback,function(fn){
+                    fn && fn.call(audio);
+                });
+                audio.callback = [];
+            });
+            return audio;
+        }else{
+            var name = url.substring(url.lastIndexOf('/') + 1),
+                script = document.createElement('script'),
+                source = audioEngine.audioContext.createBufferSource();
+            script.type = 'text/javascript';
+            script.src = src;
+            source.callback = [];
+            caches[src] = source;
+            source.play = function(){
+                //console.log(this.noteOn || this.start)
+                this.noteOn ? this.noteOn(0) : this.start(0);
+                //(this.noteOn || this.start)(0);
+            };
+            source.pause = function(){
+                this.noteOff ? this.noteOff(0) : this.stop();
+            };
+            if(isArray(callback)){
+                forEach(callback,function(fn){
+                    fn && source.callback.push(fn);
+                });
+            }else{
+                callback && source.callback.push(callback);
+            }
+            function onLoad(){
+                source.loaded = true;
+                forEach(source.callback,function(fn){
+                    fn && fn.call(this);
+                });
+                var arrayBuffer = Base64Binary.decodeArrayBuffer(window[name]);
+                audioEngine.audioContext.decodeAudioData(arrayBuffer, function(audioData) {
+                    source.buffer = audioData;
+                });
+                source.connect(audioEngine.audioContext.destination);
+            }
+            script.onreadystatechange = function () {
+                if (this.readyState == 'complete'){
+                    onLoad();
+                }
+            }
+            script.onload = onLoad;
+            (document.head || document.body).appendChild(script);
+            return source;
+        }
+    };
+    return audioEngine;
+}();
