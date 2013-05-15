@@ -20,29 +20,32 @@ function Action() {
             return pause === undefined ? _pause : _pause = pause;
         };
     }();
-    if(arguments.length >= 2){
-        this.duration = arguments[1];
-    }
-    if(arguments.length > 2){
-        var callbacks = this.callback();
-        forEach(slice(arguments, 2), function(callback,index){
-            callbacks.push(callback);
-        });
-    }
     this.elapsed = 0;
+    this._preInit.apply(this, arguments);
     this.init.apply(this, arguments);
 }
 Action.prototype = new BaseObject;
 Action.prototype.step = function (dt) {
-    if(this.pause() || this.done() || !(this.duration > 0)){
+    if(this.pause() || this.done() || !this.target){
         return;
     }
-    this.update(this.elapsed = this.elapsed + dt > this.duration ? this.duration : (this.elapsed + dt));
-    console.log(this.elapsed);
-    this.done(this.elapsed >= this.duration);
-    if(this.done()){
-        this.emitCallback();
+    this.update(dt);
+    /* var action = this.currentAction();
+    if(!action || action.pause() || action.done() || !(action.duration > 0)){
+        return;
     }
+    if(!action.target){
+        action.startWithTarget(this.target);
+    }
+    action.update(action.elapsed = action.elapsed + dt > action.duration ? action.duration : (action.elapsed + dt));
+    //console.log(action.elapsed);
+    action.done(action.elapsed >= action.duration);
+    if(action.done()){
+        action.emitCallback();
+    }
+    if(action !== this && this.done()){
+        this.emitCallback();
+    } */
 };
 Action.prototype.emitCallback = function (){
     forEach(this.callback(),function(callback,index){
@@ -60,10 +63,8 @@ Action.prototype.currentAction = function(){
     return this;
 };
 Action.prototype.reset = function () {
-    /*this.duration = 0;
-    this.callback = null;
-    this.isDone = false;
-    this.elapsed = 0;*/
+    this.done(false);
+    this.elapsed = 0;
     this.exec('onReset', arguments);
     this.exec('_reset', arguments);
     this.exec('afterReset', arguments);
@@ -78,22 +79,43 @@ Action.prototype.clear = function () {
     delete this.target;
     this.exec('afterClear', arguments);
 };
+Action.prototype._preInit = function(){
+    if(arguments.length >= 2){
+        this.duration = arguments[1];
+    }
+    if(arguments.length > 2){
+        var callbacks = this.callback();
+        forEach(slice(arguments, 2), function(callback,index){
+            callbacks.push(callback);
+        });
+    }
+};
 Action.prototype.init = function () {
     this.exec('onInit', arguments);
     this.exec('_init', arguments);
     this.exec('afterInit', arguments);
 };
-Action.prototype.update = function () {
-    this.exec('onUpdate', arguments);
-    this.exec('_update', arguments);
-    this.exec('afterUpdate', arguments);
+Action.prototype.update = function (dt) {
+    var time = this.currentTime(dt);
+    this.exec('onUpdate', time);
+    this.exec('_update', time);
+    this.exec('afterUpdate', time);
+    this.checkDone();
+};
+Action.prototype.checkDone = function(){
+    if(this.elapsed >= this.duration){
+        this.done(true);
+        this.emitCallback();
+    }
 };
 Action.prototype.startWithTarget = function (target) {
     this.target = target;
     this.exec('_startWithTarget', arguments);
     this.step(1000/60);
 };
-
+Action.prototype.currentTime = function(dt){
+    return (this.elapsed += dt) / this.duration;
+};
 function MoveTo() {
     Action.apply(this, arguments);
 }
@@ -105,8 +127,8 @@ MoveTo.prototype._startWithTarget = function () {
     this.startPosition = this.target.position();
     this.deltaPosition = PointDiff(this.toPosition, this.startPosition);
 };
-MoveTo.prototype._update = function () {
-    this.target.position(PointSum(this.startPosition, PointMulti(this.deltaPosition, this.elapsed / this.duration)));
+MoveTo.prototype._update = function (time) {
+    this.target.position(PointSum(this.startPosition, PointMulti(this.deltaPosition, time)));
 };
 MoveTo.prototype._reset = function () {
     /*this.toPosition = null;
@@ -133,7 +155,8 @@ MoveBy.prototype._update = function () {
     MoveTo.prototype._update.apply(this, arguments);
 };
 MoveBy.prototype._reset = function () {
-    MoveTo.prototype._reset.apply(this, arguments);
+    this.startPosition = PointSum(this.startPosition, this.deltaPosition);
+    //MoveTo.prototype._reset.apply(this, arguments);
 };
 MoveBy.prototype._clear = function () {
     MoveTo.prototype._clear.apply(this, arguments);
@@ -150,8 +173,8 @@ ScaleTo.prototype._startWithTarget = function () {
     this.startScale = this.target.scale();
     this.deltaScale = PointDiff(this.scaleTo, this.startScale);
 };
-ScaleTo.prototype._update = function () {
-    this.target.scale(PointSum(this.startScale, PointMulti(this.deltaScale, this.elapsed / this.duration)));
+ScaleTo.prototype._update = function (time) {
+    this.target.scale(PointSum(this.startScale, PointMulti(this.deltaScale, time)));
 };
 ScaleTo.prototype._reset = function () {
     /*this.scaleTo = null;
@@ -193,10 +216,11 @@ RotateTo.prototype._init = function (rotateTo) {
 };
 RotateTo.prototype._startWithTarget = function () {
     this.startRotate = this.target.rotate();
-    this.deltaRotate = PointDiff(this.rotateTo, this.startRotate);
+    this.deltaRotate = this.rotateTo - this.startRotate;
 };
-RotateTo.prototype._update = function () {
-    this.target.rotate(PointSum(this.startRotate, PointMulti(this.deltaRotate, this.elapsed / this.duration)));
+RotateTo.prototype._update = function (time) {
+    this.target.rotate(this.startRotate + this.deltaRotate * time);
+    //this.target.rotate(PointSum(this.startRotate, PointMulti(this.deltaRotate, this.elapsed / this.duration)));
 };
 RotateTo.prototype._reset = function () {
     /*this.rotateTo = null;
@@ -272,8 +296,8 @@ FadeTo.prototype._startWithTarget = function () {
     this.startFade = this.target.alpha();
     this.deltaFade = this.fadeTo - this.startFade;
 };
-FadeTo.prototype._update = function () {
-    this.target.alpha(this.startFade + this.deltaFade * this.elapsed / this.duration);
+FadeTo.prototype._update = function (time) {
+    this.target.alpha(this.startFade + this.deltaFade * time);
 };
 FadeTo.prototype._reset = function () {
     /*this.fadeTo = null;
@@ -296,8 +320,8 @@ FadeBy.prototype._startWithTarget = function () {
     this.startFade = this.target.alpha();
     this.deltaFade = this.fadeTo;
 };
-FadeBy.prototype._update = function () {
-    this.target.alpha(this.startFade + this.deltaFade * this.elapsed / this.duration);
+FadeBy.prototype._update = function (time) {
+    this.target.alpha(this.startFade + this.deltaFade * time);
 };
 FadeBy.prototype._reset = function () {
     FadeTo.prototype._reset.apply(this, arguments);
@@ -345,11 +369,18 @@ function Delay() {
     Action.apply(this, arguments);
 }
 Delay.prototype = new Action;
-
+Delay.prototype._init = function (duration) {
+    this.duration = duration;
+    var callbacks = this.callback();
+    forEach(slice(arguments, 1), function(callback,index){
+        callbacks.push(callback);
+    });
+};
 function Sequence() {
     Action.apply(this, arguments);
 }
 Sequence.prototype = new Action;
+Sequence.prototype._preInit = function () {};
 Sequence.prototype._init = function () {
     this.actions = function () {
         var _actions = [];
@@ -357,10 +388,11 @@ Sequence.prototype._init = function () {
             return actions === undefined ? _actions : _actions = actions;
         }
     }();
+    var actions = this.actions();
     forEach(arguments, function (action) {
-        this.actions().push(action);
+        actions.push(action);
     });
-    this.done = function () {
+    /* this.done = function () {
         var _done;
         return function(done){
             if(done === undefined){
@@ -368,7 +400,7 @@ Sequence.prototype._init = function () {
                 forEach(this.actions(),function(action){
                     if(!action.done()){
                         hasDone = false;
-                        return false;
+                        return true;
                     }
                 });
                 return hasDone;
@@ -379,7 +411,27 @@ Sequence.prototype._init = function () {
                 return done;
             }
         };
-    }();
+    }(); */
+};
+Sequence.prototype._update = function (time) {
+    //console.log(time);
+    exec(this.currentAction(),'update',time);
+};
+Sequence.prototype.currentTime = function (dt) {
+    return dt;
+};
+Sequence.prototype.checkDone = function(){
+    var hasDone = true;
+    forEach(this.actions(),function(action){
+        if(!action.done()){
+            hasDone = false;
+            return true;
+        }
+    });
+    if(hasDone){
+        this.emitCallback();
+    }
+    return hasDone;
 };
 Sequence.prototype.currentAction = function () {
     var actions = this.actions();
@@ -388,33 +440,80 @@ Sequence.prototype.currentAction = function () {
             actions.splice(i, 1);
         }
     }
-    return actions.length && actions[0];
+    if(actions.length){
+        if(!actions[0].target){
+            actions[0].startWithTarget(this.target);
+        }else{
+            return actions[0];
+        }
+    }
 };
 
 function Repeat() {
     Action.apply(this, arguments);
 }
 Repeat.prototype = new Action;
+Repeat.prototype._preInit = function () {};
 Repeat.prototype._init = function (action, repeatTotal) {
     this.action = action;
-    this.repeatTotal = repeattotal;
+    this.repeatTotal = repeatTotal;
     this.hasRepeated = 0;
+    /* this.done = function () {
+        var _done;
+        return function (done) {
+            return done === undefined ? _done : _done = done;
+        };
+    }(); */
 };
-Repeat.prototype._update = function () {
+/* Repeat.prototype._update = function () {
+    debugger
     this.action._update.apply(this.action, arguments);
+    if(this.action.done()){
+        this.hasRepeated++;
+        if(this.hasRepeated < this.repeatTotal){
+            this.action.done(false);
+        }else{
+            this.done();
+        }
+    }
+}; */
+Repeat.prototype.checkDone = function(){
+    if(this.hasRepeated >= this.repeatTotal){
+        return true;
+    }
+};
+Repeat.prototype._update = function (time) {
+    //console.log(time);
+    exec(this.currentAction(),'update',time);
+    if(this.action.done()){
+        this.hasRepeated++;
+        this.done(this.hasRepeated >= this.repeatTotal);
+    }
+};
+Repeat.prototype.currentTime = function (dt) {
+    return dt;
 };
 Repeat.prototype.currentAction = function () {
-    return this.action;
+    if(this.hasRepeated < this.repeatTotal && this.action.done()){
+        this.action.reset();
+        this.hasRepeated++;
+    }
+    if(this.action.target){
+        return this.action;
+    }
+    this.action.startWithTarget(this.target);
 };
-Repeat.prototype.done = function () {
+/* Repeat.prototype.done = function () {
     return this.action.done.apply(this.action, arguments);
-};
+}; */
 Repeat.prototype._reset = function () {};
 Repeat.prototype._clear = function () {
     this.actions(null);
 };
 
-function Spawn() {}
+function Spawn() {
+    Action.apply(this, arguments);
+}
 Spawn.prototype = new Action;
 Spawn.prototype._init = function () {
     this.actions = function () {
@@ -423,15 +522,45 @@ Spawn.prototype._init = function () {
             return actions === undefined ? _actions : _actions = actions;
         };
     }();
+    var actions = this.actions();
     forEach(arguments, function (action) {
-        this.actions().push(action);
+        actions.push(action);
     });
 };
-Spawn.prototype._update = function () {
-    var arg = arguments;
-    forEach(this.actions(), function (action) {
-        action.update.apply(action, arg);
+Spawn.prototype._preInit = function(){};
+Spawn.prototype._update = function (time) {
+    var me = this;
+    forEach(me.actions(), function (action) {
+        if(!action.target){
+            action.startWithTarget(me.target);
+        }else{
+            action.update(time);
+        }
     });
+};
+Spawn.prototype.currentTime = function (dt) {
+    return dt;
+};
+Spawn.prototype.checkDone = function(){
+    var done = true,
+        me = this,
+        hasNull = false;
+    forEach(me.actions(), function (action,index) {
+        if(!action.done()){
+            done = false;
+            return true;
+        }else{
+            hasNull = true;
+            me.actions()[index] = null;
+        }
+    });
+    if(done){
+        this.done(true);
+    }
+    if(hasNull){
+        this.actions().removeNullVal();
+    }
+    return done;
 };
 function RepeatForever() {
     Action.apply(this, arguments);
@@ -439,6 +568,8 @@ function RepeatForever() {
 RepeatForever.prototype = new Action;
 RepeatForever.prototype._init = function(action){
     this.action = action;
+};
+RepeatForever.prototype._preInit = function(){
 };
 RepeatForever.prototype._update = function(){
     this.action._update.apply(this.action, arguments);
@@ -453,4 +584,25 @@ RepeatForever.prototype.currentAction = function(){
 };
 RepeatForever.prototype.done = function () {
     return this.action.done.apply(this.action, arguments);
+};
+RepeatForever.prototype.checkDone = function(){
+    return false;
+};
+RepeatForever.prototype._update = function (time) {
+    //console.log(time);
+    exec(this.currentAction(),'update',time);
+    if(this.action.done()){
+    }
+};
+RepeatForever.prototype.currentTime = function (dt) {
+    return dt;
+};
+RepeatForever.prototype.currentAction = function () {
+    if(this.action.done()){
+        this.action.reset();
+    }
+    if(this.action.target){
+        return this.action;
+    }
+    this.action.startWithTarget(this.target);
 };

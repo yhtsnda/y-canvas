@@ -17,6 +17,7 @@ Layer.prototype.clear = function () {
 };
 Layer.prototype.handleEvent = function () {
     this.exec('onHandleEvent');
+    this.exec('_handleEvent');
     this.exec('afterHandleEvent');
 };
 Layer.prototype.removeChild = function (child) {
@@ -36,16 +37,18 @@ Layer.prototype.removeChildByTag = function (tag) {
     });
 };
 Layer.prototype.update = function (context) {
+    this.handleEvent(context);
     this.exec('onUpdate', context);
     this.exec('_update', context);
     this.exec('updateChildren', context);
-    this.exec('render', context);
+    this.render(context);
     this.exec('afterUpdate', context);
 };
 Layer.prototype.render = function (context) {
-    this.exec('onRender');
-    this.children() && this.children().forEach(function (child, index) {
+    this.exec('onRender', context);
+    /* this.children() && this.children().forEach(function (child, index) {
         child.render(context || getContext());
-    });
-    this.exec('afterRender');
+    }); */
+    this.exec('_render', context);
+    this.exec('afterRender', context);
 };

@@ -16,6 +16,9 @@ function mixIn(a, b, modifyA) {
     }
 }
 function forEach(obj, fn) {
+    if(obj === undefined || obj === null){
+        return;
+    }
     //fn(v,k,obj)
     if (obj.some) {
         return obj.some.apply(obj, Array.prototype.slice.call(arguments, 1));

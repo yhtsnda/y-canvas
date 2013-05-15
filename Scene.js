@@ -1,11 +1,9 @@
 function Scene() {
     Node.apply(this, arguments);
 }
-
 Scene.prototype = new BaseObject;
 Scene.prototype.init = function () {
     this.exec('onInit', arguments);
-    
     this.exec('_init', arguments);
     this.exec('afterInit', arguments);
 };
@@ -23,25 +21,26 @@ Scene.prototype.clear = function () {
     this.exec('afterClear', arguments);
 };
 Scene.prototype.update = function (context) {
+    this.handleEvent(context);
     this.exec('onUpdate', arguments);
     /*var layers = this.layersWithoutEmpty();
     layers && layers.sort(function (a, b) {
-        return a.index - b.index;
+    return a.index - b.index;
     }).forEach(function (layer) {
-        layer.update(context || getContext());
+    layer.update(context || getContext());
     });*/
-    var children = this.children();
+    var children = this.children(),
+        len = children.length;
     children.sort(function (a, b) {
-    	return b.index - a.index;
+        return b.index - a.index;
     });
-    var len = children.length;
     for (var i = len - 1; i >= 0; i--) {
-    	if (children[i] === null || children[i].destoryed) {
-    		len--;
-    		children[i] = children[len];
-    		continue;
-    	}
-    	children[i].update(context);
+        if (children[i] === null || children[i].destoryed) {
+            len--;
+            children[i] = children[len];
+            continue;
+        }
+        children[i].update(context);
     }
     children.length = len;
     this.exec('_update', arguments);
@@ -65,8 +64,8 @@ Scene.prototype.resume = function () {
     });
 };
 Scene.prototype.handleEvent = function (event) {
-    var children = this.children();
+    /* var children = this.children();
     children && children.some(function (child) {
         return child.handleEvent(event);
-    });
+    }); */
 };

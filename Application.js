@@ -71,7 +71,8 @@ Application.prototype.showFPS = function (context) {
     this._currentFrameCount++;
 };
 Application.prototype.handleEvents = function () {
-    var me = this;
+    EventSystem.deallingEvents(true);
+    /* var me = this;
     EventSystem.deallingEvents(true);
     forEach(EventSystem.events(), function (events) {
         forEach(events, function (event) {
@@ -79,9 +80,10 @@ Application.prototype.handleEvents = function () {
             exec(me.nextScene, 'handleEvent', event);
         });
     });
-    EventSystem.deallingEvents(false);
+    EventSystem.deallingEvents(false); */
 };
 Application.prototype.resetEvents = function () {
+    EventSystem.deallingEvents(false);
     EventSystem.resetEvents();
 };
 Application.prototype.clear = function () {

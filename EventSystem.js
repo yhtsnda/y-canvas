@@ -22,11 +22,11 @@ EventSystem.init = function () {
                 }
             });
             this.events()[MOUSEEVTINDEX].removeNullVal();
-            e.absolutePosition = {
+            e.position = {
                 x : e.offsetX != null ? e.offsetX : e.pageX - e.target.offsetLeft,
                 y : e.offsetY != null ? e.offsetY : e.pageY - e.target.offsetTop
             };
-            //console.log(e.absolutePosition);
+            //console.log(e.position);
             this.events()[MOUSEEVTINDEX].push(e);
         },
         'key' : function (e) {
@@ -50,7 +50,7 @@ EventSystem.init = function () {
             offsetX:IE特有,距当前事件元素的左上顶点的距离，不计算border，如果有border，点击border时的offsetX值可以为负值
             layerX:火狐特有,鼠标距离事件元素一直往上，找到position为absolute或relative的元素的左上顶点的距离,如果设置当前元素postion为absolute或relative，则值与layerX相同
              */
-            e.absolutePosition = {
+            e.position = {
                 x : touch ? (touch.pageX - touch.target.offsetLeft) : 0,
                 y : touch ? (touch.pageY - touch.target.offsetTop) : 0
             };
@@ -95,10 +95,36 @@ EventSystem.events = (function () {
 EventSystem.deallingEvents = (function () {
     var _inDealingEvents;
     return function (inDealling) {
-        return inDealling == null ? _inDealingEvents : _inDealingEvents = inDealling;
+        return inDealling === undefined ? _inDealingEvents : _inDealingEvents = inDealling;
     };
 })();
 EventSystem.resetEvents = function () {
     this.events([[], [], []]);
     this.deallingEvents(false);
 };
+EventSystem.handleEventWithTarget = function (target) {
+    //mouse event
+    forEach(EventSystem.events()[0], function (event) {
+        if (event.position.x >= target.actualPosition().x &&
+            event.position.x <= target.actualPosition().x + target.width() &&
+            event.position.y >= target.actualPosition().y &&
+            event.position.y <= target.actualPosition().y + target.height()) {
+            forEach(target['on' + event.type], function (handle) {
+                handle.call(target, event);
+            });
+        }
+    });
+    //key event
+    forEach(EventSystem.events()[1], function (event) {});
+    //touch event
+    forEach(EventSystem.events()[2], function (event) {
+        if (event.position.x >= target.actualPosition().x &&
+            event.position.x <= target.actualPosition().x + target.width() &&
+            event.position.y >= target.actualPosition().y &&
+            event.position.y <= target.actualPosition().y + target.height()) {
+            forEach(target['on' + event.type], function (handle) {
+                handle.call(target, event);
+            });
+        }
+    });
+}

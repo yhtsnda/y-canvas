@@ -31,23 +31,58 @@
                 layer = new Layer,
                 sprite = new Sprite,
                 img = new Image;
-            img.src = "http://www.mhtml5.com/wp-content/themes/windPaled/images/sitetitle.png"; 
-            img.onload = function () {
-                sprite.images().push(this);
+            img.src = "sprite.jpg"; 
+            //img.onload = function () {
+                sprite.images().push(img);
+                sprite.width(695);
+                sprite.height(359);
                 var move = new MoveTo({x:300,y:400});/*,1000,function(){
                     console.log(1);
                 },function(){
                     console.log(2);
                 });*/
-                move.duration = 5000;
+                /*move.duration = 1000;
                 move.callback().push(function(){
-                    console.log(3);
+                    
+                    var rotate = new RotateTo(10,1000);
+                    rotate.callback().push(function(){
+                        var moveTo = new MoveTo({x:400,y:200},1000);
+                        sprite.runAction(moveTo);
+                    });
+                    sprite.runAction(rotate);
+                    var scale = new ScaleTo({x:0.5,y:0.5},1000);
+                    sprite.runAction(scale);
                 });
-                sprite.runAction(move);
-            };
-            sprite.draw = function (context){
-                
-            };
+                sprite.runAction(move);*/
+            //};
+            var delay = new Delay();
+            delay.duration = 2000;
+            delay.callback().push(function(){console.log(1);});
+            var rotate = new RotateTo(10,1000);
+            rotate.callback().push(function(){
+                console.log(2);
+            });
+            var moveTo = new MoveTo({x:400,y:200},1000,function(){
+                console.log(3);
+            });
+            var seq = new Sequence(delay,rotate,moveTo);
+            seq.callback().push(function(){console.log(0)});
+            var by = new MoveTo({x:100,y:100},1000,function(){
+                console.log(new Date);
+            });
+            var repeat = new RepeatForever(by);
+            repeat.callback().push(function(){
+                console.log('repeat');
+            });
+            var scale = new ScaleTo({x:0.5,y:2},1000),
+                rotate = new RotateTo(Math.PI,2000),
+                move = new MoveTo({x:400,y:400},3000);
+            
+            //sprite.runAction(new Spawn(scale,rotate,move));
+            sprite.runAction(repeat);
+            sprite.onmousemove.push(function(){
+                console.log(this.position());
+            });
             app.currentScene = scene;
             scene.addChild(layer);
             layer.addChild(sprite);

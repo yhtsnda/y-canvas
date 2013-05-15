@@ -165,9 +165,13 @@ function Node() {
         }
     }();
     this.actionManager = new ActionManager(this);
-    this.onKey = [],
-    this.onMouse = [],
-    this.onTouch = [];
+    var me = this;
+    forEach(["mousedown", "mouseup", "mousemove", "mouseover", "mouseout", "mouseenter", "mouseleave","keydown", "keypress", "keyup","touchstart", "touchmove", "touchend", "touchcancel"],function(e){
+        me['on' + e] = [];
+    });
+    /* this.onkey = {},
+    this.onmouse = {},
+    this.ontouch = {}; */
     this.handleEvents = function () {
     };
     this.runAction = function(){
