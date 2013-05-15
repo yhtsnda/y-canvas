@@ -487,6 +487,7 @@ Repeat.prototype._update = function (time) {
     exec(this.currentAction(),'update',time);
     if(this.action.done()){
         this.hasRepeated++;
+        //console.log(this.hasRepeated);
         this.done(this.hasRepeated >= this.repeatTotal);
     }
 };
@@ -496,7 +497,7 @@ Repeat.prototype.currentTime = function (dt) {
 Repeat.prototype.currentAction = function () {
     if(this.hasRepeated < this.repeatTotal && this.action.done()){
         this.action.reset();
-        this.hasRepeated++;
+        //this.hasRepeated++;
     }
     if(this.action.target){
         return this.action;

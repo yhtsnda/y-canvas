@@ -1,5 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en">
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title></title>
@@ -23,6 +22,7 @@
     <script src="Rect.js"></script>
     <script src="base64-binary.js"></script>
     <script src="AudioEngine.js"></script>
+    <script src="ImageEngine.js"></script>
 </head>
 <body>
     <canvas id="app" width='1024' height='768'></canvas>
@@ -33,7 +33,7 @@
                 layer = new Layer,
                 sprite = new Sprite,
                 img = new Image;
-            img.src = "sprite.jpg"; 
+            img.src = "image/sprite.jpg"; 
             //img.onload = function () {
                 sprite.images().push(img);
                 sprite.width(695);
@@ -72,7 +72,7 @@
             var by = new MoveTo({x:100,y:100},1000,function(){
                 console.log(new Date);
             });
-            var repeat = new RepeatForever(by);
+            var repeat = new Repeat(by, 5);
             repeat.callback().push(function(){
                 console.log('repeat');
             });

@@ -5,10 +5,10 @@ var AudioEngine = function(){
         isSafari = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1,
         caches = [];
     audioEngine.canPlayMP3 = (function(){
-        return false;//isIE || isSafari;
+        return isIE || isSafari && !isIPad;
     })();
     audioEngine.canPlayOGG = (function(){
-        return false;
+        return !(isIE || isSafari || isIPad);
     })();
     audioEngine.audioContext = (function(){
         if ('AudioContext' in window) {
@@ -19,14 +19,14 @@ var AudioEngine = function(){
     })();
     audioEngine.loadAudio = function(url,callback){
         if(this.canPlayMP3){
-            return audioEngine.getAudio(url, 'mp3', callback);
+            return getAudio(url, 'mp3', callback);
         }else if(this.canPlayOGG){
-            return audioEngine.getAudio(url, 'ogg', callback);
+            return getAudio(url, 'ogg', callback);
         }else if(this.audioContext){
-            return audioEngine.getAudio(url, 'js', callback);
+            return getAudio(url, 'js', callback);
         }
     };
-    audioEngine.getAudio = function(url, type, callback){
+    function getAudio(url, type, callback){
         var cache = caches[url + '.' + type];
         if(cache){
             if(isArray(callback)){
@@ -42,16 +42,16 @@ var AudioEngine = function(){
             }else{
                 if(cache.loaded){
                     callback && callback.call(cache);
-                }else{ 
+                }else{
                     callback && cache.callback.push(fn);
                 }
             }
             return cache;
         }else{
-            return this.load(url, type, callback);
+            return load(url, type, callback);
         }
     };
-    audioEngine.load = function(url, type, callback){
+    function load(url, type, callback){
         var src = url + '.' + type;
         if(type === 'mp3' || type === 'ogg'){
             var audio = document.createElement("audio");
