@@ -114,7 +114,11 @@ Action.prototype.startWithTarget = function (target) {
     this.step(1000/60);
 };
 Action.prototype.currentTime = function(dt){
-    return (this.elapsed += dt) / this.duration;
+    return (this.elapsed += dt);// / this.duration;
+};
+Action.prototype.getTime = function(time){
+    //console.log(Easing.easeInQuad(time,this.duration));
+    return time / this.duration;//Easing.easeInOutCubic(time,this.duration);
 };
 function MoveTo() {
     Action.apply(this, arguments);
@@ -128,7 +132,7 @@ MoveTo.prototype._startWithTarget = function () {
     this.deltaPosition = PointDiff(this.toPosition, this.startPosition);
 };
 MoveTo.prototype._update = function (time) {
-    this.target.position(PointSum(this.startPosition, PointMulti(this.deltaPosition, time)));
+    this.target.position(PointSum(this.startPosition, PointMulti(this.deltaPosition, this.getTime(time))));
 };
 MoveTo.prototype._reset = function () {
     /*this.toPosition = null;
@@ -174,7 +178,7 @@ ScaleTo.prototype._startWithTarget = function () {
     this.deltaScale = PointDiff(this.scaleTo, this.startScale);
 };
 ScaleTo.prototype._update = function (time) {
-    this.target.scale(PointSum(this.startScale, PointMulti(this.deltaScale, time)));
+    this.target.scale(PointSum(this.startScale, PointMulti(this.deltaScale, this.getTime(time))));
 };
 ScaleTo.prototype._reset = function () {
     /*this.scaleTo = null;
@@ -219,7 +223,7 @@ RotateTo.prototype._startWithTarget = function () {
     this.deltaRotate = this.rotateTo - this.startRotate;
 };
 RotateTo.prototype._update = function (time) {
-    this.target.rotate(this.startRotate + this.deltaRotate * time);
+    this.target.rotate(this.startRotate + this.deltaRotate * this.getTime(time));
     //this.target.rotate(PointSum(this.startRotate, PointMulti(this.deltaRotate, this.elapsed / this.duration)));
 };
 RotateTo.prototype._reset = function () {

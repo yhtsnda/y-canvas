@@ -15,6 +15,7 @@
     <script src="Sprite.js"></script>
     <script src="ActionManager.js"></script>
     <script src="Action.js"></script>
+    <script src="Easing.js"></script>
     <script src="EventSystem.js"></script>
     <script src="MessageCenter.js"></script>
     <script src="Point.js"></script>
@@ -72,9 +73,9 @@
             });
             var seq = new Sequence(delay,rotate,moveTo);
             seq.callback().push(function(){console.log(0)});
-            var by = new MoveTo({x:100,y:100},1000,function(){
+            var by = Easing.withAction(new MoveTo({x:100,y:100},1000,function(){
                 console.log(new Date);
-            });
+            }),'easeInSine');
             var repeat = new Repeat(by, 5);
             repeat.callback().push(function(){
                 console.log('repeat');
