@@ -89,7 +89,7 @@ var Easing = {
     easeInOutBounce : function (t, d) {},
     withAction : function(action, name){
          action.getTime = function(time){
-            return Easing['easeInOutCubic'](time,this.duration);
+            return Easing[name](time,this.duration);
          };
          return action;
     }
