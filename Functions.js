@@ -62,3 +62,25 @@ forEach(['Array', 'Object', 'Function', 'Arguments', 'Number', 'Date', 'Boolean'
     };
 });
 currying('exec', BaseObject.prototype);
+
+
+function setCallback(callback){
+    this.callback = this.callback || [];
+    if(callback){
+        if(isArray(callback)){
+            var me = this;
+            forEach(callback,function(fn){
+                fn && me.callback.push(fn);
+            });
+        }else{
+            this.callback.push(callback);
+        }
+    }
+}
+function emitCallback(){
+    var me = this;
+    forEach(me.callback, function (fn) {
+        fn && fn.call(me);
+    });
+    me.callback = [];
+}
