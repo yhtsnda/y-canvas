@@ -75,17 +75,17 @@
             seq.callback().push(function(){console.log(0)});
             var by = Easing.withAction(new MoveTo({x:100,y:100},1000,function(){
                 console.log(new Date);
-            }),'easeInOutElastic');
+            }),'easeInSine');
             var repeat = new Repeat(by, 5);
             repeat.callback().push(function(){
                 console.log('repeat');
             });
-            var scale = new ScaleTo({x:0.5,y:2},1000),
+            var scale = Easing.withAction(new ScaleTo({x:0.5,y:2},3000),'easeInOutElastic'),
                 rotate = new RotateTo(Math.PI,2000),
                 move = new MoveTo({x:400,y:400},3000);
             
             //sprite.runAction(new Spawn(scale,rotate,move));
-            sprite.runAction(repeat);
+            sprite.runAction(scale);
             sprite.onmousemove.push(function(){
                 console.log(this.position());
             });

@@ -117,8 +117,7 @@ Action.prototype.currentTime = function(dt){
     return Math.min(this.elapsed += dt, this.duration);// / this.duration;
 };
 Action.prototype.getTime = function(time){
-    //console.log(Easing.easeInQuad(time,this.duration));
-    return time / this.duration;//Easing.easeInOutCubic(time,this.duration);
+    return time / this.duration;
 };
 function MoveTo() {
     Action.apply(this, arguments);
@@ -373,6 +372,7 @@ function Delay() {
     Action.apply(this, arguments);
 }
 Delay.prototype = new Action;
+Delay.prototype._preInit = function () {};
 Delay.prototype._init = function (duration) {
     this.duration = duration;
     var callbacks = this.callback();
