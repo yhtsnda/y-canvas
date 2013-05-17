@@ -75,7 +75,7 @@
             seq.callback().push(function(){console.log(0)});
             var by = Easing.withAction(new MoveTo({x:100,y:100},1000,function(){
                 console.log(new Date);
-            }),'easeInSine');
+            }),'easeInOutElastic');
             var repeat = new Repeat(by, 5);
             repeat.callback().push(function(){
                 console.log('repeat');

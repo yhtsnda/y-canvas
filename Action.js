@@ -114,7 +114,7 @@ Action.prototype.startWithTarget = function (target) {
     this.step(1000/60);
 };
 Action.prototype.currentTime = function(dt){
-    return (this.elapsed += dt);// / this.duration;
+    return Math.min(this.elapsed += dt, this.duration);// / this.duration;
 };
 Action.prototype.getTime = function(time){
     //console.log(Easing.easeInQuad(time,this.duration));

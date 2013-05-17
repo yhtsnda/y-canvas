@@ -3,7 +3,7 @@ var Easing = {
         return (t /= d) * t
     },
     easeOutQuad : function (t, d) {
-        return - (t /= d) * (t - 2)
+        return  - (t /= d) * (t - 2)
     },
     easeInOutQuad : function (t, d) {
         if ((t /= d / 2) < 1)
@@ -78,19 +78,76 @@ var Easing = {
             return -0.5 * (Math.sqrt(1 - t * t) - 1);
         return 0.5 * (Math.sqrt(1 - (t -= 2) * t) + 1);
     },
-    easeInElastic : function (t, d) {},
-    easeOutElastic : function (t, d) {},
-    easeInOutElastic : function (t, d) {},
-    easeInBack : function (t, d) {},
-    easeOutBack : function (t, d) {},
-    easeInOutBack : function (t, d) {},
-    easeInBounce : function (t, d) {},
-    easeOutBounce : function (t, d) {},
-    easeInOutBounce : function (t, d) {},
-    withAction : function(action, name){
-         action.getTime = function(time){
-            return Easing[name](time,this.duration);
-         };
-         return action;
+    easeInElastic : function (t, d) {
+        if (t == 0)
+            return 0;
+        if ((t /= d) == 1)
+            return 1;
+        var p = d * .3,
+            a = 1,
+            s = p / 4;
+        return  - (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p));
+    },
+    easeOutElastic : function (t, d) {
+        if (t == 0)
+            return 0;
+        if ((t /= d) == 1)
+            return 1;
+        var p = d * .3,
+            a = 1,
+            s = p / 4;
+        return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + 1;
+    },
+    easeInOutElastic : function (t, d) {
+        
+        if (t == 0)
+            return 0;
+        if ((t /= d / 2) == 2)
+            return 1;
+        var p = d * (.3 * 1.5),
+            a = 1,
+            s = p / 4;
+            if (t < 1)
+                return  - .5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p));
+            return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + 1;
+    },
+    easeInBack : function (t, d) {
+        
+        if (s == undefined)
+            s = 1.70158;
+        return (t /= d) * t * ((1.70158 + 1) * t - 1.70158);
+    },
+    easeOutBack : function (t, d) {
+        return (t = t / d - 1) * t * ((1.70158 + 1) * t + 1.70158) + 1;
+    },
+    easeInOutBack : function (t, d) {
+        if ((t /= d / 2) < 1)
+            return 0.5 * (t * t * (((1.70158 *= (1.525)) + 1) * t - 1.70158));
+        return 0.5 * ((t -= 2) * t * (((1.70158 *= (1.525)) + 1) * t + 1.70158) + 2);
+    },
+    easeInBounce : function (t, d) {
+        return 1 - this.easeOutBounce(d - t, d);
+    },
+    easeOutBounce : function (t, d) {
+        if ((t /= d) < (1 / 2.75)) {
+            return (7.5625 * t * t);
+        } else if (t < (2 / 2.75)) {
+            return (7.5625 * (t -= (1.5 / 2.75)) * t + .75);
+        } else if (t < (2.5 / 2.75)) {
+            return (7.5625 * (t -= (2.25 / 2.75)) * t + .9375);
+        } else {
+            return (7.5625 * (t -= (2.625 / 2.75)) * t + .984375);
+        }
+    },
+    easeInOutBounce : function (t, d) {
+        if (t < d / 2)
+            return this.easeInBounce(t * 2, d) * .5;
+        return this.easeOutBounce(t * 2 - d, d) * .5 + .5;
+    },
+    withAction : function (action, name) {
+        action.getTime = function (time) {
+            return Easing[name](time, this.duration);
+        };
+        return action;
     }
 };
