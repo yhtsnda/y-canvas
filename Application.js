@@ -60,14 +60,18 @@ Application.prototype.showFPS = function (context) {
     this._currentFrameCount = this._currentFrameCount || 0;
     if (this._currentFrameCount % 10 === 0) {
         var now = (new Date).valueOf();
-        this._fpsText = Math.round(100000 / (now - this._lastDate)) / 10;
+        if(this._lastDate){
+            this._fpsText = Math.round(100000 / (now - this._lastDate)) / 10;
+        }
         this._lastDate = now;
     }
-    context.save();
-    context.fillStyle = '#589B2A';
-    context.font = "30px sans-serif bold";
-    context.fillText(this._fpsText, this.dom.width / 2, 30);
-    context.restore();
+    if(this._fpsText){
+        context.save();
+        context.fillStyle = '#589B2A';
+        context.font = "30px sans-serif bold";
+        context.fillText(this._fpsText, this.dom.width / 2, 30);
+        context.restore();
+    }
     this._currentFrameCount++;
 };
 Application.prototype.handleEvents = function () {
