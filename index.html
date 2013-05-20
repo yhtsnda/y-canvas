@@ -73,7 +73,7 @@
             });
             var seq = new Sequence(delay,rotate,moveTo);
             seq.callback().push(function(){console.log(0)});
-            var by = Easing.withAction(new MoveTo({x:100,y:100},1000,function(){
+            var by = Easing.withAction(new MoveTo(new Point(100,100),1000,function(){
                 console.log(new Date);
             }),'easeInSine');
             var repeat = new Repeat(by, 5);
@@ -85,7 +85,7 @@
                 move = new MoveTo({x:400,y:400},3000);
             
             //sprite.runAction(new Spawn(scale,rotate,move));
-            sprite.runAction(rotate);
+            sprite.runAction(repeat);
             //sprite.rotate(Math.PI /2);
             sprite.onmousemove.push(function(){
                 console.log(this.position());

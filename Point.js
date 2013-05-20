@@ -5,10 +5,7 @@
 4.add，plus加 ,subtract减 ,multiply,times乘 ,divide除
  */
 function PointMake(x, y) {
-    return {
-        x : x,
-        y : y
-    };
+    return new Point(x, y);
 }
 function PointZero() {
     return PointMake(0, 0);
@@ -20,14 +17,34 @@ function PointInRect(point, rect) {
     return point && rect && point.x > rect.x && point.x < (rect.x + rect.w) && point.y > rect.y && point.y < (rect.y + rect.h)
 }
 function PointSum(a, b) {
-    return PointMake(a.x + b.x, a.y + b.y);
+    return a.sum(b);//PointMake(a.x + b.x, a.y + b.y);
 }
 function PointDiff(a, b) {
-    return PointMake(a.x - b.x, a.y - b.y);
+    return a.diff(b);//PointMake(a.x - b.x, a.y - b.y);
 };
 function PointMulti(a, n) {
-    return PointMake(a.x * n, a.y * n);
+    return a.multi(n);//PointMake(a.x * n, a.y * n);
 };
 function PointDevide(a, n) {
-    return PointMake(a.x / n, a.y / n);
+    return a.devide(n);//PointMake(a.x / n, a.y / n);
+};
+
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+Point.prototype.distanceTo = function (point) {
+    return Math.sqrt((this.x - point.x) * (this.x - point.x) + (this.y - point.y) * (this.y - point.y));
+};
+Point.prototype.sum = function (to) {
+    return PointMake(this.x + to.x, this.y + to.y);
+};
+Point.prototype.multi = function (n) {
+    return PointMake(this.x * n, this.y * n);
+};
+Point.prototype.devide = function (n) {
+    return PointMake(this.x / n, this.y / n);
+};
+Point.prototype.diff = function (to) {
+    return PointMake(this.x - to.x, this.y - to.y);
 };
