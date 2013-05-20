@@ -11,8 +11,8 @@ var EventSystem = {
 };
 EventSystem.init = function () {
     var MOUSEEVTINDEX = 0,
-    KEYBOARDEVTINDEX = 1,
-    TOUCHEVTINDEX = 2;
+        KEYBOARDEVTINDEX = 1,
+        TOUCHEVTINDEX = 2;
     
     var gainEvent = {
         'mouse' : function (e) {

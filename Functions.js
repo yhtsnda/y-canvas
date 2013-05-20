@@ -84,3 +84,11 @@ function emitCallback(){
     });
     me.callback = [];
 }
+function prop(defaultValue){
+    return (function(){
+        var _value = defaultValue;
+        return function(value){
+            return value === undefined ? _value : _value = value;
+        };
+    })();
+}

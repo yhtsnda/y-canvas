@@ -21,12 +21,7 @@ ActionManager.prototype.removeActionManagerSupport = function () {
     }
 };
 ActionManager.prototype.addActionManagerSupport = function () {
-    this.actions = function () {
-        var _actions = [];
-        return function (actions) {
-            return actions === undefined ? _actions : _actions = actions;
-        };
-    }();
+    this.actions = prop([]);
     this.actionsWithoutEmpty = function () {
         return this.actions() && this.actions().removeNullVal();
     };
@@ -52,12 +47,7 @@ ActionManager.prototype.addActionManagerSupport = function () {
         this.actions().push(action);
         action.startWithTarget(this.target);
     };
-    this.actionIndex = function () {
-        var _actionIndex = 0;
-        return function (actionIndex) {
-            return actionIndex === undefined ? _actionIndex : _actionIndex = actionIndex;
-        }
-    }();
+    this.actionIndex = prop(0);
 };
 ActionManager.prototype.update = function () {
     var hasNull = false;

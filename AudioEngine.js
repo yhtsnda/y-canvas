@@ -1,9 +1,9 @@
 var AudioEngine = function () {
     var audioEngine = {},
-    isIPad = navigator.userAgent.indexOf('iPad') != -1,
-    isIE = navigator.userAgent.indexOf('MSIE') != -1,
-    isSafari = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1,
-    caches = [];
+        isIPad = navigator.userAgent.indexOf('iPad') != -1,
+        isIE = navigator.userAgent.indexOf('MSIE') != -1,
+        isSafari = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1,
+        caches = [];
     audioEngine.canPlayMP3 = (function () {
         return false;//isIE || isSafari && !isIPad;
     })();

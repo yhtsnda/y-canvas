@@ -40,8 +40,8 @@
             img.src = "images/logo.png"; 
             //img.onload = function () {
                 sprite.images().push(img);
-                sprite.width(695);
-                sprite.height(359);
+                sprite.width(288);
+                sprite.height(135);
                 var move = new MoveTo({x:300,y:400});/*,1000,function(){
                     console.log(1);
                 },function(){
@@ -81,11 +81,12 @@
                 console.log('repeat');
             });
             var scale = Easing.withAction(new ScaleTo({x:0.5,y:2},3000),'easeInOutElastic'),
-                rotate = new RotateTo(Math.PI,2000),
+                rotate = new RotateTo(Math.PI*4,2000),
                 move = new MoveTo({x:400,y:400},3000);
             
             //sprite.runAction(new Spawn(scale,rotate,move));
-            sprite.runAction(scale);
+            sprite.runAction(rotate);
+            //sprite.rotate(Math.PI /2);
             sprite.onmousemove.push(function(){
                 console.log(this.position());
             });

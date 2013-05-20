@@ -2,24 +2,9 @@ function Action() {
     //this.duration = arguments.length >= 2 ? arguments[arguments.length - 2] : 0;
     //this.callback = arguments.length >= 2 ? arguments[arguments.length - 1] : null;
     
-    this.done = function () {
-        var _done = false;
-        return function(done){
-            return done === undefined ? _done : _done = done;
-        };
-    }();
-    this.callback = function () {
-        var _callbacks = [];
-        return function (callback){
-            return callback === undefined ? _callbacks : _callbacks = callback; 
-        };
-    }();
-    this.pause = function(){
-        var _pause = false;
-        return function(pause){
-            return pause === undefined ? _pause : _pause = pause;
-        };
-    }();
+    this.done = prop(false);
+    this.callback = prop([]);
+    this.pause = prop(false);
     this.elapsed = 0;
     this._preInit.apply(this, arguments);
     this.init.apply(this, arguments);
@@ -610,4 +595,17 @@ RepeatForever.prototype.currentAction = function () {
         return this.action;
     }
     this.action.startWithTarget(this.target);
+};
+function CustomerAction(){
+    
+}
+CustomerAction.prototype = new Action;
+CustomerAction.prototype._init = function (to, duration, callback) {
+    
+};
+CustomerAction.prototype._startWithTarget = function () {
+};
+CustomerAction.prototype._update = function (time) {
+};
+CustomerAction.prototype._reset = function () {
 };

@@ -1,118 +1,38 @@
 function Node() {
-    this.position = function () {
-        var pos = PointMake(0, 0);
-        return function (position) {
-            return position === undefined ? pos : pos = position;
-        }
-    }();
+    this.position = prop(PointMake(0, 0));
     this.actualPosition = function(){
         return this.position();
     };
-    this.rect = function () {
-        var _rect = PointMake(0, 0);
-        return function (rect) {
-            return rect === undefined ? _rect : _rect = rect;
-        }
-    }();
-    this.visible = function () {
-        var _visible = true;
-        return function (visible) {
-            return visible === undefined ? _visible : _visible = visible;
-        }
-    }();
-    this.display = function () {
-        var _display = true;
-        return function (display) {
-            return display === undefined ? _display : _display = display;
-        }
-    }();
-    this.images = function () {
-        var _images = [];
-        return function (images) {
-            return images === undefined ? _images : _images = images;
-        }
-    }();
-    this.imageSizes = function(){
-        var _imageSizes = [];
-        return function(imageSizes){
-            return imageSizes === undefined ? _imageSizes : _imageSizes = imageSizes;
-        }
-    }();
+    this.rect = prop(PointMake(0, 0));
+    this.visible = prop(false);
+    this.display = prop(true);
+    this.images = prop([]);;
+    this.imageSizes = prop([])
     /* this.getImageSize = function(){
         //context.drawImage(img,x,y);
         //context.drawImage(img,x,y,width,height);
         //context.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
         var imageSize = this.imageSizes[this.imageIndex()];
     }; */
-    this.imageIndex = function(){
-        var _index = 0;
-        return function(index){
-            return index === undefined ? _index : _index = index;
-        }
-    }();
+    this.imageIndex = prop(0);
     this.getImage = function(){
         return this.images()[this.imageIndex()];
     };
-    this.zIndex = function () {
-        var _index = 0;
-        return function (index) {
-            return index === undefined ? _index : _index = index;
-        }
-    }();
-    this.aplha = function(){
-        var _alpha = 0;
-        return function(alpha){
-            return alpha === undefined ? _alpha : _alpha = alpha;
-        }
-    }();
-    this.anchor = function () {
-        var _anchor = PointMake(0.5, 0.5);
-        return function (anchor) {
-            return anchor === undefined ? _anchor : _anchor = anchor;
-        }
-    }();
-    this.rotate = function () {
-        var _rotate = 0;
-        return function (rotate) {
-            return rotate === undefined ? _rotate : _rotate = rotate;
-        }
-    }();
-    this.scale = function () {
-        var _scale = PointMake(1, 1);
-        return function (scale) {
-            return scale === undefined ? _scale : _scale = scale;
-        }
-    }();
-    this.skew = function () {
-        var _skew = PointMake(1, 1);
-        return function (skew) {
-            return skew === undefined ? _skew : _skew = skew;
-        }
-    }();
-    this.transform = function () {
-        var _transform = null;
-        return function (transform) {
-            return transform === undefined ? _transform : _transform = transform;
-        }
-    }();
-    this.pause = function () {
-        var _paused;
-        return function (paused) {
-            return paused === undefined ? _paused : _paused = paused;
-        }
-    }();
+    this.zIndex = prop(0);
+    this.aplha = prop(0);
+    this.anchor = prop(PointMake(0.5, 0.5));
+    this.rotate = prop(0);
+    this.scale = prop(PointMake(1, 1));
+    this.skew = prop(PointMake(1, 1));
+    this.transform = prop();
+    this.pause = prop();
     this.stop = function () {
         this.pause(true);
     };
     this.resume = function () {
         this.pause(false);
     };
-    this.children = (function () {
-        var _children = [];
-        return function (children) {
-            return children === undefined ? _children : _children = children;
-        }
-    })();
+    this.children = prop([]);
     this.childrenWithoutEmpty = function () {
         return this.children() && this.children().removeNullVal();
     };
@@ -152,18 +72,8 @@ function Node() {
         }
         children.length = len;
     };
-    this.width = function () {
-        var _width = 0;
-        return function (width) {
-            return width === undefined ? _width : _width = width;
-        }
-    }();
-    this.height = function () {
-        var _height = 0;
-        return function (height){
-            return height === undefined ? _height : _height = height;
-        }
-    }();
+    this.width = prop(0);
+    this.height = prop(0);;
     this.actionManager = new ActionManager(this);
     var me = this;
     forEach(["mousedown", "mouseup", "mousemove", "mouseover", "mouseout", "mouseenter", "mouseleave","keydown", "keypress", "keyup","touchstart", "touchmove", "touchend", "touchcancel"],function(e){
