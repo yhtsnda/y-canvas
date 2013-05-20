@@ -35,6 +35,7 @@ Brownian.prototype.update = function () {
         this.pastTime = 0;
     };
 };
+//吸附
 function Attraction(attractionPosition, maxValue, r, life) {
     Force.call(this, 0, 0, life);
     this.maxValue = maxValue;
@@ -45,9 +46,23 @@ function Attraction(attractionPosition, maxValue, r, life) {
 Attraction.prototype.update = function () {
     var d = this.attractionPosition.distanceTo(this.target.position());
     if (d < this.r) {
-        this.value(this.target.position().sub(this.attractionPosition));
+        this.value(this.target.position().sub(this.attractionPosition).multi(this.maxValue / d));
     } else {
-        this.value(this.attractionPosition.sub(this.target.position()));
+        this.value(this.attractionPosition.sub(this.target.position())).multi(this.maxValue / d);
     };
-    this.value.multi(this.maxValue / d);
+};
+function Repulsion(repulsionPosition, maxValue, r, life) {
+    Force.call(this, 0, 0, life);
+    this.maxValue = maxValue;
+    this.r = r;
+    this.repulsionPosition = repulsionPosition;
+    this.target = null;
+};
+Repulsion.prototype.update = function () {
+    var d = this.repulsionPosition.distanceTo(this.target.position());
+    if (d > this.r) {
+        this.value.reset(0, 0);
+    } else {
+        this.value(this.target.position().diff(this.repulsionPosition).multi(this.maxValue / d));
+    }
 };

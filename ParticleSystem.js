@@ -1,10 +1,5 @@
 function ParticleSystem() {
-    this.particles = (function () {
-        var _particles = [];
-        return function (particles) {
-            return particles === undefined ? _particles : _particles = particles;
-        };
-    })();
+    this.particles = prop([]);
     this.pool = new ParticlePool;
     
     this.createParticle = function (type) {
