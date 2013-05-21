@@ -8,7 +8,6 @@ Matrix.prototype.multi = function (b) {
     for (i = 0; i < this.length; ++i) {
         for (k = 0; k < this.length; ++k) {
             var r = this[i][k];
-            debugger
             for (j = 0; j < this.length; ++j) {
                 this[i][j] += r * b[k][j];
             }

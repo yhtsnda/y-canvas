@@ -93,9 +93,9 @@ Sprite.prototype.drawWithImage = function (ctx, image) {
     pos = this.actualPosition(),
     scale = this.scale();
     if (size) {
-        ctx.drawImage(image.img, size[0], size[1], size[2], size[3], pos.x / scale.x, pos.y / scale.y, size[2], size[3]);
+        ctx.drawImage(image.img, size[0], size[1], size[2], size[3], pos.x, pos.y, size[2], size[3]);
     } else {
-        ctx.drawImage(image.img, pos.x / scale.x, pos.y / scale.y);
+        ctx.drawImage(image.img, pos.x, pos.y);
         //console.log(pos.x / scale.x, pos.y / scale.y);
     }
     /*

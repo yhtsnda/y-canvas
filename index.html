@@ -60,11 +60,14 @@
                 rotate = new RotateTo(Math.PI * 4, 2000),
                 move = new MoveTo(PointMake(400,400), 3000),
                 out = new SkewBy(PointMake(Math.PI / 180 * 6,0),1000);
+                var act = Easing.withAction(new CustomerAction({position:PointMake(300,300),scale:PointMake(2,2),rotate:Math.PI},1000),'easeInOutSine');
                 //sprite.skew().reset(Math.PI/6,Math.PI/6);
-                sprite.runAction(out);//new Spawn(scale,rotate,move));
+                sprite.runAction(act);//new Spawn(scale,rotate,move));
+                //sprite.position().reset(300,300);
+                //sprite.scale().reset(3,3);
                 //sprite.runAction(seq);
                 //sprite.rotate(Math.PI /2);
-                sprite.position().reset(100,100);
+                //sprite.position().reset(100,100);
                 app.currentScene = scene;
                 scene.addChild(layer);
                 layer.addChild(sprite);
