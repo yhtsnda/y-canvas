@@ -47,7 +47,7 @@ Application.prototype.clear = function () {
 Application.prototype.update = function (context) {
     var me = this;
     me.handleEvents();
-    me.getContext().clearRect(0, 0, this.dom.width, this.dom.height);
+    this.clearCanvas(context);
     exec(me.currentScene, 'update', context);
     exec(me.nextScene, 'update', context);
     me.resetEvents();
@@ -55,6 +55,9 @@ Application.prototype.update = function (context) {
     requestAnimFrame(function () {
         me.update(context);
     });
+};
+Application.prototype.clearCanvas = function(context){
+    context.clearRect(0, 0, this.dom.width, this.dom.height);
 };
 Application.prototype.showFPS = function (context) {
     this._currentFrameCount = this._currentFrameCount || 0;

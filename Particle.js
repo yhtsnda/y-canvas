@@ -52,18 +52,20 @@ Particle.prototype.update = function (ctx) {
     this.life(this.life() - 0.004);
 };
 Particle.prototype._render = function (ctx) {
+    //ctx.save();
     //ctx.globalAlpha = this.alpha;
-    //ctx.translate(this.position().x, this.position().y);
+    ctx.translate(this.position().x, this.position().y);
     //ctx.rotate(this.rotation);
     //ctx.scale(this.scale, this.scale);
     var size = this.image().size;
     if (size) {
-        ctx.drawImage(this.image().img, size[0], size[1], size[2], size[3], this.position().x, this.position().y, size[2], size[3]);
+        ctx.drawImage(this.image().img, size[0], size[1], size[2], size[3], 0, 0, size[2], size[3]);
     } else {
-        ctx.drawImage(this.image().img, this.position().x, this.position().y);
+        ctx.drawImage(this.image().img, 0, 0);
     }
-    //ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     //ctx.globalAlpha = 1;
+    //ctx.restore();
 };
 Particle.prototype.draw = function () {};
 Particle.prototype.afterRender = function () {};

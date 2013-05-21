@@ -45,10 +45,8 @@ Attraction.prototype.update = function () {
     var d = this.attractionPosition.distanceTo(this.target.position());
     if (d < this.r) {
         this.value().sub(this.target.position(), this.attractionPosition);
-        //this.value(this.target.position().diff(this.attractionPosition).multi(this.maxValue / (d||1)));
     } else {
         this.value().sub(this.attractionPosition, this.target.position());
-        //this.value(this.attractionPosition.diff(this.target.position()).multi(this.maxValue / (d||1)));
     };
     this.value().multi2(this.maxValue / d);
 };
@@ -64,7 +62,7 @@ Repulsion.prototype = new Force;
 Repulsion.prototype.update = function () {
     var d = this.repulsionPosition.distanceTo(this.target.position());
     if (d > this.r) {
-        this.value.reset(0, 0);
+        this.value().reset(0, 0);
     } else {
         this.value(this.target.position().diff(this.repulsionPosition).multi(this.maxValue / (d || 1)));
     }

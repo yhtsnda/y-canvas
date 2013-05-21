@@ -2,35 +2,40 @@ function Sprite() {
     Node.apply(this, arguments);
 }
 Sprite.prototype = new BaseObject;
+
+(function(){
+    function defaultFunc(){}
+    ['onInit','_init','afterInit','onUpdate','_update','afterUpdate','onRender','_render','afterRender','onClear','_clear','afterClear','onHandleEvent','_handleEvent','afterHandleEvent'].some(function(prop){
+        Sprite.prototype[prop] = defaultFunc;
+    });
+})();
 Sprite.prototype.init = function () {
-    this.exec('onInit', arguments);
-    this.exec('_init', arguments);
-    this.exec('afterInit', arguments);
+    this.onInit.apply(this,arguments);
+    this._init.apply(this, arguments);
+    this.afterInit.apply(this, arguments);
 };
 Sprite.prototype.update = function (ctx) {
-    //ctx.save();
     this.handleEvent(ctx);
-    this.exec('onUpdate', ctx);
+    this.onUpdate(ctx);
     this.performAction(ctx);
     this.performTransform(ctx);
-    this.exec('_update', ctx);
+    this._update(ctx);
     this.updateChildren(ctx);
     this.render(ctx);
-    this.exec('afterUpdate', ctx);
+    this.afterUpdate(ctx);
     
     ctx.setTransform(1,0,0,1,0,0);
     ctx.globalAlpha=1;
-    //ctx.restore();
 };
 Sprite.prototype.render = function (ctx) {
-    this.exec('onRender', ctx);
-    this.exec('_render', ctx);
-    this.exec('afterRender', ctx);
+    this.onRender(ctx);
+    this._render(ctx);
+    this.afterRender(ctx);
 };
 Sprite.prototype.clear = function () {
-    this.exec('onClear', arguments);
-    this.exec('_clear', arguments);
-    this.exec('afterClear', arguments);
+    this.onClear.apply(this, arguments);
+    this._clear(this, arguments);
+    this.afterClear(this, arguments);
 };
 Sprite.prototype._render = function (ctx) {
     if (this.getImage()) {
@@ -48,7 +53,7 @@ Sprite.prototype.performTransform = function (ctx) {
     if (!!this.rotate()) {
         ctx.translate(this.actualPosition().x + this.width() * this.anchor().x, this.actualPosition().y + this.height() * this.anchor().y);
         ctx.rotate(this.rotate());
-        //ctx.translate(-this.actualPosition().x - this.width() * this.anchor().x, -this.actualPosition().y - this.height() * this.anchor().y);
+        ctx.translate(-this.actualPosition().x - this.width() * this.anchor().x, -this.actualPosition().y - this.height() * this.anchor().y);
     }
     if (this.scale().x !== 1 || this.scale().y !== 1) {
         ctx.scale(this.scale().x, this.scale().y);
@@ -71,6 +76,7 @@ Sprite.prototype.drawWithImage = function (ctx, image) {
         ctx.drawImage(image.img, size[0], size[1], size[2], size[3], pos.x / scale.x, pos.y / scale.y, size[2], size[3]);
     } else {
         ctx.drawImage(image.img, pos.x / scale.x, pos.y / scale.y);
+        //console.log(pos.x / scale.x, pos.y / scale.y);
     }
     /*
     剪切图像，并在画布上定位被剪切的部分：
@@ -91,8 +97,8 @@ Sprite.prototype.drawWithImage = function (ctx, image) {
 Sprite.prototype.draw = function (ctx) {};
 
 Sprite.prototype.handleEvent = function () {
-    this.exec('onHandleEvent');
+    this.onHandleEvent();
     EventSystem.handleEventWithTarget(this);
-    this.exec('_handleEvent');
-    this.exec('afterHandleEvent');
+    this._handleEvent();
+    this.afterHandleEvent();
 };
