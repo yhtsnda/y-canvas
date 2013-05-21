@@ -1,7 +1,4 @@
 function Action() {
-    //this.duration = arguments.length >= 2 ? arguments[arguments.length - 2] : 0;
-    //this.callback = arguments.length >= 2 ? arguments[arguments.length - 1] : null;
-    
     this.done = prop(false);
     this.callback = prop([]);
     this.pause = prop(false);
@@ -10,27 +7,17 @@ function Action() {
     this.init.apply(this, arguments);
 }
 Action.prototype = new BaseObject;
+(function(){
+    function defaultFunc(){};
+    ['onInit','_init','_preInit','afterInit','onUpdate','_update','afterUpdate','onReset','_reset','afterReset','onClear','_clear','afterClear','_startWithTarget'].some(function(prop){
+        Action.prototype[prop] = defaultFunc;
+    });
+})();
 Action.prototype.step = function (dt) {
     if(this.pause() || this.done() || !this.target){
         return;
     }
     this.update(dt);
-    /* var action = this.currentAction();
-    if(!action || action.pause() || action.done() || !(action.duration > 0)){
-        return;
-    }
-    if(!action.target){
-        action.startWithTarget(this.target);
-    }
-    action.update(action.elapsed = action.elapsed + dt > action.duration ? action.duration : (action.elapsed + dt));
-    //console.log(action.elapsed);
-    action.done(action.elapsed >= action.duration);
-    if(action.done()){
-        action.emitCallback();
-    }
-    if(action !== this && this.done()){
-        this.emitCallback();
-    } */
 };
 Action.prototype.emitCallback = function (){
     forEach(this.callback(),function(callback,index){
@@ -50,19 +37,19 @@ Action.prototype.currentAction = function(){
 Action.prototype.reset = function () {
     this.done(false);
     this.elapsed = 0;
-    this.exec('onReset', arguments);
-    this.exec('_reset', arguments);
-    this.exec('afterReset', arguments);
+    this.onReset.apply(this,arguments);
+    this._reset.apply(this,arguments);
+    this.afterReset.apply(this,arguments);
 };
 Action.prototype.clear = function () {
     /*delete this.duration;
     delete this.callback;
     delete this.isDone;
     delete this.elapsed;*/
-    this.exec('onClear', arguments);
-    this.exec('_clear', arguments);
+    this.onClear.apply(this,arguments);
+    this._clear.apply(this,arguments);
     delete this.target;
-    this.exec('afterClear', arguments);
+    this.afterClear.apply(this,arguments);
 };
 Action.prototype._preInit = function(){
     if(arguments.length >= 2){
@@ -76,15 +63,15 @@ Action.prototype._preInit = function(){
     }
 };
 Action.prototype.init = function () {
-    this.exec('onInit', arguments);
-    this.exec('_init', arguments);
-    this.exec('afterInit', arguments);
+    this.onInit.apply(this, arguments);
+    this._init.apply(this, arguments);
+    this.afterInit.apply(this, arguments);
 };
 Action.prototype.update = function (dt) {
     var time = this.currentTime(dt);
-    this.exec('onUpdate', time);
-    this.exec('_update', time);
-    this.exec('afterUpdate', time);
+    this.onUpdate.call(this, time);
+    this._update.call(this, time);
+    this.afterUpdate.call(this, time);
     this.checkDone();
 };
 Action.prototype.checkDone = function(){
@@ -95,7 +82,7 @@ Action.prototype.checkDone = function(){
 };
 Action.prototype.startWithTarget = function (target) {
     this.target = target;
-    this.exec('_startWithTarget', arguments);
+    this._startWithTarget.apply(this, arguments);
     this.step(1000/60);
 };
 Action.prototype.currentTime = function(dt){
@@ -159,10 +146,10 @@ ScaleTo.prototype._init = function (scaleTo) {
 };
 ScaleTo.prototype._startWithTarget = function () {
     this.startScale = this.target.scale();
-    this.deltaScale = PointDiff(this.scaleTo, this.startScale);
+    this.deltaScale = this.scaleTo.diff(this.startScale);
 };
 ScaleTo.prototype._update = function (time) {
-    this.target.scale(PointSum(this.startScale, PointMulti(this.deltaScale, this.getTime(time))));
+    this.target.scale().addself(this.startScale, this.deltaScale.multi(this.getTime(time)));
 };
 ScaleTo.prototype._reset = function () {
     /*this.scaleTo = null;
@@ -194,7 +181,33 @@ ScaleBy.prototype._reset = function () {
 ScaleBy.prototype._clear = function () {
     ScaleTo.prototype._clear.apply(this, arguments);
 };
-
+function SkewTo(){
+    Action.apply(this, arguments);
+}
+SkewTo.prototype = new Action;
+SkewTo.prototype._init = function(skewTo){
+    this.skewTo = skewTo;
+};
+SkewTo.prototype._startWithTarget = function () {
+    this.startSkew = this.target.skew();
+    this.deltaSkew = this.skewTo.diff(this.startSkew);
+};
+SkewTo.prototype._update = function (time) {
+    this.target.skew(this.startSkew.add(this.deltaSkew.multi(this.getTime(time))));
+};
+function SkewBy(){
+    Action.apply(this, arguments);
+}
+SkewBy.prototype = new Action;
+SkewBy.prototype._init = function(skewBy){
+    this.deltaSkew = skewBy;
+};
+SkewBy.prototype._startWithTarget = function () {
+    this.startSkew = this.target.skew();
+};
+SkewBy.prototype._update = function () {
+    SkewTo.prototype._update.apply(this,arguments);
+};
 function RotateTo() {
     Action.apply(this, arguments);
 }
@@ -337,8 +350,15 @@ FadeIn.prototype._clear = function () {
 function FadeOut() {
     Action.apply(this, arguments);
 }
-FadeOut.prototype._init = function () {
+FadeOut.prototype = new Action;
+FadeOut.prototype._preInit = function () {};
+FadeOut.prototype._init = function (duration) {
     this.fadeTo = 0;
+    this.duration = duration;
+    var callbacks = this.callback();
+    forEach(slice(arguments, 1), function(callback,index){
+        callbacks.push(callback);
+    });
 };
 FadeOut.prototype._startWithTarget = function () {
     FadeIn.prototype._startWithTarget.apply(this, arguments);
@@ -381,29 +401,8 @@ Sequence.prototype._init = function () {
     forEach(arguments, function (action) {
         actions.push(action);
     });
-    /* this.done = function () {
-        var _done;
-        return function(done){
-            if(done === undefined){
-                var hasDone = true;
-                forEach(this.actions(),function(action){
-                    if(!action.done()){
-                        hasDone = false;
-                        return true;
-                    }
-                });
-                return hasDone;
-            }else{
-                forEach(this.actions(),function(action){
-                    action.done(done);
-                });
-                return done;
-            }
-        };
-    }(); */
 };
 Sequence.prototype._update = function (time) {
-    //console.log(time);
     exec(this.currentAction(),'update',time);
 };
 Sequence.prototype.currentTime = function (dt) {

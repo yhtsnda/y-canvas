@@ -19,6 +19,7 @@
     <script src="EventSystem.js"></script>
     <script src="MessageCenter.js"></script>
     <script src="Point.js"></script>
+    <script src="Matrix.js"></script>
     <script src="Size.js"></script>
     <script src="Rect.js"></script>
     <script src="base64-binary.js"></script>
@@ -57,9 +58,10 @@
                 });
                 var scale = Easing.withAction(new ScaleTo(PointMake(0.5,2), 3000), 'easeInOutElastic'),
                 rotate = new RotateTo(Math.PI * 4, 2000),
-                move = new MoveTo(PointMake(400,400), 3000);
-                
-                sprite.runAction(rotate);//new Spawn(scale,rotate,move));
+                move = new MoveTo(PointMake(400,400), 3000),
+                out = new SkewBy(PointMake(Math.PI / 180 * 6,0),1000);
+                //sprite.skew().reset(Math.PI/6,Math.PI/6);
+                sprite.runAction(out);//new Spawn(scale,rotate,move));
                 //sprite.runAction(seq);
                 //sprite.rotate(Math.PI /2);
                 sprite.position().reset(100,100);

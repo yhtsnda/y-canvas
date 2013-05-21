@@ -19,11 +19,11 @@ function Node() {
         return this.images()[this.imageIndex()];
     };
     this.zIndex = prop(0);
-    this.aplha = prop(0);
+    this.alpha = prop(1);
     this.anchor = prop(PointMake(0.5, 0.5));
     this.rotate = prop(0);
     this.scale = prop(PointMake(1, 1));
-    this.skew = prop(PointMake(1, 1));
+    this.skew = prop(PointMake(0, 0));
     this.transform = prop();
     this.pause = prop();
     this.stop = function () {

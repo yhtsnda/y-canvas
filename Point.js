@@ -80,3 +80,8 @@ Point.prototype.sub = function(a, b){
     this.y = a.y - b.y;
     return this;
 };
+Point.prototype.addself = function(a, b){
+    this.x = a.x + b.x;
+    this.y = a.y + b.y;
+    return this;
+};
