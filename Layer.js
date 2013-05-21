@@ -2,7 +2,9 @@ function Layer() {
     Node.apply(this, arguments);
 }
 Layer.prototype = new BaseObject;
-Layer.prototype.init = function () {
+Layer.prototype.init = function (width, height) {
+    this.width(width || getDom().width);
+    this.height(height || getDom().height);
     this.exec('onInit');
     this.exec('resume');
     this.exec('afterInit');
@@ -17,6 +19,8 @@ Layer.prototype.clear = function () {
 };
 Layer.prototype.handleEvent = function () {
     this.exec('onHandleEvent');
+    
+    EventSystem.handleEventWithTarget(this);
     this.exec('_handleEvent');
     this.exec('afterHandleEvent');
 };
@@ -40,10 +44,11 @@ Layer.prototype.update = function (context) {
     this.handleEvent(context);
     this.exec('onUpdate', context);
     this.exec('_update', context);
-    this.exec('updateChildren', context);
+    this.updateChildren(context);
     this.render(context);
     this.exec('afterUpdate', context);
 };
+
 Layer.prototype.render = function (context) {
     this.exec('onRender', context);
     /* this.children() && this.children().forEach(function (child, index) {

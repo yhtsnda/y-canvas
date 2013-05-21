@@ -79,9 +79,6 @@ function Node() {
     forEach(["mousedown", "mouseup", "mousemove", "mouseover", "mouseout", "mouseenter", "mouseleave","keydown", "keypress", "keyup","touchstart", "touchmove", "touchend", "touchcancel"],function(e){
         me['on' + e] = [];
     });
-    /* this.onkey = {},
-    this.onmouse = {},
-    this.ontouch = {}; */
     this.handleEvents = function () {
     };
     this.runAction = function(){

@@ -48,3 +48,35 @@ Point.prototype.devide = function (n) {
 Point.prototype.diff = function (to) {
     return PointMake(this.x - to.x, this.y - to.y);
 };
+
+Point.prototype.add = function (to) {
+    this.x += to.x;
+    this.y += to.y;
+    return this;
+};
+Point.prototype.multi2 = function (n) {
+    this.x *= n;
+    this.y *= n;
+    return this;
+};
+Point.prototype.devide2 = function (n) {
+    this.x /= n;
+    this.y /= n;
+    return this;
+    return PointMake(this.x / n, this.y / n);
+};
+Point.prototype.diff2 = function (to) {
+    this.x -= to.x;
+    this.y -= to.y;
+    return this;
+};
+Point.prototype.reset = function(x, y){
+    this.x = x || 0;
+    this.y = y || 0;
+    return this;
+};
+Point.prototype.sub = function(a, b){
+    this.x = a.x - b.x;
+    this.y = a.y - b.y;
+    return this;
+};

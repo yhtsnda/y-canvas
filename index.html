@@ -39,13 +39,13 @@
             var app = new Application(document.getElementById('app')),
                 scene = new Scene,
                 layer = new Layer,
-                sprite = new Sprite,
+                //sprite = new Sprite,
                 img = new Image;
-            img.src = "images/logo.png"; 
+            img.src = "images/arrow.png"; 
             //img.onload = function () {
-                sprite.images().push(img);
-                sprite.width(288);
-                sprite.height(135);
+                //sprite.images().push({img:img,size:[0,0,20,20]});
+                //sprite.width(20);
+                //sprite.height(20);
                 var move = new MoveTo({x:300,y:400});/*,1000,function(){
                     console.log(1);
                 },function(){
@@ -89,14 +89,40 @@
                 move = new MoveTo({x:400,y:400},3000);
             
             //sprite.runAction(new Spawn(scale,rotate,move));
-            sprite.runAction(repeat);
+            //sprite.runAction(repeat);
             //sprite.rotate(Math.PI /2);
-            sprite.onmousemove.push(function(){
-                console.log(this.position());
-            });
+            //sprite.position().reset(0,0);
             app.currentScene = scene;
             scene.addChild(layer);
-            layer.addChild(sprite);
+            //layer.addChild(sprite);
+            var sys = new ParticleSystem;
+            //var gra = new Gravity(0.2);
+            var p = PointMake(200,200);
+            for(var i=0;i<1000;i++){
+                var particle = new Particle;
+                particle.position().reset(500,200);
+                particle.image({img:img,size:[0,0,20,20]});
+                //particle.forcesMap().push(gra);
+                particle.boundary(new Rect(0,0,1024,768));
+                particle.boundaryType = particle.bounce;
+                //particle.bounceIntensity = 1;
+                
+                var bro = new Brownian(0.5, Math.random()+1);
+                
+                var attraction = new Attraction(p,1,100);
+                attraction.target = particle;
+                
+                particle.forcesMap().push(bro);
+                particle.forcesMap().push(attraction);
+                //particle.velocity().y = -1;
+                //particle.damp().reset(0,0);
+                sys.particles().push(particle);
+            }
+            layer.addChild(sys);
+            layer.onmousemove.push(function(e){
+                p.reset(e.position.x,e.position.y);
+                //console.log(attraction.attractionPosition)
+            });
             app.run();
         });
     </script>

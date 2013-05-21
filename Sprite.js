@@ -8,7 +8,7 @@ Sprite.prototype.init = function () {
     this.exec('afterInit', arguments);
 };
 Sprite.prototype.update = function (ctx) {
-    ctx.save();
+    //ctx.save();
     this.handleEvent(ctx);
     this.exec('onUpdate', ctx);
     this.performAction(ctx);
@@ -17,7 +17,10 @@ Sprite.prototype.update = function (ctx) {
     this.updateChildren(ctx);
     this.render(ctx);
     this.exec('afterUpdate', ctx);
-    ctx.restore();
+    
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.globalAlpha=1;
+    //ctx.restore();
 };
 Sprite.prototype.render = function (ctx) {
     this.exec('onRender', ctx);
@@ -45,7 +48,7 @@ Sprite.prototype.performTransform = function (ctx) {
     if (!!this.rotate()) {
         ctx.translate(this.actualPosition().x + this.width() * this.anchor().x, this.actualPosition().y + this.height() * this.anchor().y);
         ctx.rotate(this.rotate());
-        ctx.translate(-this.actualPosition().x - this.width() * this.anchor().x, -this.actualPosition().y - this.height() * this.anchor().y);
+        //ctx.translate(-this.actualPosition().x - this.width() * this.anchor().x, -this.actualPosition().y - this.height() * this.anchor().y);
     }
     if (this.scale().x !== 1 || this.scale().y !== 1) {
         ctx.scale(this.scale().x, this.scale().y);
@@ -61,13 +64,13 @@ Sprite.prototype.performAction = function (ctx) {
     exec(this.actionManager, 'update');
 };
 Sprite.prototype.drawWithImage = function (ctx, image) {
-    var imageSize = this.imageSizes()[this.imageIndex()],
+    var size = image.size,//this.imageSizes()[this.imageIndex()],
         pos = this.actualPosition(),
         scale = this.scale();
-    if (imageSize) {
-        ctx.drawImage(image, imageSize[0], imageSize[1], imageSize[2], imageSize[3], pos.x / scale.x, pos.y / scale.y, imageSize[2], imageSize[3]);
+    if (size) {
+        ctx.drawImage(image.img, size[0], size[1], size[2], size[3], pos.x / scale.x, pos.y / scale.y, size[2], size[3]);
     } else {
-        ctx.drawImage(image, pos.x / scale.x, pos.y / scale.y);
+        ctx.drawImage(image.img, pos.x / scale.x, pos.y / scale.y);
     }
     /*
     剪切图像，并在画布上定位被剪切的部分：

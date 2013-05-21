@@ -7,11 +7,14 @@ function ParticleSystem() {
         this.particles().push(particle);
         return particle;
     };
-    this.render = function () {
+    this.update = function (ctx) {
+    
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.fillRect(0, 0, getDom().width, getDom().height);
         var particles = this.particles(),
             len = particles.length;
         forEach(particles, function (particle) {
-            particle.render();
+            particle.update(ctx);
         });
         while (len-- > 0) {
             if (particles[len].life <= 0) {

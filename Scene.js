@@ -10,9 +10,9 @@ Scene.prototype.init = function () {
 Scene.prototype.clear = function () {
     this.exec('onClear', arguments);
     this.unSubscribe();
-    this.layers().forEach(function (layer) {
+    /* this.layers().forEach(function (layer) {
         exec(layer, 'clear');
-    });
+    }); */
     this.clearLayers();
     for (var prop in this) {
         delete this[prop];
@@ -29,7 +29,7 @@ Scene.prototype.update = function (context) {
     }).forEach(function (layer) {
     layer.update(context || getContext());
     });*/
-    var children = this.children(),
+    /* var children = this.children(),
         len = children.length;
     children.sort(function (a, b) {
         return b.index - a.index;
@@ -42,7 +42,8 @@ Scene.prototype.update = function (context) {
         }
         children[i].update(context);
     }
-    children.length = len;
+    children.length = len; */
+    this.updateChildren(context);
     this.exec('_update', arguments);
     this.exec('afterUpdate', arguments);
 };
