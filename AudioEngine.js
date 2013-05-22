@@ -5,10 +5,10 @@ var AudioEngine = function () {
         isSafari = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1,
         caches = [];
     audioEngine.canPlayMP3 = (function () {
-        return false;//isIE || isSafari && !isIPad;
+        return isIE || isSafari && !isIPad;
     })();
     audioEngine.canPlayOGG = (function () {
-        return false;//!(isIE || isSafari || isIPad);
+        return !(isIE || isSafari || isIPad);
     })();
     /* audioEngine.pauseAudio = function (url) {
         if (isString(url)) {
@@ -45,7 +45,7 @@ var AudioEngine = function () {
                 if (cache.loaded) {
                     callback && callback.call(cache);
                 } else {
-                    callback && cache.callback.push(fn);
+                    callback && cache.callback.push(callback);
                 }
             }
             if (type === 'mp3' || type === 'ogg') {
