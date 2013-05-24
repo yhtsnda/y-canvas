@@ -12,6 +12,7 @@ var MessageCenter = {
         this.handlers[topic] && this.handlers[topic].forEach(function (handler, index) {
             handler && handler.handler && handler.handler.call(handler.target);
         });
+        return this;
     },
     _existTopic : function (existedTopic) {
         //console.log(this.topics);
@@ -23,7 +24,7 @@ var MessageCenter = {
     _existHandler : function (topic, handler, target) {
         return this.handlers[topic] && this.handlers[topic].some(function (_handler) {
             return _handler && _handler.handler === handler && _handler.target === target;
-        })
+        });
     },
     onPublish : function (topic) {
         if (!topic) {
@@ -33,19 +34,21 @@ var MessageCenter = {
             this.topics.push(topic);
         }
         this.trigger(topic);
+        return this;
     },
     onSubscribe : function (topic, handler, target) {
         if (!topic) {
-            return;
+            return this;
         }
         this.handlers[topic] || (this.handlers[topic] = []);
         if (!this._existHandler(topic, handler, target)) {
             this.handlers[topic].push(new Handler(handler, target));
         }
+        return this;
     },
     onUnSubscribe : function (target, topic, handler) {
         if (!target) {
-            return;
+            return this;
         }
         if (topic && handler) {
             this.handlers[topic] && this.handlers[topic].forEach(function (_handler, index, handlers) {
@@ -118,11 +121,13 @@ var MessageCenter = {
                 }*/
             }
         }
+        return this;
     },
     clearTopic : function (topic) {
         this.topics.forEach(function (_topic, index, topics) {
             _topic === topic && (topics[index] = null);
         });
+        return this;
     },
     clearSubscribe : function (topic, handler) {
         for (var prop in this.handlers) {
@@ -139,5 +144,6 @@ var MessageCenter = {
             }
             handlers && 0 == handlers.length && delete this.handlers[f];*/
         }
+        return this;
     }
 };

@@ -36,6 +36,15 @@ function forEach(obj, fn, host) {
         }
     }
 }
+function forEachWithMe(fn){
+    if(isArray(this)){
+        this.some(function(ele){
+            return fn && fn.call(ele);
+        });
+    }else{
+        fn && fn.call(this);
+    }
+}
 function currying(fromFunc, toFunc, source, context) {
     (context || this)[toFunc] = function (obj,fun) {
         if(obj === null || obj === undefined){
