@@ -14,22 +14,26 @@ function FruitNinja() {
             'game' : function () {
                 app.currentScene = GameScene();
             },
-            'gameover' : function () {}
+            'gameover' : function () {
+                app.currentScene = GameoverScene();
+            }
         };
-        var changeState = function (state) {
-            states[state] && states[state]();
-        }
         return {
-            changeState : changeState
+            changeState : changeState(state) {
+                states[state] && states[state]();
+            }
         }
     })();
     gameStateManager.changeState('loading');
+    MessageCenter.onSubscribe('loadingDone',function(){
+        gameStateManager.changeState('introduce');
+        //app.currentScene = StartScene();
+    }).onSubscribe('fruit',function(){
+        gameStateManager.changeState('introduce');
+        //app.currentScene = GameScene();
+    });
+    
     app.run();
-    /* MessageCenter.onSubscribe('loadingDone',function(){
-    app.currentScene = StartScene();
-    }).onSubscribe('loadingDone',function(){
-    app.currentScene = GameScene();
-    }); */
 }
 
 function LoadingScene() {
