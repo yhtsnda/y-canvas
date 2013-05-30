@@ -1,7 +1,7 @@
 var ImageEngine = function (){
     var caches = [],
         imageEngine = {};
-    imageEngine.loadImage = function(url,callback){
+    imageEngine.loadImage = function (url, callback) {
         var cache = caches[url];
         if(cache){
             if(cache.loaded){

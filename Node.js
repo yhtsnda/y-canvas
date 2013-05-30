@@ -51,10 +51,10 @@ function Node() {
         }
     };
     this.addChild = function (child) {
-        return this.children().push(child), this.children();
+        return this.children().push(child), this;
     };
     this.removeLastChild = function () {
-        return this.children().pop(), this.children();
+        return this.children().pop(), this;
     };
     this.updateChildren = function (context) {
         var children = this.children();
@@ -71,6 +71,7 @@ function Node() {
             children[i].update(context);
         }
         children.length = len;
+        return this;
     };
     this.width = prop(0);
     this.height = prop(0);;
