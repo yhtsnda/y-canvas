@@ -1,9 +1,10 @@
 function FruitNinja() {
-    var app = new Application(document.getElementById('app'));
-    //app.currentScene = LoadingScene();
+    var dom = document.getElementById('app');
+    dom.width = 640;//device.resolution.w;
+    dom.height = 480;//device.resolution.h;
+    var app = new Application(dom);
     
     var gameStateManager = (function () {
-        //var currState = 'loading';
         var states = {
             'loading' : function () {
                 app.currentScene = LoadingScene();
@@ -32,7 +33,6 @@ function FruitNinja() {
         gameStateManager.changeState('introduce');
         //app.currentScene = GameScene();
     });
-    
     app.run();
 }
 
@@ -76,6 +76,8 @@ function StartScene() {
     var scene = new Scene,
         layer = new Layer,
         sprite = new Sprite;
+    var bg = new Sprite();
+    bg.images().push({img:'images/background.jpg'});
     return scene.addChild(layer.addChild(sprite));
 }
 

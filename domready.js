@@ -1,7 +1,4 @@
-var addEventHandler = function (c, d, f) {
-    c.addEventListener ? c.addEventListener(d, f, false) : c.attachEvent ? c.attachEvent("on" + d, eval(f)) : (c["on" + d] = f);
-},
-domReady = function (c) {
+function domReady(c) {
     if (!("onreadystatechange" in document) || !("readystatechange" in document)) {
         var d = setTimeout(function () {
                 clearTimeout(d);
