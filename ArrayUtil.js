@@ -6,3 +6,8 @@ Array.prototype.removeNullVal = function () {
     }
     return this;
 };
+
+Array.prototype.empty = function(){
+    this.length = 0;
+    return this;
+}

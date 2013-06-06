@@ -7,13 +7,7 @@ function Node() {
     this.visible = prop(false);
     this.display = prop(true);
     this.images = prop([]);;
-    this.imageSizes = prop([])
-    /* this.getImageSize = function(){
-        //context.drawImage(img,x,y);
-        //context.drawImage(img,x,y,width,height);
-        //context.drawImage(img,sx,sy,swidth,sheight,x,y,width,height);
-        var imageSize = this.imageSizes[this.imageIndex()];
-    }; */
+    this.imageSizes = prop([]);
     this.imageIndex = prop(0);
     this.getImage = function(){
         return this.images()[this.imageIndex()];

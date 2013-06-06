@@ -5,18 +5,19 @@ function FruitNinja() {
     var app = new Application(dom);
     
     var gameStateManager = (function () {
-        var states = {
+        var scenes = app.currentScene(),
+            states = {
             'loading' : function () {
-                app.currentScene = LoadingScene();
+                scenes.empty().push(LoadingScene());
             },
             'introduce' : function () {
-                app.currentScene = StartScene();
+                scenes.empty().push(StartScene());
             },
             'game' : function () {
-                app.currentScene = GameScene();
+                scenes.empty().push(GameScene());
             },
             'gameover' : function () {
-                app.currentScene = GameoverScene();
+                scenes.empty().push(GameoverScene());
             }
         };
         return {
@@ -28,10 +29,8 @@ function FruitNinja() {
     gameStateManager.changeState('loading');
     MessageCenter.onSubscribe('loadingDone',function(){
         gameStateManager.changeState('introduce');
-        //app.currentScene = StartScene();
     }).onSubscribe('fruit',function(){
         gameStateManager.changeState('introduce');
-        //app.currentScene = GameScene();
     });
     app.run();
 }
@@ -69,16 +68,13 @@ function LoadingScene() {
             BaseObject.prototype.publish('loaded');
         });
     });
-    return (new Scene).addChild((new Layer).addChild(progressBar));
+    return new Scene().addChild(new Layer).addChild(progressBar);
 }
 
 function StartScene() {
-    var scene = new Scene,
-        layer = new Layer,
-        sprite = new Sprite;
     var bg = new Sprite();
-    bg.images().push({img:'images/background.jpg'});
-    return scene.addChild(layer.addChild(sprite));
+    bg.images().push({img:'FruitNinja/images/background.jpg'});
+    return new Scene().addChild(new Layer().addChild(new Layer).addChild(bg));
 }
 
 function GameScene() {}

@@ -15,14 +15,16 @@ function mixIn(a, b, modifyA) {
         return ret;
     }
 }
+
 function forEach(obj, fn, host) {
-    if(obj === undefined || obj === null){
+    if (obj === undefined || obj === null) {
         return;
     }
     //fn(v,k,obj)
     /* if (obj.some) {
         return obj.some.apply(obj, Array.prototype.slice.call(arguments, 1));
-    } else */ if (obj.length !== undefined) {
+    } else */
+    if (obj.length !== undefined) {
         for (var i = 0; i < obj.length; i++) {
             if (fn.call(host || Global(), obj[i], i, obj) === true) {
                 return true;
@@ -36,61 +38,63 @@ function forEach(obj, fn, host) {
         }
     }
 }
-function forEachWithMe(fn){
-    if(isArray(this)){
-        this.some(function(ele){
-            return fn && fn.call(ele);
-        });
-    }else{
+
+function forEachWithMe(fn) {
+    if (isArray(this)) {
+        forEach.apply(window, arguments);
+    } else {
         fn && fn.call(this);
     }
 }
+
 function currying(fromFunc, toFunc, source, context) {
-    (context || this)[toFunc] = function (obj,fun) {
-        if(obj === null || obj === undefined){
+    (context || this)[toFunc] = function(obj, fun) {
+        if (obj === null || obj === undefined) {
             return;
         }
-        return arguments.length > 1 ? source[fromFunc].apply(obj, Array.prototype.slice.call(arguments,1)) : source[fromFunc].call(obj);
+        return arguments.length > 1 ? source[fromFunc].apply(obj, Array.prototype.slice.call(arguments, 1)) : source[fromFunc].call(obj);
     }
 }
-forEach(['push', 'pop', 'slice', 'splice', 'concat', 'shift', 'unshift', 'sort', 'reverse', 'join'], function (v, k) {
+forEach(['push', 'pop', 'slice', 'splice', 'concat', 'shift', 'unshift', 'sort', 'reverse', 'join'], function(v, k) {
     currying(v, v, Array.prototype);
 });
 currying('toString', 'toStr', Object.prototype);
-forEach(['apply', 'call'], function (v, k) {
+forEach(['apply', 'call'], function(v, k) {
     currying(v, v, Function.prototype);
 });
-forEach(['Array', 'Object', 'Function', 'Arguments', 'Number', 'Date', 'Boolean', 'String', 'RegExp'], function (v, k) {
-    Global()['is' + v] = function (obj) {
+forEach(['Array', 'Object', 'Function', 'Arguments', 'Number', 'Date', 'Boolean', 'String', 'RegExp'], function(v, k) {
+    Global()['is' + v] = function(obj) {
         return toStr(obj) === '[object ' + v + ']';
     };
 });
 currying('exec', 'exec', BaseObject.prototype);
 
-function setCallback(callback){
+function setCallback(callback) {
     this.callback = this.callback || [];
-    if(callback){
-        if(isArray(callback)){
+    if (callback) {
+        if (isArray(callback)) {
             var me = this;
-            forEach(callback,function(fn){
+            forEach(callback, function(fn) {
                 fn && me.callback.push(fn);
             });
-        }else{
+        } else {
             this.callback.push(callback);
         }
     }
 }
-function emitCallback(){
+
+function emitCallback() {
     var me = this;
-    forEach(me.callback, function (fn) {
+    forEach(me.callback, function(fn) {
         fn && fn.call(me);
     });
     me.callback = [];
 }
-function prop(defaultValue){
-    return (function(){
+
+function prop(defaultValue) {
+    return (function() {
         var _value = defaultValue;
-        return function(value){
+        return function(value) {
             return value === undefined ? _value : _value = value;
         };
     })();
