@@ -36,9 +36,9 @@ function FruitNinja() {
 }
 
 function LoadingScene() {
-    var progressBar = new Sprite;
-    imgs = "images/background.jpg images/fruit/apple.png images/fruit/apple-1.png images/fruit/apple-2.png images/fruit/banana.png images/fruit/banana-1.png images/fruit/banana-2.png images/fruit/basaha.png images/fruit/basaha-1.png images/fruit/basaha-2.png images/fruit/peach.png images/fruit/peach-1.png images/fruit/peach-2.png images/fruit/sandia.png images/fruit/sandia-1.png images/fruit/sandia-2.png images/fruit/boom.png images/shadow.png images/home-mask.png images/logo.png images/ninja.png images/home-desc.png images/dojo.png images/new-game.png images/quit.png images/new.png images/score.png images/xxx.png images/xxxf.png images/game-over.png".split(" "),
-    audios = "sounds/boom sounds/splatter sounds/menu sounds/throw sounds/over".split(" ");
+    var progressBar = new Sprite,
+        imgs = "images/background.jpg images/fruit/apple.png images/fruit/apple-1.png images/fruit/apple-2.png images/fruit/banana.png images/fruit/banana-1.png images/fruit/banana-2.png images/fruit/basaha.png images/fruit/basaha-1.png images/fruit/basaha-2.png images/fruit/peach.png images/fruit/peach-1.png images/fruit/peach-2.png images/fruit/sandia.png images/fruit/sandia-1.png images/fruit/sandia-2.png images/fruit/boom.png images/shadow.png images/home-mask.png images/logo.png images/ninja.png images/home-desc.png images/dojo.png images/new-game.png images/quit.png images/new.png images/score.png images/xxx.png images/xxxf.png images/game-over.png".split(" "),
+        audios = "sounds/boom sounds/splatter sounds/menu sounds/throw sounds/over".split(" ");
     progressBar.len = imgs.length + audios.length;
     progressBar.subscribe('loaded', function () {
         this.loaded = this.loaded || 0;
@@ -73,36 +73,27 @@ function LoadingScene() {
 
 function StartScene() {
     var bg = new Sprite,
-        knife = new Knife,
-        indrag;
+    knife = new Knife,
+    indrag;
     bg.images().push({
         img : 'FruitNinja/images/background.jpg'
     });
     var layer = new Layer().addChild(new Layer).addChild(knife).addChild(bg);
-    layer.onmousedown.push(function(e){
-        //console.log(e.position);
+    layer.onmousedown.push(function (e) {
         indrag = true;
-        knife.parts = knife.parts || [];
-        knife.parts.push({
-            x: e.position.x,
-            y: e.position.y,
-            life: 15
-        });
     });
-    layer.onmousemove.push(function(e){
-        //console.log(e.position);
-        if(!indrag){
+    layer.onmousemove.push(function (e) {
+        if (!indrag) {
             return;
         }
         knife.parts = knife.parts || [];
         knife.parts.push({
-            x: e.position.x,
-            y: e.position.y,
-            life: 15
+            x : e.position.x,
+            y : e.position.y,
+            life : 15
         });
     });
-    layer.onmouseup.push(function(e){
-        //console.log(e.position);
+    layer.onmouseup.push(function (e) {
         indrag = false;
         knife.parts = [];
     });
@@ -116,28 +107,34 @@ function Knife() {
     knife.draw = function (ctx) {
         if (this.parts && this.parts.length > 1) {
             ctx.beginPath();
+            ctx.strokeStyle = "#00ff00";
             for (var d = this.parts.length - 1; d >= 0; d--) {
                 this.parts[d].life--;
-                if(d === this.parts.length - 1){
+                if (d === this.parts.length - 1) {
                     continue;
                 }
                 var from = this.parts[d + 1],
-                    to = this.parts[d];
+                to = this.parts[d];
                 if (from.life > 0) {
-                    ctx.lineWidth = 12 * to.life / 15;
-                    ctx.strokeStyle = "red";
-                    ctx.moveTo(from.x, from.y);
-                    ctx.lineTo(to.x, to.y);
-                    ctx.stroke();
-                    
-                    ctx.lineWidth = 10 * to.life / 15;
-                    ctx.strokeStyle = "#FFFFFF";
+                    ctx.lineWidth = parseInt(12 * to.life / 15);
                     ctx.moveTo(from.x, from.y);
                     ctx.lineTo(to.x, to.y);
                     ctx.stroke();
                 } else {
                     this.parts.splice(d, 1);
                 }
+            }
+            ctx.closePath();
+            
+            ctx.beginPath();
+            ctx.strokeStyle = "#FFFFFF";
+            for (var d = this.parts.length - 2; d >= 0; d--) {
+                var from = this.parts[d + 1],
+                to = this.parts[d];
+                ctx.lineWidth = parseInt(8 * to.life / 15);
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(to.x, to.y);
+                ctx.stroke();
             }
             ctx.closePath();
         }
