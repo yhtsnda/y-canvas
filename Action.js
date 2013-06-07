@@ -149,7 +149,7 @@ ScaleTo.prototype._startWithTarget = function () {
     this.deltaScale = this.scaleTo.diff(this.startScale);
 };
 ScaleTo.prototype._update = function (time) {
-    this.target.scale().addself(this.startScale, this.deltaScale.multi(this.getTime(time)));
+    this.target.scale(this.startScale.sum(this.deltaScale.multi(this.getTime(time))));
 };
 ScaleTo.prototype._reset = function () {
     /*this.scaleTo = null;

@@ -1,15 +1,17 @@
 function Node() {
+    this.width = prop(0);
+    this.height = prop(0);
     this.position = prop(PointMake(0, 0));
-    this.actualPosition = function(){
-        return this.position();
+    this.actualPosition = function() {
+        return this.parent() ? PointSum(this.position(), this.parent().actualPosition()) : this.position();
     };
     this.rect = prop(PointMake(0, 0));
     this.visible = prop(false);
     this.display = prop(true);
-    this.images = prop([]);;
+    this.images = prop([]);
     this.imageSizes = prop([]);
     this.imageIndex = prop(0);
-    this.getImage = function(){
+    this.getImage = function() {
         return this.images()[this.imageIndex()];
     };
     this.zIndex = prop(0);
@@ -20,23 +22,30 @@ function Node() {
     this.skew = prop(PointMake(0, 0));
     this.transform = prop();
     this.pause = prop();
-    this.stop = function () {
+    this.stop = function() {
         this.pause(true);
     };
-    this.resume = function () {
+    this.resume = function() {
         this.pause(false);
     };
+    this.parent = prop(null);
     this.children = prop([]);
-    this.childrenWithoutEmpty = function () {
+    this.childrenWithoutEmpty = function() {
         return this.children() && this.children().removeNullVal();
     };
-    this.resetChildren = function () {
+    this.resetChildren = function() {
+        forEach(this.children, function(child) {
+            exec(child, 'parent', null);
+        });
         return this.children([]);
     };
-    this.clearChildren = function () {
+    this.clearChildren = function() {
+        forEach(this.children, function(child) {
+            exec(child, 'parent', null);
+        });
         return this.children(null);
     };
-    this.getChildByTag = function () {
+    this.getChildByTag = function() {
         var children = this.children();
         for (var i = 0; i < children.length; i++) {
             if (children[i] && children[i].tag == tag) {
@@ -44,40 +53,36 @@ function Node() {
             }
         }
     };
-    this.addChild = function (child) {
-        return this.children().push(child), this;
-    };
-    this.removeLastChild = function () {
-        return this.children().pop(), this;
-    };
-    this.updateChildren = function (context) {
-        var children = this.children();
-        children.sort(function (a, b) {
-            return b.index - a.index;
-        });
-        var len = children.length;
-        for (var i = len - 1; i >= 0; i--) {
-            if (children[i] === null || children[i].destoryed) {
-                len--;
-                children[i] = children[len];
-                continue;
-            }
-            children[i].update(context);
-        }
-        children.length = len;
+    this.addChild = function(child) {
+        child.parent(this);
+        this.children().push(child);
         return this;
     };
-    this.width = prop(0);
-    this.height = prop(0);;
+    this.removeLastChild = function() {
+        return this.children().pop().parent(null), this;
+    };
+    this.updateChildren = function(context) {
+        var children = this.children();
+        /*children.sort(function(a, b) {
+            return a && b && b.zIndex && a.zIndex && a.zIndex() - b.zIndex();
+        });*/
+        for (var i = children.length - 1; i >= 0; i--) {
+            if (children[i] === null || children[i].destoryed) {
+                children.splice(i, 1);
+            }
+        }
+        for (var i = 0; i < children.length; i++) {
+            children[i].update(context);
+        }
+        return this;
+    };
     this.actionManager = new ActionManager(this);
     var me = this;
-    forEach(["mousedown", "mousemove", "mouseup",  "mouseover", "mouseout", "mouseenter", "mouseleave","keydown", "keypress", "keyup","touchstart", "touchmove", "touchend", "touchcancel"],function(e){
+    forEach(["mousedown", "mousemove", "mouseup", "mouseover", "mouseout", "mouseenter", "mouseleave", "keydown", "keypress", "keyup", "touchstart", "touchmove", "touchend", "touchcancel"], function(e) {
         me['on' + e] = [];
     });
-    this.handleEvents = function () {
-    };
-    this.runAction = function(){
-        exec(this.actionManager,'runAction',arguments);
+    this.runAction = function() {
+        exec(this.actionManager, 'runAction', arguments);
     };
     arguments.length ? exec(this, 'init', arguments) : exec(this, 'init');
 }
