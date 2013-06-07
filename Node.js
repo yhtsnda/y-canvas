@@ -71,7 +71,7 @@ function Node() {
     this.height = prop(0);;
     this.actionManager = new ActionManager(this);
     var me = this;
-    forEach(["mousedown", "mouseup", "mousemove", "mouseover", "mouseout", "mouseenter", "mouseleave","keydown", "keypress", "keyup","touchstart", "touchmove", "touchend", "touchcancel"],function(e){
+    forEach(["mousedown", "mousemove", "mouseup",  "mouseover", "mouseout", "mouseenter", "mouseleave","keydown", "keypress", "keyup","touchstart", "touchmove", "touchend", "touchcancel"],function(e){
         me['on' + e] = [];
     });
     this.handleEvents = function () {
