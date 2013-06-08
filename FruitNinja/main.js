@@ -209,15 +209,14 @@ function supportKnife(layer, knife) {
             return;
         }
         knife.parts = knife.parts || [];
-        knife.parts.push({
-            x: e.position.x,
-            y: e.position.y,
-            life: 15
-        });
+        knife.parts.push(knifeFactory.getKnife().reset(e.position.x, e.position.y, 15));
     });
     layer.onmouseup.push(function(e) {
         indrag = false;
         knife.parts = [];
+        forEach(knife.parts,function(part){
+            knifeFactory.collect(part);
+        });
     });
     layer.ontouchstart = layer.onmousedown;
     layer.ontouchmove = layer.onmousemove;
@@ -226,9 +225,32 @@ function supportKnife(layer, knife) {
 }
 
 function GameScene() {}
-
+var knifeFactory = function(){
+    var knifes = [];
+    function createKnife(){
+        return {
+            reset : function(x, y, life){
+                this.x = x;
+                this.y = y;
+                this.life = life;
+                return this;
+            }
+        }
+    }
+    return {
+        getKnife : function () {
+            return knifes.length ? knifes.pop() : createKnife();
+        }, collect : function (knife) {
+            knifes.push(knife);
+        },see : function(){
+            return knifes;
+        }
+    }
+}();
 function Knife() {
-    var knife = new Sprite;
+    var knife = new Sprite,
+        innerWidth = 8,
+        outerWidth = 12;
     knife.draw = function(ctx) {
         if (this.parts && this.parts.length > 1) {
             ctx.beginPath();
@@ -241,12 +263,12 @@ function Knife() {
                 var from = this.parts[d + 1],
                     to = this.parts[d];
                 if (from.life > 0) {
-                    ctx.lineWidth = parseInt(12 * to.life / 15);
+                    ctx.lineWidth = parseInt(outerWidth * to.life / 15);
                     ctx.moveTo(from.x, from.y);
                     ctx.lineTo(to.x, to.y);
                     ctx.stroke();
                 } else {
-                    this.parts.splice(d, 1);
+                    knifeFactory.collect(this.parts.splice(d, 1)[0]);
                 }
             }
             ctx.closePath();
@@ -256,7 +278,7 @@ function Knife() {
             for (var d = this.parts.length - 2; d >= 0; d--) {
                 var from = this.parts[d + 1],
                     to = this.parts[d];
-                ctx.lineWidth = parseInt(8 * to.life / 15);
+                ctx.lineWidth = parseInt(innerWidth * to.life / 15);
                 ctx.moveTo(from.x, from.y);
                 ctx.lineTo(to.x, to.y);
                 ctx.stroke();
