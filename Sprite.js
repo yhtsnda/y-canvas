@@ -16,7 +16,7 @@ Sprite.prototype.init = function() {
 };
 Sprite.prototype._init = function(settings) {
     forEach(settings, function(setting, prop) {
-        this[prop](setting);
+        this[prop] ? this[prop](setting) : this[prop] = setting;
     }, this);
 };
 Sprite.prototype.update = function(ctx) {
