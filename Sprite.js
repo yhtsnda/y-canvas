@@ -60,7 +60,7 @@ Sprite.prototype.performTransform = function(ctx) {
     /*var matrix = new Matrix([
     [1,0,this.actualPosition().x + this.width() * this.anchor().x],[0,1,this.actualPosition().y + this.height() * this.anchor().y],[0,0,1]]);*/
     ctx.translate(this.actualPosition().x + this.width() * this.anchor().x, this.actualPosition().y + this.height() * this.anchor().y);
-    if ( !! this.rotate()) {
+    if (this.rotate() !== 0) {
         ctx.rotate(this.rotate());
         /* matrix.multi(new Matrix(
         [[Math.cos(this.rotate()),-Math.sin(this.rotate()),0],
