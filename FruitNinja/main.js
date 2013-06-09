@@ -87,15 +87,64 @@ var asserts = {
     },
     startboom: {
         images: [{
-                img: 'FruitNinja/images/fruit/boom.png'
+                img: 'FruitNinja/images/boom.png'
             }
         ],
         width: 66,
         height: 68,
         position: PointMake(517, 337),
         scale: PointMake(0, 0)
+    },
+    apple: {
+        images: [{
+            img: 'FruitNinja/images/fruit/apple.png'
+        }],
+        width: 66,
+        height: 66
+    },
+    peach: {
+        images: [{
+            img: 'FruitNinja/images/peach.png'
+        }],
+        width: 62,
+        height: 59
+    },
+    basaha: {
+        images: [{
+            img: 'FruitNinja/images/basaha.png'
+        }],
+        width: 68,
+        height: 72
+    },
+    sandia: {
+        images: [{
+            img: 'FruitNinja/images/sandia.png'
+        }],
+        width: 98,
+        height: 85
     }
-};
+},knifeFactory = (function(){
+    var knifes = [];
+    function createKnife(){
+        return {
+            reset : function(x, y, life){
+                this.x = x;
+                this.y = y;
+                this.life = life;
+                return this;
+            }
+        }
+    }
+    return {
+        getKnife : function () {
+            return knifes.length ? knifes.pop() : createKnife();
+        }, collect : function (knife) {
+            knifes.push(knife);
+        },see : function(){
+            return knifes;
+        }
+    }
+})();
 
 function FruitNinja() {
     var dom = document.getElementById('app');
@@ -136,7 +185,7 @@ function FruitNinja() {
 
 function LoadingScene() {
     var progressBar = new Sprite,
-        imgs = "images/background.jpg images/fruit/apple.png images/fruit/apple-1.png images/fruit/apple-2.png images/fruit/banana.png images/fruit/banana-1.png images/fruit/banana-2.png images/fruit/basaha.png images/fruit/basaha-1.png images/fruit/basaha-2.png images/fruit/peach.png images/fruit/peach-1.png images/fruit/peach-2.png images/fruit/sandia.png images/fruit/sandia-1.png images/fruit/sandia-2.png images/fruit/boom.png images/shadow.png images/home-mask.png images/logo.png images/ninja.png images/home-desc.png images/dojo.png images/new-game.png images/quit.png images/new.png images/score.png images/xxx.png images/xxxf.png images/game-over.png".split(" "),
+        imgs = "images/background.jpg images/fruit/apple.png images/fruit/apple-l.png images/fruit/apple-r.png images/fruit/banana.png images/fruit/banana-l.png images/fruit/banana-r.png images/fruit/basaha.png images/fruit/basaha-l.png images/fruit/basaha-r.png images/fruit/peach.png images/fruit/peach-l.png images/fruit/peach-r.png images/fruit/sandia.png images/fruit/sandia-l.png images/fruit/sandia-r.png images/boom.png images/shadow.png images/home-mask.png images/logo.png images/ninja.png images/home-desc.png images/dojo.png images/new-game.png images/quit.png images/new.png images/score.png images/xxx.png images/xxxf.png images/game-over.png".split(" "),
         audios = "sounds/boom sounds/splatter sounds/menu sounds/throw sounds/over".split(" ");
     progressBar.len = imgs.length + audios.length;
     progressBar.subscribe('loaded', function() {
@@ -225,28 +274,6 @@ function supportKnife(layer, knife) {
 }
 
 function GameScene() {}
-var knifeFactory = function(){
-    var knifes = [];
-    function createKnife(){
-        return {
-            reset : function(x, y, life){
-                this.x = x;
-                this.y = y;
-                this.life = life;
-                return this;
-            }
-        }
-    }
-    return {
-        getKnife : function () {
-            return knifes.length ? knifes.pop() : createKnife();
-        }, collect : function (knife) {
-            knifes.push(knife);
-        },see : function(){
-            return knifes;
-        }
-    }
-}();
 function Knife() {
     var knife = new Sprite,
         innerWidth = 8,
@@ -289,26 +316,28 @@ function Knife() {
     return knife;
 }
 
-function Fruit(type) {
+function Fruit() {
     var fruit = new Sprite();
-    fruit.reset = function() {
-
+    fruit.reset = function(type) {
+        fruit._init(assert.type);
+        return this;
+    };
+    fruit.depart = function(){
+        return this;
     };
     return fruit;
 }
 var FruitFactory = function() {
     var factory = [];
     return {
-        getFruit: function(type) {
-            if (type && factory[type] && factory[type].length) {
-                return factory[type].pop();
-            } else {
-                return Fruit(type);
-            }
+        getFruit: function() {
+            return factory.length ? factory.pop() : Fruit();
         },
         collect: function(fruit) {
-            factory[fruit.type] = factory[fruit.type] || [];
-            factory[fruit.type].push(fruit.reset());
+            factory.push(fruit);
+        },
+        see: function(){
+            return factory;
         }
     }
 }();
