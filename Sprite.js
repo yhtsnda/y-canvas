@@ -4,7 +4,9 @@ function Sprite() {
 Sprite.prototype = new BaseObject;
 
 (function() {
-    function defaultFunc() {}
+    function defaultFunc() {
+        return this;
+    }
     ['onInit', 'afterInit', 'onUpdate', '_update', 'afterUpdate', 'onRender', '_render', 'afterRender', 'onClear', '_clear', 'afterClear', 'onHandleEvent', '_handleEvent', 'afterHandleEvent'].some(function(prop) {
         Sprite.prototype[prop] = defaultFunc;
     });
@@ -16,11 +18,15 @@ Sprite.prototype.init = function() {
 };
 Sprite.prototype._init = function(settings) {
     forEach(settings, function(setting, prop) {
-        this[prop] ? this[prop](setting) : this[prop] = setting;
+        if(isFunction(this[prop])){
+            this[prop](setting);
+        }else{
+            this[prop] = setting;
+        }
     }, this);
+    return this;
 };
 Sprite.prototype.update = function(ctx) {
-    ctx.save();
     this.handleEvent(ctx);
     this.onUpdate(ctx);
     this.performAction(ctx);
@@ -30,9 +36,8 @@ Sprite.prototype.update = function(ctx) {
     this.updateChildren(ctx);
     this.afterUpdate(ctx);
 
-    //ctx.setTransform(1, 0, 0, 1, 0, 0);
-    //ctx.globalAlpha = 1;
-    ctx.restore();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
 };
 Sprite.prototype.render = function(ctx) {
     this.onRender(ctx);

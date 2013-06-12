@@ -80,6 +80,16 @@ Point.prototype.sub = function(a, b){
     this.y = a.y - b.y;
     return this;
 };
+Point.prototype.rotate = function(angle){
+    //var angle = 360*Math.random();
+    var sina = Math.sin(angle);
+    var cosa = Math.cos(angle);
+    var tempx = this.x;
+    var tempy = this.y;
+    this.x = tempx * cosa - tempy * sina;
+    this.y = tempx * sina + tempy * cosa;
+    return this;
+};
 Point.prototype.addself = function(a, b){
     this.x = a.x + b.x;
     this.y = a.y + b.y;

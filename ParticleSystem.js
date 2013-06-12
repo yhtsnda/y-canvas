@@ -1,22 +1,31 @@
 function ParticleSystem() {
-    this.particles = prop([]);
-    this.pool = new ParticlePool;
-    
-    this.createParticle = function (type) {
-        var particle = this.pool.get(type);
-        this.particles().push(particle);
-        return particle;
+    var particles = [];
+    var pool = ParticlePool;
+    this.addChild = function (particle) {
+        particle.parent(this);
+        particles.push(particle);
+        return this;
+    };
+    this.removeChild = function (particle) {
+        forEach(particles, function (child, index, particles) {
+            if (child === particle) {
+                exec(pool.collect(particles.splice(index, 1)[0]), 'parent', null);
+                return true;
+            }
+        });
+        return this;
+    };
+    this.getParticle = function () {
+        return pool.get();
     };
     this.update = function (ctx) {
-        var particles = this.particles(),
-            len = particles.length;
-        forEach(particles, function (particle) {
-            particle.update(ctx);
-        });
+        var len = particles.length;
         while (len-- > 0) {
-            if (particles[len].life <= 0) {
-                this.pool.recycle(particles[len]);
+            if (!particles[len] || particles[len].life <= 0) {
+                pool.collect(particles[len]);
                 particles.splice(len, 1);
+            }else{
+                particles[len].update(ctx);
             }
         };
     }

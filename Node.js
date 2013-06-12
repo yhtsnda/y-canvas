@@ -1,4 +1,6 @@
+var tag=0;
 function Node() {
+    this.tag=tag+++0;
     this.width = prop(0);
     this.height = prop(0);
     this.position = prop(PointMake(0, 0));
@@ -53,13 +55,23 @@ function Node() {
             }
         }
     };
+    this.removeChild = function(toRemove){
+        forEach(this.children(), function(child, index, children){
+            if(child === toRemove){
+                exec(children.splice(index, 1)[0], parent, null);
+                return true;
+            }
+        });
+        return this;
+    };
     this.addChild = function(child) {
-        child.parent(this);
+        exec(child, 'parent', this);
         this.children().push(child);
         return this;
     };
     this.removeLastChild = function() {
-        return this.children().pop().parent(null), this;
+        exec(this.children().pop(), 'parent', null);
+        return this;
     };
     this.updateChildren = function(context) {
         var children = this.children();

@@ -1,5 +1,6 @@
 function Particle(pos, life, img) {
     this.position = prop(pos || PointMake(0, 0));
+    this.parent = prop(null);
     this.velocity = prop(PointMake(0, 0)); //速度
     this.damp = prop(PointMake(0.1, 0.1)); //阻尼
     this.resultant = prop(PointMake(0, 0)); //
@@ -33,13 +34,13 @@ Particle.prototype.update = function (ctx) {
     
     this.resultant().reset();
     forEach(this.forcesMap(), function (force, index, forces) {
-        if (force.isActive()) {
+        if (force && force.isActive()) {
             this.resultant().add(force.value());
         } else {
             forces[index] = null;
         }
     }, this);
-    this.forcesMap().removeNullVal();
+    //this.forcesMap().removeNullVal();
     
     this.velocity().add(this.resultant());
     this.velocity().x *= (1 - this.damp().x);
@@ -55,8 +56,8 @@ Particle.prototype._render = function (ctx) {
     //ctx.save();
     //ctx.globalAlpha = this.alpha;
     ctx.translate(this.position().x, this.position().y);
-    //ctx.rotate(this.rotation);
-    //ctx.scale(this.scale, this.scale);
+    ctx.rotate(this.rotation);
+    ctx.scale(this.scale, this.scale);
     var size = this.image().size;
     if (size) {
         ctx.drawImage(this.image().img, size[0], size[1], size[2], size[3], 0, 0, size[2], size[3]);
@@ -77,7 +78,7 @@ Particle.prototype.reset = function () {
     this.position().reset();
     this.velocity().reset(); //速度
     this.damp().reset(0.1, 0.1); //阻尼
-    this.resultant.reset();
+    this.resultant().reset();
     this.life(Infinity);
     this.forcesMap().length = 0;
     this.bounceIntensity = 2;
@@ -85,6 +86,7 @@ Particle.prototype.reset = function () {
     this.scale = 1;
     this.rotation = 0;
     this.alpha = 1;
+    return this;
 };
 Particle.prototype.bounce = function () { //跳跃
     var pos = this.position(),

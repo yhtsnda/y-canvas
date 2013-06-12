@@ -24,6 +24,7 @@ Layer.prototype.handleEvent = function () {
     this.exec('_handleEvent');
     this.exec('afterHandleEvent');
 };
+/* 
 Layer.prototype.removeChild = function (child) {
     this.children().some(function (_child, index, children) {
         if (_child === child) {
@@ -31,15 +32,15 @@ Layer.prototype.removeChild = function (child) {
             return true;
         }
     });
-};
-Layer.prototype.removeChildByTag = function (tag) {
+}; */
+/* Layer.prototype.removeChildByTag = function (tag) {
     this.children().some(function (child, index, children) {
         if (child.tag === tag) {
             children.splice(index, 1);
             return true;
         }
     });
-};
+}; */
 Layer.prototype.update = function (context) {
     this.handleEvent(context);
     this.exec('onUpdate', context);
