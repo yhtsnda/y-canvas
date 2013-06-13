@@ -1,14 +1,14 @@
 function BaseObject() {}
-BaseObject.prototype.publish = function (topic) {
-    MessageCenter.onPublish(topic);
+BaseObject.prototype.publish = function() {
+    MessageCenter.onPublish.apply(MessageCenter, arguments);
 };
-BaseObject.prototype.subscribe = function (topic, handler) {
+BaseObject.prototype.subscribe = function(topic, handler) {
     MessageCenter.onSubscribe(topic, handler, this);
 };
-BaseObject.prototype.unSubscribe = function (topic, handler) {
+BaseObject.prototype.unSubscribe = function(topic, handler) {
     MessageCenter.onUnSubscribe(this, topic, handler);
 };
-BaseObject.prototype.exec = function (functionName) {
+BaseObject.prototype.exec = function(functionName) {
     if (!this || !this[functionName]) {
         return;
     }
@@ -20,6 +20,6 @@ BaseObject.prototype.exec = function (functionName) {
         this[functionName]();
     }
 };
-BaseObject.prototype.execB = function (functionName, args) {
+BaseObject.prototype.execB = function(functionName, args) {
     return this && this[functionName] && this[functionName].apply(this, args);
 };

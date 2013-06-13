@@ -19,12 +19,11 @@ Layer.prototype.clear = function () {
 };
 Layer.prototype.handleEvent = function () {
     this.exec('onHandleEvent');
-    
     EventSystem.handleEventWithTarget(this);
     this.exec('_handleEvent');
     this.exec('afterHandleEvent');
 };
-/* 
+/*
 Layer.prototype.removeChild = function (child) {
     this.children().some(function (_child, index, children) {
         if (_child === child) {
