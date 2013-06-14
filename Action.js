@@ -306,7 +306,7 @@ FadeTo.prototype._startWithTarget = function() {
     this.deltaFade = this.fadeTo - this.startFade;
 };
 FadeTo.prototype._update = function(time) {
-    this.target.alpha(this.startFade + this.deltaFade * time);
+    this.target.alpha(this.startFade + this.deltaFade * this.getTime(time));
 };
 FadeTo.prototype._reset = function() {
     /*this.fadeTo = null;
@@ -331,7 +331,7 @@ FadeBy.prototype._startWithTarget = function() {
     this.deltaFade = this.fadeTo;
 };
 FadeBy.prototype._update = function(time) {
-    this.target.alpha(this.startFade + this.deltaFade * time);
+    this.target.alpha(this.startFade + this.deltaFade * this.getTime(time));
 };
 FadeBy.prototype._reset = function() {
     FadeTo.prototype._reset.apply(this, arguments);

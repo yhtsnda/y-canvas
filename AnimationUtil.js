@@ -22,4 +22,5 @@ Global().setTimeRequest = function (callback, time) {
                 timeRequest = Global().requestAnimFrame(arguments.callee);
             }
         });
+    return timeRequest;
 };
