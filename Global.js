@@ -38,11 +38,11 @@ function domReady(c) {
     }
 }
 var requestAnimFrame = (function() {
-        return Global().requestAnimationFrame || Global().webkitRequestAnimationFrame || Global().mozRequestAnimationFrame || Global().oRequestAnimationFrame || Global().msRequestAnimationFrame || function(callback) {
-            Global().setTimeout(callback, Math.round(1000 / 60));
-        };
-    })(),
-    cancelAnimationFrame = (function() {
+    return Global().requestAnimationFrame || Global().webkitRequestAnimationFrame || Global().mozRequestAnimationFrame || Global().oRequestAnimationFrame || Global().msRequestAnimationFrame || function(callback) {
+        Global().setTimeout(callback, Math.round(1000 / 60));
+    };
+})(),
+    cancelAnimFrame = (function() {
         return Global().cancelAnimationFrame || Global().webkitCancelRequestAnimationFrame || Global().mozCancelRequestAnimationFrame || Global().oCancelRequestAnimationFrame || Global().msCancelRequestAnimationFram || clearTimeout;
     })(),
     setTimeRequest = function(callback, time) {
@@ -51,14 +51,15 @@ var requestAnimFrame = (function() {
             return;
         }
         var tick = 0;
-        var timeRequest = Global().requestAnimFrame(function() {
+        var t = {};
+        t.timeRequest = Global().requestAnimFrame(function() {
             tick++;
-            Global().cancelAnimationFrame(timeRequest);
+            //Global().cancelAnimationFrame(t.timeRequest);
             if (tick == time) {
                 callback && callback();
             } else {
-                timeRequest = Global().requestAnimFrame(arguments.callee);
+                t.timeRequest = Global().requestAnimFrame(arguments.callee);
             }
         });
-        return timeRequest;
+        return t;
     };

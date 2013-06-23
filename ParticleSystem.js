@@ -1,10 +1,20 @@
 function ParticleSystem() {
     var particles = [];
     var pool = ParticlePool;
+    this.parent = prop(null);
+    this.zIndex = prop(1);
     this.addChild = function (particle) {
         particle.parent(this);
         particles.push(particle);
         return this;
+    };
+    this.removeChilden = function(){
+        forEach(particles, function (child, index, particles) {
+            exec(child, 'parent', null);
+            pool.collect(child);
+        });
+        particles = null;
+        pool = null;
     };
     this.removeChild = function (particle) {
         forEach(particles, function (child, index, particles) {
@@ -28,5 +38,9 @@ function ParticleSystem() {
                 particles[len].update(ctx);
             }
         };
-    }
+    };
+    this.clear = function(){
+        this.parent().removeChild(this);
+        this.removeChilden();
+    };
 }

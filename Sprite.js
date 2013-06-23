@@ -44,11 +44,6 @@ Sprite.prototype.render = function(ctx) {
     this._render(ctx);
     this.afterRender(ctx);
 };
-Sprite.prototype.clear = function() {
-    this.onClear.apply(this, arguments);
-    this._clear(this, arguments);
-    this.afterClear(this, arguments);
-};
 Sprite.prototype._render = function(ctx) {
     if (this.getImage()) {
         this.drawWithImage(ctx, this.getImage());
@@ -61,7 +56,11 @@ Sprite.prototype.performTransform = function(ctx) {
     a = ScaleX    b = SkewX    c = SkewY
     d = ScaleY    e = TranslateX    f = TranslateY
      */
+    try{
     ctx.globalAlpha = this.alpha();
+}catch(e){
+    debugger
+}
     /*var matrix = new Matrix([
     [1,0,this.actualPosition().x + this.width() * this.anchor().x],[0,1,this.actualPosition().y + this.height() * this.anchor().y],[0,0,1]]);*/
     ctx.translate(this.actualPosition().x + this.width() * this.anchor().x, this.actualPosition().y + this.height() * this.anchor().y);
@@ -128,10 +127,3 @@ Sprite.prototype.drawWithImage = function(ctx, image) {
      */
 };
 Sprite.prototype.draw = function(ctx) {};
-
-Sprite.prototype.handleEvent = function() {
-    this.onHandleEvent();
-    EventSystem.handleEventWithTarget(this);
-    this._handleEvent();
-    this.afterHandleEvent();
-};

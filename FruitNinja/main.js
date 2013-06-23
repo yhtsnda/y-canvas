@@ -330,24 +330,6 @@ var defaultFunc = function() {},
             }
         }
     })(),
-    juiceFactory = (function() {
-        var juices = [];
-
-        function createJuice() {
-            return new Particle;
-        }
-        return {
-            getJuice: function() {
-                return juices.length ? juices.pop() : createJuice();
-            },
-            collect: function(juice) {
-                juices.push(juice);
-            },
-            see: function() {
-                return juices;
-            }
-        }
-    })(),
     blotFactory = (function() {
         var blots = [];
 
@@ -492,21 +474,25 @@ function FruitNinja() {
     var app = new Application(dom);
 
     var gameStateManager = (function() {
-        var scenes = app.currentScene(),
+        var scenes = app.children(),
             states = {
                 'loading': function() {
-                    scenes.empty().push(LoadingScene());
+                    scenes.unshift(LoadingScene());
                 },
                 'introduce': function() {
-                    scenes.empty().push(StartScene());
+                    exec(scenes.shift(),'clear');
+                    scenes.unshift(LaunchScene());
                 },
                 'game': function() {
-                    scenes.empty().push(GameScene());
+                    exec(scenes.shift(),'clear');
+                    scenes.unshift(GameScene());
                 },
                 'gameover': function() {
-                    scenes.empty().push(GameoverScene());
+                    exec(scenes.shift(),'clear');
+                    scenes.unshift(GameoverScene());
                 }
             };
+        scenes.empty().push(KnifeScene());
         return {
             changeState: function(state) {
                 states[state] && states[state]();
@@ -529,75 +515,6 @@ function FruitNinja() {
     });
     app.run();
 }
-
-function LoadingScene() {
-    var progressBar = new Sprite,
-        imgs = "images/background.jpg images/fruit/apple.png images/fruit/apple-l.png images/fruit/apple-r.png images/fruit/banana.png images/fruit/banana-l.png images/fruit/banana-r.png images/fruit/basaha.png images/fruit/basaha-l.png images/fruit/basaha-r.png images/fruit/peach.png images/fruit/peach-l.png images/fruit/peach-r.png images/fruit/sandia.png images/fruit/sandia-l.png images/fruit/sandia-r.png images/boom.png images/shadow.png images/home-mask.png images/logo.png images/ninja.png images/home-desc.png images/dojo.png images/new-game.png images/quit.png images/new.png images/score.png images/xxx.png images/xxxf.png images/gameover.png".split(" "),
-        audios = "sounds/boom sounds/splatter sounds/menu sounds/throw sounds/over".split(" ");
-    progressBar.len = imgs.length + audios.length;
-    progressBar.subscribe('loaded', function() {
-        this.loaded = this.loaded || 0;
-        if (++this.loaded === progressBar.len) {
-            this.publish('introduce');
-        };
-    });
-    ImageEngine.loadImage('images/progress_orange.gif', function() {
-        var pattern,
-            img = this;
-        progressBar.draw = function(ctx) {
-            pattern = pattern || ctx.createPattern(img, "repeat");
-            ctx.fillStyle = pattern;
-            ctx.fillRect(70, 230, 500 * Math.min(progressBar.loaded / progressBar.len, 1), img.height);
-            ctx.strokeStyle = "#eee";
-            ctx.rect(70, 230, 500, img.height);
-            ctx.stroke();
-        };
-    });
-    imgs.some(function(url) {
-        ImageEngine.loadImage('' + url, function() {
-            BaseObject.prototype.publish('loaded');
-        });
-    });
-    audios.some(function(url) {
-        AudioEngine.loadAudio('' + url, function() {
-            BaseObject.prototype.publish('loaded');
-        });
-    });
-    return new Scene().addChild(new Layer().addChild(progressBar));
-}
-
-function StartScene() {
-    var layer = new Layer,
-        bg = new Sprite(asserts.bg),
-        logo = new Sprite(asserts.logo),
-        mask = new Sprite(asserts.mask).addChild(logo),
-        ninja = new Sprite(asserts.ninja),
-        desc = new Sprite(asserts.desc),
-        dojo = new Sprite(asserts.dojo),
-        peach = new Sprite(asserts.startpeach),
-        game = new Sprite(asserts.game),
-        sandia = new Sprite(asserts.startsandia),
-        quit = new Sprite(asserts.quit),
-        boom = new Sprite(asserts.startboom);
-    peach.depart = function() {
-        this.unSubscribe();
-        this.publish('gamestart');
-    };
-    mask.runAction(Easing.withAction(new MoveTo(new Point(0, 0), 1000), 'easeOutQuad'));
-    dojo.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(-Math.PI * 2, 4000))));
-    game.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(Math.PI * 2, 4000))));
-    quit.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(-Math.PI * 2, 4000))));
-    sandia.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(-Math.PI * 2, 4000))));
-    peach.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300, function() {
-        peach.subscribe('knifeslice', checkCross);
-    }), new RepeatForever(new RotateTo(Math.PI * 2, 4000))));
-    boom.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(Math.PI * 2, 4000))));
-    desc.runAction(new Sequence(new Delay(2000), new MoveBy(PointMake(200, 0), 200)));
-    ninja.runAction(new Sequence(new Delay(1000), Easing.withAction(new MoveBy(PointMake(0, 110), 1000), 'easeOutBounce')));
-
-    return new Scene().addChild(supportKnife(layer.addChild(bg).addChild(mask).addChild(ninja).addChild(desc).addChild(dojo).addChild(peach).addChild(game).addChild(sandia).addChild(boom).addChild(quit)));
-}
-
 function supportKnife(layer, knife) {
     if (!knife) {
         layer.addChild(knife = Knife());
@@ -658,17 +575,11 @@ function GameScene() {
             };
             layer.addChild(fruit);
         }
-        animation = setTimeout(createFruit, 100);
+        animation = setTimeRequest(createFruit, 40);
     }
-    animation = setTimeout(createFruit, 100);
+    animation = setTimeRequest(createFruit, 40);
     var missed = 0;
     layer.subscribe('missfruit', function(x) {
-        if (++missed >= 3) {
-            layer.unSubscribe('missfruit');
-            clearTimeout(animation);
-            this.publish('gameover');
-            return;
-        }
         var miss = new Sprite({
             images: [{
                     img: 'images/xxxf.png'
@@ -680,6 +591,11 @@ function GameScene() {
         miss.runAction(new Sequence(new MoveBy(PointMake(0, -80), 1000), new Delay(500), new FadeOut(1000, function() {
             miss.parent().removeChild(miss);
         })));
+        if (++missed == 3) {
+            layer.unSubscribe('missfruit');
+            cancelAnimFrame(animation.timeRequest);
+            this.publish('gameover');
+        }
     });
     layer.subscribe('gameover', function() {
         var gameover = new Sprite(asserts.gameover);
@@ -688,11 +604,11 @@ function GameScene() {
         gameover.onmousedown.push(function(){
             this.runAction(new ScaleTo(PointMake(0,0),200,function(){
                 gameover.unSubscribe();
-                gameover.publish('loading');
+                gameover.publish('introduce');
             }));
         });
-    })
-    return new Scene().addChild(supportKnife(layer.addChild(bg)));
+    });
+    return new Scene().addChild(layer.addChild(bg));
 }
 
 function Knife() {
@@ -738,7 +654,11 @@ function Knife() {
     };
     return knife;
 }
-
+function KnifeScene(){
+    var scene = new Scene().addChild(supportKnife(new Layer()));
+    scene.name='knife';
+    return scene;
+}
 domReady(function() {
     FruitNinja();
 });

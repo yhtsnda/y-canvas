@@ -12,7 +12,7 @@ function Application() {
 Application.prototype = new BaseObject;
 Application.prototype.init = function(dom) {
     this.dom = dom;
-    this.currentScene = prop([]);
+    this.children = prop([]);
     this.nextScene = null;
     this.scenes = [];
     Global().app = this;
@@ -30,7 +30,7 @@ Application.prototype.run = function() {
 };
 Application.prototype.pause = function(pause) {
     return pause != undefined ? (function(pause) {
-        forEach(this.currentScene(), function(scene, index) {
+        forEach(this.children(), function(scene, index) {
             exec(scene, 'pause', pause);
         });
         exec(this.nextScene, 'pause', pause);
@@ -44,7 +44,7 @@ Application.prototype.pause = function(pause) {
         this.pause(false);
     };
     Application.prototype.clear = function() {
-        forEach(this.currentScene(), function(scene, index) {
+        forEach(this.children(), function(scene, index) {
             exec(scene, 'clear');
         });
         exec(this.nextScene, 'clear');
@@ -52,13 +52,12 @@ Application.prototype.pause = function(pause) {
     };
     Application.prototype.update = function(context) {
         var me = this;
-        me.handleEvents();
         this.clearCanvas(context);
-        forEach(this.currentScene(), function(scene, index) {
+        forEach(this.children(), function(scene, index) {
             exec(scene, 'update', context);
         });
         exec(me.nextScene, 'update', context);
-        me.resetEvents();
+        me.handleEvents();
         me.showFPS(context);
         requestAnimFrame(function() {
             me.update(context);
@@ -87,17 +86,9 @@ Application.prototype.pause = function(pause) {
     };
     Application.prototype.handleEvents = function() {
         EventSystem.deallingEvents(true);
-        /* var me = this;
-    EventSystem.deallingEvents(true);
-    forEach(EventSystem.events(), function (events) {
-        forEach(events, function (event) {
-            exec(me.currentScene, 'handleEvent', event);
-            exec(me.nextScene, 'handleEvent', event);
+        forEach(this.children(), function(scene, index) {
+            exec(scene, 'handleEvents');
         });
-    });
-    EventSystem.deallingEvents(false); */
-    };
-    Application.prototype.resetEvents = function() {
         EventSystem.deallingEvents(false);
         EventSystem.resetEvents();
     };

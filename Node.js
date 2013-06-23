@@ -5,8 +5,11 @@ function Node() {
     this.height = prop(0);
     this.position = prop(PointMake(0, 0));
     this.actualPosition = function() {
+        try{
         return this.parent() ? PointSum(this.position(), this.parent().actualPosition()) : this.position();
-    };
+    }catch(e){
+        debugger
+    }};
     this.rect = prop(PointMake(0, 0));
     this.visible = prop(false);
     this.display = prop(true);
@@ -16,7 +19,7 @@ function Node() {
     this.getImage = function() {
         return this.images()[this.imageIndex()];
     };
-    this.zIndex = prop(0);
+    this.zIndex = prop(1);
     this.alpha = prop(1);
     this.anchor = prop(PointMake(0.5, 0.5));
     this.rotate = prop(0);
@@ -31,6 +34,13 @@ function Node() {
         this.pause(false);
     };
     this.parent = prop(null);
+    this.removeFromParent = function(){
+        try{
+            this.parent().removeChild(this);
+        }catch(e){
+
+        }
+    };
     this.children = prop([]);
     this.childrenWithoutEmpty = function() {
         return this.children() && this.children().removeNullVal();
@@ -42,8 +52,8 @@ function Node() {
         return this.children([]);
     };
     this.clearChildren = function() {
-        forEach(this.children, function(child) {
-            exec(child, 'parent', null);
+        forEach(this.children(), function(child) {
+            exec(child, 'clear');
         });
         return this.children(null);
     };
@@ -75,26 +85,52 @@ function Node() {
     };
     this.updateChildren = function(context) {
         var children = this.children();
-        /*children.sort(function(a, b) {
-            return a && b && b.zIndex && a.zIndex && a.zIndex() - b.zIndex();
-        });*/
+        if(!children){
+            return;
+        }
         for (var i = children.length - 1; i >= 0; i--) {
             if (children[i] === null || children[i].destoryed) {
                 children.splice(i, 1);
             }
         }
+        children.sort(function(a, b) {
+            return a.zIndex() - b.zIndex();
+        });
         for (var i = 0; i < children.length; i++) {
             children[i].update(context);
         }
         return this;
     };
     this.actionManager = new ActionManager(this);
-    var me = this;
     forEach(["mousedown", "mousemove", "mouseup", "mouseover", "mouseout", "mouseenter", "mouseleave", "keydown", "keypress", "keyup", "touchstart", "touchmove", "touchend", "touchcancel"], function(e) {
-        me['on' + e] = [];
-    });
+        this['on' + e] = [];
+    }, this);
     this.runAction = function() {
         exec(this.actionManager, 'runAction', arguments);
     };
+    this.clear = function(){
+        exec(this, 'unSubscribe');
+        exec(this.actionManager,'clear');
+        this.clearChildren();
+        this.removeFromParent();
+        var me = this;
+        requestAnimFrame(function(){
+            for (var prop in me) {
+                delete me[prop];
+            }
+            me = null;
+        });
+        return this;
+    };
+    this.handleEvent = function () {
+        this.exec('onHandleEvent');
+        EventSystem.handleEventWithTarget(this);
+        forEach(this.children(), function(child){
+            exec(child, 'handleEvent');
+        });
+        this.exec('_handleEvent');
+        this.exec('afterHandleEvent');
+    };
+
     arguments.length ? exec(this, 'init', arguments) : exec(this, 'init');
 }

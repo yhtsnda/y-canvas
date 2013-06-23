@@ -18,6 +18,7 @@ Action.prototype.step = function(dt) {
         return;
     }
     this.update(dt);
+    return this;
 };
 Action.prototype.emitCallback = function() {
     forEach(this.callback(), function(callback, index) {
@@ -42,10 +43,6 @@ Action.prototype.reset = function() {
     this.afterReset.apply(this, arguments);
 };
 Action.prototype.clear = function() {
-    /*delete this.duration;
-    delete this.callback;
-    delete this.isDone;
-    delete this.elapsed;*/
     this.onClear.apply(this, arguments);
     this._clear.apply(this, arguments);
     delete this.target;
@@ -73,17 +70,20 @@ Action.prototype.update = function(dt) {
     this._update.call(this, time);
     this.afterUpdate.call(this, time);
     this.checkDone();
+    return this;
 };
 Action.prototype.checkDone = function() {
     if (this.elapsed >= this.duration) {
         this.done(true);
         this.emitCallback();
     }
+    return this;
 };
 Action.prototype.startWithTarget = function(target) {
     this.target = target;
     this._startWithTarget.apply(this, arguments);
     this.step(1000 / 60);
+    return this;
 };
 Action.prototype.currentTime = function(dt) {
     return Math.min(this.elapsed += dt, this.duration); // / this.duration;
@@ -98,23 +98,25 @@ function MoveTo() {
 MoveTo.prototype = new Action;
 MoveTo.prototype._init = function(toPosition) {
     this.toPosition = toPosition;
+    return this;
 };
 MoveTo.prototype._startWithTarget = function() {
     this.startPosition = this.target.position();
     this.deltaPosition = PointDiff(this.toPosition, this.startPosition);
+    return this;
 };
 MoveTo.prototype._update = function(time) {
     this.target.position(PointSum(this.startPosition, PointMulti(this.deltaPosition, this.getTime(time))));
+    return this;
 };
 MoveTo.prototype._reset = function() {
-    /*this.toPosition = null;
-    this.startPosition = null;
-    this.deltaPosition = null;*/
+    return this;
 };
 MoveTo.prototype._clear = function() {
     delete this.toPosition;
     delete this.startPosition;
     delete this.deltaPosition;
+    return this;
 };
 
 function MoveBy() {
@@ -122,21 +124,22 @@ function MoveBy() {
 }
 MoveBy.prototype = new Action;
 MoveBy.prototype._init = function() {
-    MoveTo.prototype._init.apply(this, arguments);
+    return MoveTo.prototype._init.apply(this, arguments);
 };
 MoveBy.prototype._startWithTarget = function() {
     this.startPosition = this.target.position();
     this.deltaPosition = this.toPosition;
+    return this;
 };
 MoveBy.prototype._update = function() {
-    MoveTo.prototype._update.apply(this, arguments);
+    return MoveTo.prototype._update.apply(this, arguments);
 };
 MoveBy.prototype._reset = function() {
-    this.startPosition = PointSum(this.startPosition, this.deltaPosition);
-    //MoveTo.prototype._reset.apply(this, arguments);
+    //TODO
+    return this;
 };
 MoveBy.prototype._clear = function() {
-    MoveTo.prototype._clear.apply(this, arguments);
+    return MoveTo.prototype._clear.apply(this, arguments);
 };
 
 function ScaleTo() {
@@ -145,23 +148,26 @@ function ScaleTo() {
 ScaleTo.prototype = new Action;
 ScaleTo.prototype._init = function(scaleTo) {
     this.scaleTo = scaleTo;
+    return this;
 };
 ScaleTo.prototype._startWithTarget = function() {
     this.startScale = this.target.scale();
     this.deltaScale = this.scaleTo.diff(this.startScale);
+    return this;
 };
 ScaleTo.prototype._update = function(time) {
     this.target.scale(this.startScale.sum(this.deltaScale.multi(this.getTime(time))));
+    return this;
 };
 ScaleTo.prototype._reset = function() {
-    /*this.scaleTo = null;
-    this.startScale = null;
-    this.deltaScale = null;*/
+    //TODO 
+    return this;
 };
 ScaleTo.prototype._clear = function() {
     delete this.scaleTo;
     delete this.startScale;
     delete this.deltaScale;
+    return this;
 };
 
 function ScaleBy() {
@@ -169,20 +175,21 @@ function ScaleBy() {
 }
 ScaleBy.prototype = new Action;
 ScaleBy.prototype._init = function() {
-    ScaleTo.prototype._init.apply(this, arguments);
+    return ScaleTo.prototype._init.apply(this, arguments);
 };
 ScaleBy.prototype._startWithTarget = function() {
     this.startScale = this.target.scale();
     this.deltaScale = this.scaleTo;
+    return this;
 };
 ScaleBy.prototype._update = function() {
-    ScaleTo.prototype._update.apply(this, arguments);
+    return ScaleTo.prototype._update.apply(this, arguments);
 };
 ScaleBy.prototype._reset = function() {
-    ScaleTo.prototype._reset.apply(this, arguments);
+    return ScaleTo.prototype._reset.apply(this, arguments);
 };
 ScaleBy.prototype._clear = function() {
-    ScaleTo.prototype._clear.apply(this, arguments);
+    return ScaleTo.prototype._clear.apply(this, arguments);
 };
 
 function SkewTo() {
@@ -191,27 +198,37 @@ function SkewTo() {
 SkewTo.prototype = new Action;
 SkewTo.prototype._init = function(skewTo) {
     this.skewTo = skewTo;
+    return this;
 };
 SkewTo.prototype._startWithTarget = function() {
     this.startSkew = this.target.skew();
     this.deltaSkew = this.skewTo.diff(this.startSkew);
+    return this;
 };
 SkewTo.prototype._update = function(time) {
     this.target.skew(this.startSkew.add(this.deltaSkew.multi(this.getTime(time))));
+    return this;
 };
-
+SkewTo.prototype._clear = function(){
+    delete this.startSkew;
+    delete this.deltaSkew;
+    delete this.skewTo;
+    return this;
+};
 function SkewBy() {
     Action.apply(this, arguments);
 }
 SkewBy.prototype = new Action;
 SkewBy.prototype._init = function(skewBy) {
     this.deltaSkew = skewBy;
+    return this;
 };
 SkewBy.prototype._startWithTarget = function() {
     this.startSkew = this.target.skew();
+    return this;
 };
 SkewBy.prototype._update = function() {
-    SkewTo.prototype._update.apply(this, arguments);
+    return SkewTo.prototype._update.apply(this, arguments);
 };
 
 function RotateTo() {
@@ -220,10 +237,12 @@ function RotateTo() {
 RotateTo.prototype = new Action;
 RotateTo.prototype._init = function(rotateTo) {
     this.rotateTo = rotateTo;
+    return this;
 };
 RotateTo.prototype._startWithTarget = function() {
     this.startRotate = this.target.rotate();
     this.deltaRotate = this.rotateTo - this.startRotate;
+    return this;
 };
 RotateTo.prototype._update = function(time) {
     this.target.rotate(this.startRotate + this.deltaRotate * this.getTime(time));
