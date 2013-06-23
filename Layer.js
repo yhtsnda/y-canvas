@@ -9,6 +9,12 @@ Layer.prototype.init = function (width, height) {
     this.exec('resume');
     this.exec('afterInit');
 };
+Layer.prototype.handleEvent = function () {
+    this.exec('onHandleEvent');
+    EventSystem.handleEventWithTarget(this);
+    this.exec('_handleEvent');
+    this.exec('afterHandleEvent');
+};
 Layer.prototype.update = function (context) {
     this.handleEvent(context);
     this.exec('onUpdate', context);

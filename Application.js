@@ -53,12 +53,15 @@ Application.prototype.pause = function(pause) {
     Application.prototype.update = function(context) {
         var me = this;
         this.clearCanvas(context);
+        EventSystem.deallingEvents(true);
         forEach(this.children(), function(scene, index) {
             exec(scene, 'update', context);
         });
         exec(me.nextScene, 'update', context);
-        me.handleEvents();
+        //me.handleEvents();
         me.showFPS(context);
+        EventSystem.deallingEvents(false);
+        EventSystem.resetEvents();
         requestAnimFrame(function() {
             me.update(context);
         });
@@ -76,21 +79,11 @@ Application.prototype.pause = function(pause) {
             this._lastDate = now;
         }
         if (this._fpsText) {
-            context.save();
             context.fillStyle = '#589B2A';
             context.font = "30px sans-serif bold";
             context.fillText(this._fpsText, this.dom.width / 2, 30);
-            context.restore();
         }
         this._currentFrameCount++;
-    };
-    Application.prototype.handleEvents = function() {
-        EventSystem.deallingEvents(true);
-        forEach(this.children(), function(scene, index) {
-            exec(scene, 'handleEvents');
-        });
-        EventSystem.deallingEvents(false);
-        EventSystem.resetEvents();
     };
     Application.prototype.clear = function() {
         Debugger.error("Could add code to implement Application's clear function");

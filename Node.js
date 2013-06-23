@@ -5,11 +5,8 @@ function Node() {
     this.height = prop(0);
     this.position = prop(PointMake(0, 0));
     this.actualPosition = function() {
-        try{
         return this.parent() ? PointSum(this.position(), this.parent().actualPosition()) : this.position();
-    }catch(e){
-        debugger
-    }};
+    };
     this.rect = prop(PointMake(0, 0));
     this.visible = prop(false);
     this.display = prop(true);
@@ -19,7 +16,7 @@ function Node() {
     this.getImage = function() {
         return this.images()[this.imageIndex()];
     };
-    this.zIndex = prop(1);
+    this.zIndex = prop(0);
     this.alpha = prop(1);
     this.anchor = prop(PointMake(0.5, 0.5));
     this.rotate = prop(0);
@@ -93,9 +90,9 @@ function Node() {
                 children.splice(i, 1);
             }
         }
-        children.sort(function(a, b) {
+        /*children.sort(function(a, b) {
             return a.zIndex() - b.zIndex();
-        });
+        });*/
         for (var i = 0; i < children.length; i++) {
             children[i].update(context);
         }
@@ -121,15 +118,6 @@ function Node() {
             me = null;
         });
         return this;
-    };
-    this.handleEvent = function () {
-        this.exec('onHandleEvent');
-        EventSystem.handleEventWithTarget(this);
-        forEach(this.children(), function(child){
-            exec(child, 'handleEvent');
-        });
-        this.exec('_handleEvent');
-        this.exec('afterHandleEvent');
     };
 
     arguments.length ? exec(this, 'init', arguments) : exec(this, 'init');

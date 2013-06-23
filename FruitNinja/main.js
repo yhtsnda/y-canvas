@@ -21,6 +21,7 @@ var defaultFunc = function() {},
         this.children([]);
         this.departed = false;
         this.depart = function() {
+            this.publish('depart');
             this.unSubscribe('knifeslice');
             this.departed = true;
             this.onUpdate = defaultFunc;
@@ -461,6 +462,9 @@ function particle(img, pos) {
             this.alpha -= 0.05;
             if (this.scale <= 0) {
                 this.parent().removeChild(this);
+                if(this.parent().children().length == 0){
+                    this.parent().parent().removeChild(this.parent());
+                }
             }
         };
     }
@@ -546,6 +550,16 @@ function supportKnife(layer, knife) {
 function GameScene() {
     var layer = new Layer,
         bg = new Sprite(asserts.bg),
+        score = new Sprite({
+            position: PointMake(20,30),
+            images : [{
+                img:'images/score.png'
+            }]
+        }),
+        cutted = new Sprite({
+            position : PointMake(60, 30)
+        }),
+        cuttedNum = 0,
         animation;
 
     function createFruit() {
@@ -578,7 +592,17 @@ function GameScene() {
         animation = setTimeRequest(createFruit, 40);
     }
     animation = setTimeRequest(createFruit, 40);
+    cutted.position();
+    cutted.draw = function(ctx){
+        ctx.fillStyle = "#af7c05";
+        ctx.font = "34px Tahoma bold";
+        ctx.textBaseline = "top";
+        ctx.fillText(cuttedNum, this.actualPosition().x, this.actualPosition().y);
+    };
     var missed = 0;
+    layer.subscribe('depart',function(){
+        cuttedNum++;
+    });
     layer.subscribe('missfruit', function(x) {
         var miss = new Sprite({
             images: [{
@@ -608,7 +632,7 @@ function GameScene() {
             }));
         });
     });
-    return new Scene().addChild(layer.addChild(bg));
+    return new Scene().addChild(layer.addChild(bg).addChild(score).addChild(cutted));
 }
 
 function Knife() {
