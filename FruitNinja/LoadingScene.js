@@ -10,7 +10,7 @@ function LoadingScene() {
             this.publish('introduce');
         };
     });
-    ImageEngine.loadImage('images/progress_orange.gif', function() {
+    ImageEngine.load('images/progress_orange.gif', function() {
         var pattern,
             img = this;
         progressBar.draw = function(ctx) {
@@ -23,12 +23,12 @@ function LoadingScene() {
         };
     });
     imgs.some(function(url) {
-        ImageEngine.loadImage(url, function() {
+        ImageEngine.load(url, function() {
             BaseObject.prototype.publish('loaded');
         });
     });
     audios.some(function(url) {
-        AudioEngine.loadAudio(url, function() {
+        AudioEngine.load(url, function() {
             BaseObject.prototype.publish('loaded');
         });
     });
