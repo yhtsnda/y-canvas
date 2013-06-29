@@ -99,7 +99,7 @@ Sprite.prototype.drawWithImage = function(ctx, image) {
     var size = image.size, //this.imageSizes()[this.imageIndex()],
         pos = this.actualPosition(),
         scale = this.scale(),
-        img = ImageEngine.loadImage(image.img);
+        img = ImageEngine.get(image.img);
     if (size) {
         ctx.drawImage(img, size[0], size[1], size[2], size[3], pos.x, pos.y, size[2], size[3]);
     } else {

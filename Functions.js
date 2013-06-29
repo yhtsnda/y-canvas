@@ -39,11 +39,11 @@ function forEach(obj, fn, host) {
     }
 }
 
-function forEachWithMe(fn) {
-    if (isArray(this)) {
-        forEach.apply(window, arguments);
+function forEachWithMe(obj, fn) {
+    if (isArray(obj)) {
+        forEach.apply(obj, arguments);
     } else {
-        fn && fn.call(this);
+        fn && fn(obj);
     }
 }
 

@@ -28,6 +28,7 @@ var defaultFunc = function() {},
             this.images([]);
             this.rotate(0);
             var blot = blotFactory.getBlot();
+            blot.zIndex(0);
             blot.alpha(1);
             blot.images([{
                     img: this.blot
@@ -46,7 +47,7 @@ var defaultFunc = function() {},
                 right = FruitPartFactory.getFruitPart(this.type + 'Right');
             left.position().reset(0, 0);
             right.position().reset(0, 0);
-            this.parent().addChild(particle(ImageEngine.loadImage(this.juice), PointMake(this.actualPosition().x + this.width() / 2, this.actualPosition().y + this.height() / 2)));
+            this.parent().addChild(particle(ImageEngine.get(this.juice), PointMake(this.actualPosition().x + this.width() / 2, this.actualPosition().y + this.height() / 2)));
             left.onUpdate = function() {
                 this.position().x -= 2;
             }
@@ -567,6 +568,7 @@ function GameScene() {
             var fruit = fruitFactory.getFruit()._init(asserts[(function() {
                 return ['peach', 'sandia', 'banana', 'basaha', 'apple'][parseInt(Math.random() * 5)]
             })()]).reset();
+            fruit.zIndex(1);
             fruit.position(PointMake(100 + Math.random() * 440, 480));
             fruit.rotate(Math.PI * Math.random());
             var v0 = -18 - 2 * Math.random(),
@@ -588,6 +590,7 @@ function GameScene() {
                 }
             };
             layer.addChild(fruit);
+            AudioEngine.play('sounds/throw');
         }
         animation = setTimeRequest(createFruit, 40);
     }
@@ -631,6 +634,7 @@ function GameScene() {
                 gameover.publish('introduce');
             }));
         });
+        AudioEngine.play('sounds/gameover');
     });
     return new Scene().addChild(layer.addChild(bg).addChild(score).addChild(cutted));
 }

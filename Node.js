@@ -1,4 +1,5 @@
 var tag=0;
+var isChrome = navigator.userAgent.indexOf('Chrome') > -1;
 function Node() {
     this.tag=tag+++0;
     this.width = prop(0);
@@ -85,14 +86,9 @@ function Node() {
         if(!children){
             return;
         }
-        for (var i = children.length - 1; i >= 0; i--) {
-            if (children[i] === null || children[i].destoryed) {
-                children.splice(i, 1);
-            }
-        }
-        /*children.sort(function(a, b) {
+        isChrome && children.sort(function(a, b) {
             return a.zIndex() - b.zIndex();
-        });*/
+        });
         for (var i = 0; i < children.length; i++) {
             children[i].update(context);
         }
