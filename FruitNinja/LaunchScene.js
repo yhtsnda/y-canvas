@@ -26,6 +26,6 @@ function LaunchScene() {
     boom.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(Math.PI * 2, 4000))));
     desc.runAction(new Sequence(new Delay(2000), new MoveBy(PointMake(200, 0), 200)));
     ninja.runAction(new Sequence(new Delay(1000), Easing.withAction(new MoveBy(PointMake(0, 110), 1000), 'easeOutBounce')));
-
+    //AudioEngine.play('sounds/menu');
     return new Scene().addChild(layer.addChild(bg).addChild(mask).addChild(ninja).addChild(desc).addChild(dojo).addChild(peach).addChild(game).addChild(sandia).addChild(boom).addChild(quit));
 }
