@@ -86,7 +86,7 @@ function Node() {
         if(!children){
             return;
         }
-        isChrome && children.sort(function(a, b) {
+        !isChrome && children.sort(function(a, b) {
             return a.zIndex() - b.zIndex();
         });
         for (var i = 0; i < children.length; i++) {

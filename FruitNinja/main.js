@@ -21,6 +21,7 @@ var defaultFunc = function() {},
         this.children([]);
         this.departed = false;
         this.depart = function() {
+            AudioEngine.play('sounds/splatter');
             this.publish('depart');
             this.unSubscribe('knifeslice');
             this.departed = true;
@@ -634,7 +635,7 @@ function GameScene() {
                 gameover.publish('introduce');
             }));
         });
-        AudioEngine.play('sounds/gameover');
+        AudioEngine.play('sounds/over');
     });
     return new Scene().addChild(layer.addChild(bg).addChild(score).addChild(cutted));
 }
