@@ -15,7 +15,7 @@ function Particle(pos, life, img) {
     this.alpha = 1;
 }
 
-Particle.prototype.render = function (ctx) {
+Particle.prototype.render = function(ctx) {
     this.onRender(ctx);
     if (this.image()) {
         this._render(ctx);
@@ -24,16 +24,16 @@ Particle.prototype.render = function (ctx) {
     }
     this.afterRender(ctx);
 };
-Particle.prototype.update = function (ctx) {
+Particle.prototype.update = function(ctx) {
     if (this.life() <= 0) {
         return;
     }
     this.onUpdate(ctx);
     this._update(ctx);
     this.afterUpdate(ctx);
-    
+
     this.resultant().reset();
-    forEach(this.forcesMap(), function (force, index, forces) {
+    forEach(this.forcesMap(), function(force, index, forces) {
         if (force && force.isActive()) {
             this.resultant().add(force.value());
         } else {
@@ -41,7 +41,7 @@ Particle.prototype.update = function (ctx) {
         }
     }, this);
     //this.forcesMap().removeNullVal();
-    
+
     this.velocity().add(this.resultant());
     this.velocity().x *= (1 - this.damp().x);
     this.velocity().y *= (1 - this.damp().y);
@@ -52,7 +52,7 @@ Particle.prototype.update = function (ctx) {
     this.render(ctx);
     this.life(this.life() - 0.004);
 };
-Particle.prototype._render = function (ctx) {
+Particle.prototype._render = function(ctx) {
     //ctx.save();
     //ctx.globalAlpha = this.alpha;
     ctx.translate(this.position().x, this.position().y);
@@ -68,13 +68,20 @@ Particle.prototype._render = function (ctx) {
     //ctx.globalAlpha = 1;
     //ctx.restore();
 };
-Particle.prototype.draw = function () {};
-Particle.prototype.afterRender = function () {};
-Particle.prototype.onRender = function () {};
-Particle.prototype.onUpdate = function () {};
-Particle.prototype._update = function () {};
-Particle.prototype.afterUpdate = function () {};
-Particle.prototype.reset = function () {
+Particle.prototype.remove = function(){
+    try{
+        this.parent().removeChild(this);
+    }catch(e){
+        console.log(e);
+    }
+};
+Particle.prototype.draw = function() {};
+Particle.prototype.afterRender = function() {};
+Particle.prototype.onRender = function() {};
+Particle.prototype.onUpdate = function() {};
+Particle.prototype._update = function() {};
+Particle.prototype.afterUpdate = function() {};
+Particle.prototype.reset = function() {
     this.position().reset();
     this.velocity().reset(); //速度
     this.damp().reset(0.1, 0.1); //阻尼
@@ -88,9 +95,9 @@ Particle.prototype.reset = function () {
     this.alpha = 1;
     return this;
 };
-Particle.prototype.bounce = function () { //跳跃
+Particle.prototype.bounce = function() { //跳跃
     var pos = this.position(),
-    boundary = this.boundary();
+        boundary = this.boundary();
     if (pos.x < boundary.left()) {
         pos.x = boundary.left();
         this.velocity().x *= -this.bounceIntensity;
@@ -98,7 +105,7 @@ Particle.prototype.bounce = function () { //跳跃
         pos.x = boundary.right();
         this.velocity().x *= -this.bounceIntensity;
     }
-    
+
     if (pos.y < boundary.top()) {
         pos.y = boundary.top();
         this.velocity().y *= -this.bounceIntensity;
@@ -107,21 +114,21 @@ Particle.prototype.bounce = function () { //跳跃
         this.velocity().y *= -this.bounceIntensity;
     }
 };
-Particle.prototype.offscreen = function () { //
+Particle.prototype.offscreen = function() { //
     var pos = this.position(),
-    boundary = this.boundary();
+        boundary = this.boundary();
     if (pos.x < boundary.left()) {
         pos.x = boundary.right();
     }
-    
+
     if (pos.x > boundary.right()) {
         pos.x = boundary.left();
     }
-    
+
     if (pos.y < boundary.top()) {
         pos.y = boundary.bottom();
     }
-    
+
     if (pos.y > boundary.bottom()) {
         pos.y = boundary.top();
     }

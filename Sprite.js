@@ -1,7 +1,7 @@
 function Sprite() {
     Node.apply(this, arguments);
 }
-Sprite.prototype = new BaseObject;
+Sprite.prototype = mixIn(Node.prototype, {});
 
 (function() {
     function defaultFunc() {
@@ -18,9 +18,9 @@ Sprite.prototype.init = function() {
 };
 Sprite.prototype._init = function(settings) {
     forEach(settings, function(setting, prop) {
-        if(isFunction(this[prop])){
+        if (isFunction(this[prop])) {
             this[prop](setting);
-        }else{
+        } else {
             this[prop] = setting;
         }
     }, this);

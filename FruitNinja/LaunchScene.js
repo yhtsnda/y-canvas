@@ -21,7 +21,7 @@ function LaunchScene() {
     quit.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(-Math.PI * 2, 4000))));
     sandia.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(-Math.PI * 2, 4000))));
     peach.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300, function() {
-        peach.subscribe('knifeslice', checkCross);
+        peach.subscribe('knifeslice', handleCross);
     }), new RepeatForever(new RotateTo(Math.PI * 2, 4000))));
     boom.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(Math.PI * 2, 4000))));
     desc.runAction(new Sequence(new Delay(2000), new MoveBy(PointMake(200, 0), 200)));

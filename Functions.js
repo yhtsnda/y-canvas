@@ -99,3 +99,20 @@ function prop(defaultValue) {
         };
     })();
 }
+
+function propArray(defaultValue) {
+    return (function() {
+        var _value = defaultValue || [];
+        return function(value) {
+            if (value === undefined) {
+                return _value;
+            } else if (isArray(value)) {
+                return _value = value;
+            } else {
+                _value = defaultValue || [];
+                _value.push(value);
+                return _value;
+            }
+        }
+    })();
+}
