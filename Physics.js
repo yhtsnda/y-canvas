@@ -26,7 +26,7 @@ function Brownian(maxValue, cycle, life) {
 }
 Brownian.prototype = new Force;
 Brownian.prototype.update = function () {
-    this.pastTime += 0.004;
+    this.pastTime += 1;
     if (this.pastTime >= this.cycle) {
         this.value().reset((Math.random() * 2 - 1) * this.maxValue, (Math.random() * 2 - 1) * this.maxValue);
         this.pastTime = 0;

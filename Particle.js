@@ -3,18 +3,17 @@ function Particle(pos, life, img) {
     this.parent = prop(null);
     this.velocity = prop(PointMake(0, 0)); //速度
     this.damp = prop(PointMake(0.1, 0.1)); //阻尼
-    this.resultant = prop(PointMake(0, 0)); //
-    this.life = prop(life === undefined ? life : Infinity);
-    this.forcesMap = prop([]);
+    this.resultant = prop(PointMake(0, 0)); //合力
+    this.life = prop(life === undefined ? Infinity : life);
+    this.forcesMap = prop([]);  //强制力
     this.image = prop(img);
-    this.boundary = prop();
-    this.bounceIntensity = 2;
-    this.boundaryType = this.offscreen;
+    this.boundary = prop();     //边界
+    this.bounceIntensity = 2;   //反弹强度
+    this.boundaryType = this.offscreen; //画面以外
     this.scale = 1;
     this.rotation = 0;
     this.alpha = 1;
 }
-
 Particle.prototype.render = function(ctx) {
     this.onRender(ctx);
     if (this.image()) {
@@ -50,7 +49,7 @@ Particle.prototype.update = function(ctx) {
         this.boundaryType();
     }
     this.render(ctx);
-    this.life(this.life() - 0.004);
+    this.life(this.life() - 1);
 };
 Particle.prototype._render = function(ctx) {
     //ctx.save();
@@ -75,17 +74,17 @@ Particle.prototype.remove = function(){
         console.log(e);
     }
 };
-Particle.prototype.draw = function() {};
-Particle.prototype.afterRender = function() {};
-Particle.prototype.onRender = function() {};
-Particle.prototype.onUpdate = function() {};
-Particle.prototype._update = function() {};
+Particle.prototype.draw =
+Particle.prototype.afterRender =
+Particle.prototype.onRender =
+Particle.prototype.onUpdate =
+Particle.prototype._update =
 Particle.prototype.afterUpdate = function() {};
 Particle.prototype.reset = function() {
     this.position().reset();
     this.velocity().reset(); //速度
     this.damp().reset(0.1, 0.1); //阻尼
-    this.resultant().reset();
+    this.resultant().reset();//合力
     this.life(Infinity);
     this.forcesMap().length = 0;
     this.bounceIntensity = 2;
@@ -95,7 +94,7 @@ Particle.prototype.reset = function() {
     this.alpha = 1;
     return this;
 };
-Particle.prototype.bounce = function() { //跳跃
+Particle.prototype.bounce = function() { //反弹（跳跃）
     var pos = this.position(),
         boundary = this.boundary();
     if (pos.x < boundary.left()) {
@@ -114,7 +113,7 @@ Particle.prototype.bounce = function() { //跳跃
         this.velocity().y *= -this.bounceIntensity;
     }
 };
-Particle.prototype.offscreen = function() { //
+Particle.prototype.offscreen = function() { //控制不出边界
     var pos = this.position(),
         boundary = this.boundary();
     if (pos.x < boundary.left()) {

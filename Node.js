@@ -37,80 +37,14 @@ Node.prototype.stop = function() {
 Node.prototype.resume = function() {
     this.pause(false);
 };
-Node.prototype.removeFromParent = function() {
-    try {
-        this.parent().removeChild(this);
-    } catch (e) {
-        console.log(e);
-    }
-};
-Node.prototype.childrenWithoutEmpty = function() {
-    return this.children() && this.children().removeNullVal();
-};
-Node.prototype.resetChildren = function() {
-    forEach(this.children, function(child) {
-        exec(child, 'parent', null);
-    });
-    return this.children([]);
-};
-Node.prototype.clearChildren = function() {
-    forEach(this.children(), function(child) {
-        exec(child, 'clear');
-    });
-    return this.children(null);
-};
-Node.prototype.getChildByTag = function() {
-    var children = this.children();
-    for (var i = 0; i < children.length; i++) {
-        if (children[i] && children[i].tag == tag) {
-            return children[i];
-        }
-    }
-};
-Node.prototype.removeChild = function(toRemove) {
-    forEach(this.children(), function(child, index, children) {
-        if (child === toRemove) {
-            exec(children.splice(index, 1)[0], parent, null);
-            return true;
-        }
-    });
-    return this;
-};
-Node.prototype.remove = function() {
-    try {
-        this.parent().removeChild(this);
-    } catch (e) {}
-};
-Node.prototype.addChild = function(child) {
-    exec(child, 'parent', this);
-    this.children().push(child);
-    return this;
-};
-Node.prototype.removeLastChild = function() {
-    exec(this.children().pop(), 'parent', null);
-    return this;
-};
-Node.prototype.updateChildren = function(context) {
-    var children = this.children();
-    if (!children) {
-        return;
-    }
-    children.sort(function(a, b) {
-        return a.zIndex() - b.zIndex();
-    });
-    for (var i = 0; i < children.length; i++) {
-        children[i].update(context);
-    }
-    return this;
-};
 Node.prototype.runAction = function() {
     exec(this.actionManager, 'runAction', arguments);
 };
 Node.prototype.clear = function() {
     exec(this, 'unSubscribe');
     exec(this.actionManager, 'clear');
+    this.remove();
     this.clearChildren();
-    this.removeFromParent();
     var me = this;
     requestAnimFrame(function() {
         for (var prop in me) {
@@ -124,5 +58,5 @@ Node.prototype.getImage = function() {
     return this.images()[this.imageIndex()];
 };
 Node.prototype.actualPosition = function() {
-    return this.parent() ? PointSum(this.position(), this.parent().actualPosition()) : this.position();
+    return (this.parent() && this.parent().actualPosition) ? PointSum(this.position(), this.parent().actualPosition()) : this.position();
 };

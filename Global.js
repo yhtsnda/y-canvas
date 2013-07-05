@@ -38,12 +38,18 @@ function domReady(c) {
     }
 }
 var requestAnimFrame = (function() {
-    return Global().requestAnimationFrame || Global().webkitRequestAnimationFrame || Global().mozRequestAnimationFrame || Global().oRequestAnimationFrame || Global().msRequestAnimationFrame || function(callback) {
-        Global().setTimeout(callback, Math.round(1000 / 60));
-    };
-})(),
+        return Global().requestAnimationFrame ||
+               Global().webkitRequestAnimationFrame ||
+               Global().mozRequestAnimationFrame ||
+               Global().oRequestAnimationFrame ||
+               Global().msRequestAnimationFrame;
+    })(),
     cancelAnimFrame = (function() {
-        return Global().cancelAnimationFrame || Global().webkitCancelRequestAnimationFrame || Global().mozCancelRequestAnimationFrame || Global().oCancelRequestAnimationFrame || Global().msCancelRequestAnimationFram || clearTimeout;
+        return Global().cancelAnimationFrame ||
+               Global().webkitCancelRequestAnimationFrame ||
+               Global().mozCancelRequestAnimationFrame ||
+               Global().oCancelRequestAnimationFrame ||
+               Global().msCancelRequestAnimationFram;
     })(),
     setTimeRequest = function(callback, time) {
         if (time == 0) {
@@ -51,15 +57,14 @@ var requestAnimFrame = (function() {
             return;
         }
         var tick = 0;
-        var t = {};
-        t.timeRequest = Global().requestAnimFrame(function() {
-            tick++;
-            //Global().cancelAnimationFrame(t.timeRequest);
-            if (tick == time) {
-                callback && callback();
-            } else {
-                t.timeRequest = Global().requestAnimFrame(arguments.callee);
-            }
-        });
-        return t;
+        return t = {
+            timeRequest : Global().requestAnimFrame(function() {
+                tick++;
+                if (tick == time) {
+                    callback && callback();
+                } else {
+                    t.timeRequest = Global().requestAnimFrame(arguments.callee);
+                }
+            })
+        };
     };

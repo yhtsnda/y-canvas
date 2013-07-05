@@ -23,3 +23,101 @@ BaseObject.prototype.exec = function(functionName) {
 BaseObject.prototype.execB = function(functionName, args) {
     return this && this[functionName] && this[functionName].apply(this, args);
 };
+BaseObject.prototype.addChild = function(child){
+    try{
+        child.parent(this);
+        this.children().push(child);
+    }catch(e){
+        console.log(e);
+    }
+    return this;
+};
+BaseObject.prototype.addChildAt = function(child, index){
+    try{
+        child.parent(this);
+        var children = this.children();
+        if(children[index]){
+            for (var i = children.length - 1; i >= index; i--) {
+                children[i + 1] = children[i];
+            };
+        }
+        children[index] = child;
+    }catch(e){
+        console.log(e);
+    }
+    return this;
+};
+BaseObject.prototype.getChildAt = function(index){
+    return this.children()[index];
+};
+BaseObject.prototype.replaceChildAt = function(child, index){
+    try{
+        child.parent(this);
+        this.children()[index] = child;
+    }catch(e){
+        console.log(e.stack);
+    }
+    return this;
+};
+BaseObject.prototype.remove = function(){
+    try{
+        this.parent().removeChild(this);
+    }catch(e){
+        console.log(e);
+    }
+    return this;
+};
+BaseObject.prototype.removeChild = function(toRemove){
+    forEach(this.children(), function(child, index, children) {
+        if (child === toRemove) {
+            exec(children.splice(index, 1)[0], 'parent', null);
+            return true;
+        }
+    });
+    return this;
+};
+BaseObject.prototype.removeChildAt = function(index){
+    exec(this.children().splice(index, 1)[0], 'parent', null);
+    return this;
+};
+
+BaseObject.prototype.childrenWithoutEmpty = function() {
+    return this.children() && this.children().removeNullVal();
+};
+BaseObject.prototype.resetChildren = function() {
+    forEach(this.children(), function(child) {
+        exec(child, 'parent', null);
+    });
+    return this.children([]);
+};
+BaseObject.prototype.clearChildren = function() {
+    forEach(this.children(), function(child) {
+        exec(child, 'clear');
+    });
+    return this.children(null);
+};
+BaseObject.prototype.getChildByTag = function() {
+    var children = this.children();
+    for (var i = 0; i < children.length; i++) {
+        if (children[i] && children[i].tag == tag) {
+            return children[i];
+        }
+    }
+};
+BaseObject.prototype.updateChildren = function(context) {
+    var children = this.children();
+    if (!children) {
+        return;
+    }
+    children.sort(function(a, b) {
+        return a.zIndex() - b.zIndex();
+    });
+    for (var i = 0; i < children.length; i++) {
+        try{
+            children[i].update(context);
+        }catch(e){
+            debugger
+        }
+    }
+    return this;
+};

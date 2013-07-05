@@ -76,22 +76,25 @@ function FruitNinja() {
         var scenes = app.children(),
             states = {
                 'loading': function() {
-                    scenes.unshift(LoadingScene());
+                    app.addChildAt(LoadingScene(), 0);
                 },
                 'introduce': function() {
-                    exec(scenes.shift(), 'clear');
-                    scenes.unshift(LaunchScene());
+                    app.getChildAt(0).clear();
+                    //exec(scenes.shift(), 'clear');
+                    app.addChildAt(LaunchScene(), 0);
                 },
                 'game': function() {
-                    exec(scenes.shift(), 'clear');
-                    scenes.unshift(GameScene());
+                    app.getChildAt(0).clear();
+                    //exec(scenes.shift(), 'clear');
+                    app.addChildAt(GameScene(), 0);
                 },
                 'gameover': function() {
-                    exec(scenes.shift(), 'clear');
-                    scenes.unshift(GameoverScene());
+                    app.getChildAt(0).clear();
+                    //exec(scenes.shift(), 'clear');
+                    app.addChildAt(GameoverScene(), 0);
                 }
             };
-        scenes.empty().push(KnifeScene());
+        app.addChildAt(KnifeScene(), 0);
         return {
             changeState: function(state) {
                 states[state] && states[state]();
