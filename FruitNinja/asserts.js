@@ -13,7 +13,7 @@ var reset = function() {
         this.images().empty();
         this.rotate(0);
         var blot = blotFactory.get();
-        blot.zIndex(0);
+        blot.zIndex(21);
         blot.alpha(1);
         blot.images({
             img: this.blot
@@ -45,7 +45,8 @@ var reset = function() {
         bg: {
             images: {
                 img: 'images/background.jpg'
-            }
+            },
+            zIndex: -1
         },
         logo: {
             images: {
@@ -261,6 +262,7 @@ var reset = function() {
             width: 490,
             height: 85,
             scale: PointMake(0, 0),
-            position: PointMake(75, 200)
+            position: PointMake(75, 200),
+            zIndex: 30
         }
     };

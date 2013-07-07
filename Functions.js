@@ -1,3 +1,9 @@
+function singleton(fn) {
+    var returnVal;
+    return returnVal !== undefined ? returnVal : function() {
+        return returnVal = fn();
+    };
+}
 function mixIn(a, b, modifyA) {
     if (modifyA) {
         for (var p in b) {
@@ -26,13 +32,13 @@ function forEach(obj, fn, host) {
     } else */
     if (obj.length !== undefined) {
         for (var i = 0; i < obj.length; i++) {
-            if (fn.call(host || Global(), obj[i], i, obj) === true) {
+            if (fn.call(host || window, obj[i], i, obj) === true) {
                 return true;
             }
         }
     } else { // if(isObject(obj) || isArguments(obj) || isFunction(obj)) {
         for (var i in obj) {
-            if (fn.call(host || Global(), obj[i], i, obj) === true) {
+            if (fn.call(host || window, obj[i], i, obj) === true) {
                 return true;
             }
         }
@@ -63,7 +69,7 @@ forEach(['apply', 'call'], function(v, k) {
     currying(v, v, Function.prototype);
 });
 forEach(['Array', 'Object', 'Function', 'Arguments', 'Number', 'Date', 'Boolean', 'String', 'RegExp'], function(v, k) {
-    Global()['is' + v] = function(obj) {
+    window['is' + v] = function(obj) {
         return toStr(obj) === '[object ' + v + ']';
     };
 });

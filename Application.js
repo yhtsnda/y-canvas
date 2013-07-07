@@ -1,9 +1,9 @@
 function getContext() {
-    return Global().app.getContext();
+    return window.app.getContext();
 }
 
 function getDom() {
-    return Global().app.dom;
+    return window.app.dom;
 }
 
 function Application() {
@@ -13,9 +13,9 @@ Application.prototype = new BaseObject;
 Application.prototype.init = function(dom) {
     this.dom = dom;
     this.children = prop([]);
-    this.nextScene = null;
-    this.scenes = [];
-    Global().app = this;
+    //this.nextScene = null;
+    //this.scenes = [];
+    window.app = this;
 };
 Application.prototype.getContext = function() {
     return this.dom.getContext(this.supportOpenGLES() ? 'opengles' : '2d');

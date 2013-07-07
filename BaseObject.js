@@ -20,65 +20,62 @@ BaseObject.prototype.exec = function(functionName) {
         this[functionName]();
     }
 };
-BaseObject.prototype.execB = function(functionName, args) {
-    return this && this[functionName] && this[functionName].apply(this, args);
-};
-BaseObject.prototype.addChild = function(child){
-    try{
+BaseObject.prototype.addChild = function(child) {
+    try {
         child.parent(this);
         this.children().push(child);
-    }catch(e){
+    } catch (e) {
         console.log(e);
     }
     return this;
 };
-BaseObject.prototype.addChildAt = function(child, index){
-    try{
+BaseObject.prototype.addChildAt = function(child, index) {
+    try {
         child.parent(this);
         var children = this.children();
-        if(children[index]){
+        if (children[index]) {
             for (var i = children.length - 1; i >= index; i--) {
                 children[i + 1] = children[i];
             };
         }
         children[index] = child;
-    }catch(e){
-        console.log(e);
-    }
-    return this;
-};
-BaseObject.prototype.getChildAt = function(index){
-    return this.children()[index];
-};
-BaseObject.prototype.replaceChildAt = function(child, index){
-    try{
-        child.parent(this);
-        this.children()[index] = child;
-    }catch(e){
+    } catch (e) {
         console.log(e.stack);
     }
     return this;
 };
-BaseObject.prototype.remove = function(){
-    try{
-        this.parent().removeChild(this);
-    }catch(e){
-        console.log(e);
+BaseObject.prototype.getChildAt = function(index) {
+    return this.children()[index];
+};
+BaseObject.prototype.replaceChildAt = function(child, index) {
+    try {
+        child.parent(this);
+        this.children()[index] = child;
+    } catch (e) {
+        console.log(e.stack);
     }
     return this;
 };
-BaseObject.prototype.removeChild = function(toRemove){
+BaseObject.prototype.remove = function() {
+    try {
+        this.parent().removeChild(this);
+    } catch (e) {
+        console.log(e.stack);
+    }
+    return this;
+};
+BaseObject.prototype.removeChild = function(toRemove, clear) {
     forEach(this.children(), function(child, index, children) {
         if (child === toRemove) {
             exec(children.splice(index, 1)[0], 'parent', null);
+            clear && exec(toRemove, 'clear');
             return true;
         }
     });
     return this;
 };
-BaseObject.prototype.removeChildAt = function(index){
-    exec(this.children().splice(index, 1)[0], 'parent', null);
-    return this;
+BaseObject.prototype.removeChildAt = function(index, clear) {
+    return this.removeChild(this.children().splice(index, 1)[0], clear);
 };
 
 BaseObject.prototype.childrenWithoutEmpty = function() {
@@ -113,9 +110,9 @@ BaseObject.prototype.updateChildren = function(context) {
         return a.zIndex() - b.zIndex();
     });
     for (var i = 0; i < children.length; i++) {
-        try{
+        try {
             children[i].update(context);
-        }catch(e){
+        } catch (e) {
             debugger
         }
     }

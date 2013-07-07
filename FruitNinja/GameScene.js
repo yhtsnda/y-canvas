@@ -3,23 +3,25 @@ function GameScene() {
         bg = new Sprite(asserts.bg),
         score = new Sprite({
             position: PointMake(20, 30),
-            images: [{
-                    img: 'images/score.png'
-                }
-            ]
+            images: {
+                img: 'images/score.png'
+            },
+            zIndex: 1
         }),
         cutted = new Sprite({
-            position: PointMake(60, 30)
+            position: PointMake(60, 30),
+            zIndex: 2
         }),
         cuttedNum = 0,
-        animation;
+        animation,
+        fruits = ['peach', 'sandia', 'banana', 'basaha', 'apple'];
 
     function createFruit() {
         if (Math.random() > 0.5) {
             var fruit = fruitFactory.get()._init(asserts[(function() {
-                return ['peach', 'sandia', 'banana', 'basaha', 'apple'][parseInt(Math.random() * 5)]
+                return fruits[parseInt(Math.random() * 5)];
             })()]).reset();
-            fruit.zIndex(1);
+            fruit.zIndex(20);
             fruit.position(PointMake(100 + Math.random() * 440, 480));
             fruit.rotate(Math.PI * Math.random());
             var v0 = -18 - 2 * Math.random(),
@@ -35,7 +37,7 @@ function GameScene() {
                     if (!this.departed) {
                         this.publish('missfruit', this.actualPosition().x);
                     }
-                    this.parent().removeChild(this);
+                    this.remove();
                     this.unSubscribe('knifeslice');
                     fruitFactory.collect(this);
                 }
@@ -59,15 +61,14 @@ function GameScene() {
     });
     layer.subscribe('missfruit', function(x) {
         var miss = new Sprite({
-            images: [{
-                    img: 'images/xxxf.png'
-                }
-            ],
+            images: {
+                img: 'images/xxxf.png'
+            },
             position: PointMake(x, 500)
         });
         this.addChild(miss);
         miss.runAction(new Sequence(new MoveBy(PointMake(0, -80), 1000), new Delay(500), new FadeOut(1000, function() {
-            miss.parent().removeChild(miss);
+            miss.remove();
         })));
         if (++missed == 3) {
             layer.unSubscribe('missfruit');
@@ -81,6 +82,7 @@ function GameScene() {
         gameover.runAction(new ScaleTo(PointMake(1, 1), 200));
         gameover.onmousedown.push(function() {
             this.runAction(new ScaleTo(PointMake(0, 0), 200, function() {
+                gameover.remove();
                 gameover.unSubscribe();
                 gameover.publish('introduce');
             }));
