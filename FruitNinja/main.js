@@ -107,13 +107,9 @@ function FruitNinja() {
     }).onSubscribe('introduce', function() {
         gameStateManager.changeState('introduce');
     }).onSubscribe('gamestart', function() {
-        setTimeRequest(function() {
-            gameStateManager.changeState('game');
-        }, 2);
+        gameStateManager.changeState('game');
     }).onSubscribe('restart', function() {
-        setTimeRequest(function() {
-            gameStateManager.changeState('introduce');
-        }, 2);
+        gameStateManager.changeState('introduce');
     });
     app.run();
 }

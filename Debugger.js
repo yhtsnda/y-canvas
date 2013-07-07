@@ -1,4 +1,4 @@
-var Debugger = Global().console || {
+var Debugger = window.console || {
     debug : function () {},
     info : function () {},
     warn : function () {},

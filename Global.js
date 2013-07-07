@@ -1,7 +1,3 @@
-function Global() {
-    return window;
-}
-
 function addEventHandler(dom, type, fn) {
     if (!dom || !type || !fn)
         return;
@@ -13,13 +9,6 @@ function addEventHandler(dom, type, fn) {
         dom["on" + type] = fn;
     }
 };
-
-function singleton(fn) {
-    var returnVal;
-    return returnVal !== undefined ? returnVal : function() {
-        return returnVal = fn();
-    };
-}
 
 function domReady(c) {
     if (!("onreadystatechange" in document) || !("readystatechange" in document)) {
@@ -38,18 +27,18 @@ function domReady(c) {
     }
 }
 var requestAnimFrame = (function() {
-        return Global().requestAnimationFrame ||
-               Global().webkitRequestAnimationFrame ||
-               Global().mozRequestAnimationFrame ||
-               Global().oRequestAnimationFrame ||
-               Global().msRequestAnimationFrame;
+        return window.requestAnimationFrame ||
+               window.webkitRequestAnimationFrame ||
+               window.mozRequestAnimationFrame ||
+               window.oRequestAnimationFrame ||
+               window.msRequestAnimationFrame;
     })(),
     cancelAnimFrame = (function() {
-        return Global().cancelAnimationFrame ||
-               Global().webkitCancelRequestAnimationFrame ||
-               Global().mozCancelRequestAnimationFrame ||
-               Global().oCancelRequestAnimationFrame ||
-               Global().msCancelRequestAnimationFram;
+        return window.cancelAnimationFrame ||
+               window.webkitCancelRequestAnimationFrame ||
+               window.mozCancelRequestAnimationFrame ||
+               window.oCancelRequestAnimationFrame ||
+               window.msCancelRequestAnimationFram;
     })(),
     setTimeRequest = function(callback, time) {
         if (time == 0) {
@@ -58,12 +47,12 @@ var requestAnimFrame = (function() {
         }
         var tick = 0;
         return t = {
-            timeRequest : Global().requestAnimFrame(function() {
+            timeRequest : window.requestAnimFrame(function() {
                 tick++;
                 if (tick == time) {
                     callback && callback();
                 } else {
-                    t.timeRequest = Global().requestAnimFrame(arguments.callee);
+                    t.timeRequest = window.requestAnimFrame(arguments.callee);
                 }
             })
         };
