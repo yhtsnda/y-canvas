@@ -21,18 +21,18 @@ function GameScene() {
             var fruit = fruitFactory.get()._init(asserts[(function() {
                 return fruits[parseInt(Math.random() * 5)];
             })()]).reset();
-            fruit.zIndex(20);
+            fruit.zIndex(22);
             fruit.position(PointMake(100 + Math.random() * 440, 480));
             fruit.rotate(Math.PI * Math.random());
-            var v0 = -18 - 2 * Math.random(),
-                a = 0.4 + Math.random() * 0.1,
+            var v0 = -20 + 1 * Math.random(),
+                a = 0.5 - Math.random() * 0.1,
                 t = 0,
                 rotate = 0.05 - Math.random() * 0.1;
             fruit.onUpdate = function() {
                 this.rotate(this.rotate() + rotate);
             };
             fruit.afterUpdate = function() {
-                this.position().y = 480 + v0 * ++t + 0.5 * a * t * t;
+                this.position().y += v0 + 0.5 * a * (2 * ++t - 1);
                 if (this.actualPosition().y > 480 + this.height()) {
                     if (!this.departed) {
                         this.publish('missfruit', this.actualPosition().x);
@@ -81,6 +81,7 @@ function GameScene() {
         this.addChild(gameover);
         gameover.runAction(new ScaleTo(PointMake(1, 1), 200));
         gameover.onmousedown.push(function() {
+            this.publish('gamerestart');
             this.runAction(new ScaleTo(PointMake(0, 0), 200, function() {
                 gameover.remove();
                 gameover.unSubscribe();

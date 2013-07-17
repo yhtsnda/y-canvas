@@ -21,15 +21,15 @@ function LoadingScene() {
             ctx.rect(70, 230, 500, img.height);
             ctx.stroke();
         };
-    });
-    imgs.some(function(url) {
-        ImageEngine.load(url, function() {
-            BaseObject.prototype.publish('loaded');
+        imgs.some(function(url) {
+            ImageEngine.load(url, function() {
+                BaseObject.prototype.publish('loaded');
+            });
         });
-    });
-    audios.some(function(url) {
-        AudioEngine.load(url, function() {
-            BaseObject.prototype.publish('loaded');
+        audios.some(function(url) {
+            AudioEngine.load(url, function() {
+                BaseObject.prototype.publish('loaded');
+            });
         });
     });
     return new Scene().addChild(new Layer().addChild(progressBar));

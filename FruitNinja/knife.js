@@ -36,8 +36,14 @@ function Knife() {
             }
             ctx.closePath();
 
-            this.publish('knifeslice', this.parts);
+            !this.sleep && this.publish('knifeslice', this.parts);
         }
     };
+    knife.subscribe('gameover', function(){
+        this.sleep = true;
+    });
+    knife.subscribe('gamerestart', function(){
+        this.sleep = false;
+    });
     return knife;
 }

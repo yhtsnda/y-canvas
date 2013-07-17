@@ -5,7 +5,7 @@
 4.add plus加 ,subtract减 ,multiply times乘 ,divide除
  */
 function PointMake(x, y) {
-    return new Point(x, y);
+    return new Point(x, y === undefined ? x : y);
 }
 function PointZero() {
     return PointMake(0, 0);

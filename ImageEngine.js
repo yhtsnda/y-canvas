@@ -7,18 +7,12 @@ var ImageEngine = function() {
         load: function(url, callback) {
             var cache = caches[url];
             if (cache) {
-                if (cache.loaded) {
-                    forEachWithMe(callback, function(fn) {
-                        fn.call(cache);
-                    });
-                } else {
-                    forEachWithMe(callback, function(fn) {
-                        cache.callback.push(fn);
-                    });
-                }
+                forEachWithMe(callback, function(fn) {
+                    cache.loaded ? fn.call(cache) : cache.callback.push(fn);
+                });
                 return cache;
             } else {
-                var img = new Image();
+                var img = new Image;
                 img.src = url;
                 img.callback = [];
                 caches[url] = img;
