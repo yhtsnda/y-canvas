@@ -18,6 +18,7 @@ Layer.prototype.handleEvent = function() {
 Layer.prototype.update = function(context) {
     this.handleEvent(context);
     this.exec('onUpdate', context);
+    exec(this.actionManager, 'update');
     this.exec('_update', context);
     this.updateChildren(context);
     this.render(context);

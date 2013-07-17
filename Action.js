@@ -160,7 +160,7 @@ ScaleTo.prototype._update = function(time) {
     return this;
 };
 ScaleTo.prototype._reset = function() {
-    //TODO 
+    //TODO
     return this;
 };
 ScaleTo.prototype._clear = function() {
@@ -209,12 +209,13 @@ SkewTo.prototype._update = function(time) {
     this.target.skew(this.startSkew.add(this.deltaSkew.multi(this.getTime(time))));
     return this;
 };
-SkewTo.prototype._clear = function(){
+SkewTo.prototype._clear = function() {
     delete this.startSkew;
     delete this.deltaSkew;
     delete this.skewTo;
     return this;
 };
+
 function SkewBy() {
     Action.apply(this, arguments);
 }
@@ -279,23 +280,43 @@ RotateBy.prototype._reset = function() {
 RotateBy.prototype._clear = function() {
     RotateTo.prototype._clear.apply(this, arguments);
 };
-/*
-TODO implement Tint
+
 function TintTo() {
-Action.apply(this, arguments);
+    Action.apply(this, arguments);
 }
 TintTo.prototype = new Action;
-TintTo.prototype._init = function (tintTo) {
-this.tintTo = tintTo;
+TintTo.prototype._init = function(tintTo) {
+    this.tintTo = tintTo;
 };
-TintTo.prototype._startWithTarget = function () {
-//TODO add tint support to Sprite
-//this.startTint = this.target.tint();
-//this.deltaTint =
+TintTo.prototype._startWithTarget = function() {
+    //TODO add tint support to Sprite
+    //this.startTint = this.target.tint();
+    //this.deltaTint =
+
+    var _render = this.target._render;
+    var t = 0;
+    var fill = 'hsla(' + t + ', 100%, 50%, 1)';
+    this.target._render = function(ctx) {
+        var composite = ctx.globalCompositeOperation;
+        ctx.globalCompositeOperation = 'destination-out';
+        _render.apply(this, arguments);
+        ctx.fillStyle = fill = 'hsla(' + ++t + ', 100%, 50%, 1)';
+        ctx.globalCompositeOperation = 'destination-over';
+        var pos = this.actualPosition(),
+            w = this.width() * this.scale().x,
+            h = this.height() * this.scale().y;
+        ctx.fillRect(pos.x, pos.y, w, h);
+        ctx.globalAlpha = 0.5;
+        ctx.globalCompositeOperation = composite;
+        _render.apply(this, arguments);
+    };
 };
-TintTo.prototype._update = function () {
-//TODO support update here
+TintTo.prototype._update = function() {
+    //TODO support update here
+    //getContext()
+
 };
+/*
 function TintBy() {
 Action.apply(this, arguments);
 }
@@ -360,8 +381,13 @@ function FadeIn() {
     Action.apply(this, arguments);
 }
 FadeIn.prototype = new Action;
-FadeIn.prototype._init = function() {
+FadeIn.prototype._init = function(duration) {
     this.fadeTo = 1;
+    this.duration = duration;
+    var callbacks = this.callback();
+    forEach(slice(arguments, 1), function(callback, index) {
+        callbacks.push(callback);
+    });
 };
 FadeIn.prototype._startWithTarget = function() {
     FadeTo.prototype._startWithTarget.apply(this, arguments);
@@ -476,32 +502,13 @@ Repeat.prototype._init = function(action, repeatTotal) {
     this.action = action;
     this.repeatTotal = repeatTotal;
     this.hasRepeated = 0;
-    /* this.done = function () {
-        var _done;
-        return function (done) {
-            return done === undefined ? _done : _done = done;
-        };
-    }(); */
 };
-/* Repeat.prototype._update = function () {
-    debugger
-    this.action._update.apply(this.action, arguments);
-    if(this.action.done()){
-        this.hasRepeated++;
-        if(this.hasRepeated < this.repeatTotal){
-            this.action.done(false);
-        }else{
-            this.done();
-        }
-    }
-}; */
 Repeat.prototype.checkDone = function() {
     if (this.hasRepeated >= this.repeatTotal) {
         return true;
     }
 };
 Repeat.prototype._update = function(time) {
-    //console.log(time);
     exec(this.currentAction(), 'update', time);
     if (this.action.done()) {
         this.hasRepeated++;
@@ -522,9 +529,6 @@ Repeat.prototype.currentAction = function() {
     }
     this.action.startWithTarget(this.target);
 };
-/* Repeat.prototype.done = function () {
-    return this.action.done.apply(this.action, arguments);
-}; */
 Repeat.prototype._reset = function() {};
 Repeat.prototype._clear = function() {
     this.actions(null);
@@ -645,7 +649,7 @@ CustomerAction.prototype._update = function(time) {
             this.target[prop](this['start' + prop] + this['delta' + prop] * t);
         } else {
             this.target[prop](this['start' + prop].sum(this['delta' + prop].multi(t)));
-            console.log(this['start' + prop].sum(this['delta' + prop].multi(t)));
+            //console.log(this['start' + prop].sum(this['delta' + prop].multi(t)));
         }
     }, this);
 };

@@ -15,11 +15,17 @@ function LaunchScene() {
         this.unSubscribe();
         this.publish('gamestart');
     };
+    sandia.depart = function() {
+        this.unSubscribe();
+        this.publish('gamestart');
+    };
     mask.runAction(Easing.withAction(new MoveTo(new Point(0, 0), 1000), 'easeOutQuad'));
     dojo.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(-Math.PI * 2, 4000))));
     game.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(Math.PI * 2, 4000))));
     quit.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(-Math.PI * 2, 4000))));
-    sandia.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300), new RepeatForever(new RotateTo(-Math.PI * 2, 4000))));
+    sandia.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300, function() {
+        sandia.subscribe('knifeslice', handleCross);
+    }), new RepeatForever(new RotateTo(-Math.PI * 2, 4000))));
     peach.runAction(new Sequence(new Delay(2500), new ScaleTo(PointMake(1, 1), 300, function() {
         peach.subscribe('knifeslice', handleCross);
     }), new RepeatForever(new RotateTo(Math.PI * 2, 4000))));

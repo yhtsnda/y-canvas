@@ -67,7 +67,8 @@ BaseObject.prototype.remove = function() {
 BaseObject.prototype.removeChild = function(toRemove, clear) {
     forEach(this.children(), function(child, index, children) {
         if (child === toRemove) {
-            exec(children.splice(index, 1)[0], 'parent', null);
+            exec(child, 'parent', null);
+            delete children[index];
             clear && exec(toRemove, 'clear');
             return true;
         }
@@ -75,11 +76,9 @@ BaseObject.prototype.removeChild = function(toRemove, clear) {
     return this;
 };
 BaseObject.prototype.removeChildAt = function(index, clear) {
-    return this.removeChild(this.children().splice(index, 1)[0], clear);
-};
-
-BaseObject.prototype.childrenWithoutEmpty = function() {
-    return this.children() && this.children().removeNullVal();
+    this.removeChild(this.children()[index], clear);
+    delete this.children()[index];
+    return this;
 };
 BaseObject.prototype.resetChildren = function() {
     forEach(this.children(), function(child) {
@@ -113,8 +112,8 @@ BaseObject.prototype.updateChildren = function(context) {
         try {
             children[i].update(context);
         } catch (e) {
-            debugger
         }
     }
+    children.removeNullVal();
     return this;
 };

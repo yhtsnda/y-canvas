@@ -33,8 +33,8 @@ Sprite.prototype.update = function(ctx) {
     this.performTransform(ctx);
     this._update(ctx);
     this.render(ctx);
-    this.updateChildren(ctx);
     this.afterUpdate(ctx);
+    this.updateChildren(ctx);
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1;
