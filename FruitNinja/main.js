@@ -37,6 +37,7 @@ var defaultFunc = function() {},
 
 function particle(img, pos) {
     var sys = new ParticleSystem;
+    sys.zIndex(50);
     var gravity = new Gravity(0.2);
     for (var i = 0; i < 25; i++) {
         var particle = sys.getParticle().reset();

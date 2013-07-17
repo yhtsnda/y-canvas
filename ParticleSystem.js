@@ -7,6 +7,7 @@ var ParticleSystem = function() {
         this.parent = prop(null);
         this.zIndex = prop(1);
         this.children = prop([]);
+        this.zIndex = prop(0);
     }
     ParticleSystem.prototype.remove = function() {
         try {
