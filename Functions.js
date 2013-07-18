@@ -122,3 +122,8 @@ function propArray(defaultValue) {
         }
     })();
 }
+function proxy(fn,context){
+    return function(){
+        fn.apply(context,arguments);
+    };
+}
