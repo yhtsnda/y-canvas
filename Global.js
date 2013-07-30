@@ -61,7 +61,6 @@ function visibilityChange(callback) {
     }
     return true;
 }
-
 var requestAnimFrame = (function() {
     return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
