@@ -18,10 +18,12 @@ Sprite.prototype.init = function() {
 };
 Sprite.prototype._init = function(settings) {
     forEach(settings, function(setting, prop) {
-        if (isFunction(this[prop])) {
+        if(prop.indexOf('_') === 0 && isFunction(this[prop.substring(1)])){
+            this[prop.substring(1)] = setting;
+        }else if (isFunction(this[prop])) {
             this[prop](setting);
         } else {
-            this[prop] = setting;
+             this[prop] = setting;
         }
     }, this);
     return this;

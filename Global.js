@@ -10,6 +10,18 @@ function addEventHandler(dom, type, fn) {
     }
 };
 
+function removeEventHandler(dom, type, fn) {
+    if (!dom || !type || !fn)
+        return;
+    if (dom.removeEventListener) {
+        dom.removeEventListener(type, fn, false);
+    } else if (dom.detachEvent) { //IE
+        dom.detachEvent("on" + type, fn);
+    } else {
+        dom["on" + type] = null;
+    }
+};
+
 function domReady(callback) {
     if (!("onreadystatechange" in document) || !("readystatechange" in document)) {
         var d = setTimeout(function() {
@@ -29,19 +41,19 @@ function domReady(callback) {
 
 function visibilityChange(callback) {
     if ('hidden' in document) {
-        document.addEventListener('visibilitychange', function () {
+        document.addEventListener('visibilitychange', function() {
             callback(document.hidden);
         }, false);
     } else if ('webkitHidden' in document) {
-        document.addEventListener('webkitvisibilitychange', function () {
+        document.addEventListener('webkitvisibilitychange', function() {
             callback(document.webkitHidden);
         }, false);
     } else if ('mozHidden' in document) {
-        document.addEventListener('mozvisibilitychange', function () {
+        document.addEventListener('mozvisibilitychange', function() {
             callback(document.mozHidden);
         }, false);
     } else if ('msHidden' in document) {
-        document.addEventListener('msvisibilitychange', function () {
+        document.addEventListener('msvisibilitychange', function() {
             callback(document.msHidden);
         }, false);
     } else {
@@ -51,18 +63,18 @@ function visibilityChange(callback) {
 }
 
 var requestAnimFrame = (function() {
-        return window.requestAnimationFrame ||
-               window.webkitRequestAnimationFrame ||
-               window.mozRequestAnimationFrame ||
-               window.oRequestAnimationFrame ||
-               window.msRequestAnimationFrame;
-    })(),
+    return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame;
+})(),
     cancelAnimFrame = (function() {
         return window.cancelAnimationFrame ||
-               window.webkitCancelRequestAnimationFrame ||
-               window.mozCancelRequestAnimationFrame ||
-               window.oCancelRequestAnimationFrame ||
-               window.msCancelRequestAnimationFram;
+            window.webkitCancelRequestAnimationFrame ||
+            window.mozCancelRequestAnimationFrame ||
+            window.oCancelRequestAnimationFrame ||
+            window.msCancelRequestAnimationFram;
     })(),
     setTimeRequest = function(callback, time) {
         if (time == 0) {
@@ -71,7 +83,7 @@ var requestAnimFrame = (function() {
         }
         var tick = 0;
         return t = {
-            timeRequest : window.requestAnimFrame(function() {
+            timeRequest: window.requestAnimFrame(function() {
                 tick++;
                 if (tick == time) {
                     callback && callback();

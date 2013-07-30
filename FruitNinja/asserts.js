@@ -31,7 +31,7 @@ var reset = function() {
             right = FruitPartFactory.getFruitPart(this.type + 'Right');
         left.position().reset(0, 0);
         right.position().reset(0, 0);
-        this.parent().addChild(particle(ImageEngine.get(this.juice), PointMake(this.actualPosition().x + this.width() / 2, this.actualPosition().y + this.height() / 2)));
+        this.parent().addChild(particle(ImageEngine.get(this.juice), PointMake(this.actualPosition().x, this.actualPosition().y)));
         left.onUpdate = function() {
             this.position().x -= 2;
         }
@@ -43,10 +43,12 @@ var reset = function() {
     return this;
 }, asserts = {
         bg: {
-            images: {
-                img: 'images/background.jpg'
-            },
-            zIndex: -1
+            zIndex: -1,
+            _draw: function(ctx){
+                this.pattern = this.pattern || ctx.createPattern(ImageEngine.get('images/background.jpg'), "repeat");
+                ctx.fillStyle = this.pattern;
+                ctx.fillRect(0,0,getDom().width,getDom().height);
+            }
         },
         logo: {
             images: {
