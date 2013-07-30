@@ -27,6 +27,15 @@ function GameScene() {
             var v0 = -20 + 1 * Math.random(),
                 a = 0.5 - Math.random() * 0.1,
                 t = 0,
+            // fruit.position(PointMake(getDom().width * Math.random(), getDom().height));
+            // var s = getDom().height * (0.5 + Math.random() * 0.5),
+            //     t = 0,
+            //     v0 = - s / 25,
+            //     a = v0 / 50 ;
+            // fruit.rotate(Math.PI * Math.random());
+            // var /*v0 = -(getDom().height /2 + (Math.random() * getDom().height /2))/5,
+            //     a = -v0/10,
+            //     t = 0,*/
                 rotate = 0.05 - Math.random() * 0.1;
             fruit.onUpdate = function() {
                 this.rotate(this.rotate() + rotate);
@@ -34,6 +43,8 @@ function GameScene() {
             fruit.afterUpdate = function() {
                 this.position().y += v0 + 0.5 * a * (2 * ++t - 1);
                 if (this.actualPosition().y > 480 + this.height()) {
+                //this.position().y = s + (v0 * (++t) + 0.5 * a * t * t);
+                //if (this.actualPosition().y > getDom().width + this.height()) {
                     if (!this.departed) {
                         this.publish('missfruit', this.actualPosition().x);
                     }

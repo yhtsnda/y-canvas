@@ -1,5 +1,5 @@
 var defaultFunc = function() {},
-    knifeFactory = Factory(function createKnife(){
+    knifeFactory = Factory(function createKnife() {
         return {
             reset: function(x, y, life) {
                 this.x = x;
@@ -9,7 +9,7 @@ var defaultFunc = function() {},
             }
         }
     }),
-    blotFactory = Factory(function(){
+    blotFactory = Factory(function() {
         return new Sprite;
     }),
     FruitPartFactory = (function() {
@@ -31,7 +31,7 @@ var defaultFunc = function() {},
             }
         }
     })(),
-    fruitFactory = Factory(function(){
+    fruitFactory = Factory(function() {
         return new Sprite;
     });
 
@@ -39,19 +39,18 @@ function particle(img, pos) {
     var sys = new ParticleSystem;
     sys.zIndex(50);
     var gravity = new Gravity(0.2);
-    for (var i = 0; i < 25; i++) {
+    for (var i = 0; i < 12; i++) {
         var particle = sys.getParticle().reset();
         particle.image({
             img: img
         });
         particle.position().reset(pos.x, pos.y);
-        particle.scale = 0.5 + Math.random() * 0.3;
-        particle.rotation = Math.random() * Math.PI * 2;
+        particle.scale = 1; // + Math.random() * 0.3;
         particle.damp().reset(0, 0);
-        particle.velocity().reset(0, -(4 + Math.random() * 4));
-        particle.velocity().rotate(360 * Math.random());
+        particle.velocity().reset(0, -4);
+        particle.velocity().rotate(i / 12 * Math.PI * 2);
         particle.forcesMap().push(gravity);
-        particle.alpha = 0.5 + Math.random() * 0.5;
+        particle.alpha = 1; // + Math.random() * 0.5;
         sys.addChild(particle);
         particle.onUpdate = function() {
             this.scale -= 0.02;
@@ -68,51 +67,51 @@ function particle(img, pos) {
 }
 
 function FruitNinja() {
-    var dom = document.getElementById('app');
-    dom.width = 640; //device.resolution.w;
-    dom.height = 480; //device.resolution.h;
-    var app = new Application(dom);
+    start(function(dom) {
+        var app = new Application(dom);
 
-    var gameStateManager = (function() {
-        var scenes = app.children(),
-            states = {
-                'loading': function() {
-                    app.addChildAt(LoadingScene(), 0);
-                },
-                'introduce': function() {
-                    app.getChildAt(0).clear();
-                    //exec(scenes.shift(), 'clear');
-                    app.addChildAt(LaunchScene(), 0);
-                },
-                'game': function() {
-                    app.getChildAt(0).clear();
-                    //exec(scenes.shift(), 'clear');
-                    app.addChildAt(GameScene(), 0);
-                },
-                'gameover': function() {
-                    app.getChildAt(0).clear();
-                    //exec(scenes.shift(), 'clear');
-                    app.addChildAt(GameoverScene(), 0);
+        var gameStateManager = (function() {
+            var scenes = app.children(),
+                states = {
+                    'loading': function() {
+                        app.addChildAt(LoadingScene(), 0);
+                    },
+                    'introduce': function() {
+                        app.getChildAt(0).clear();
+                        //exec(scenes.shift(), 'clear');
+                        app.addChildAt(LaunchScene(), 0);
+                    },
+                    'game': function() {
+                        app.getChildAt(0).clear();
+                        //exec(scenes.shift(), 'clear');
+                        app.addChildAt(GameScene(), 0);
+                    },
+                    'gameover': function() {
+                        app.getChildAt(0).clear();
+                        //exec(scenes.shift(), 'clear');
+                        app.addChildAt(GameoverScene(), 0);
+                    }
+                };
+            app.addChildAt(KnifeScene(), 0);
+            return {
+                changeState: function(state) {
+                    states[state] && states[state]();
                 }
-            };
-        app.addChildAt(KnifeScene(), 0);
-        return {
-            changeState: function(state) {
-                states[state] && states[state]();
             }
-        }
-    })();
-    gameStateManager.changeState('loading');
-    MessageCenter.onSubscribe('loading', function() {
+        })();
         gameStateManager.changeState('loading');
-    }).onSubscribe('introduce', function() {
-        gameStateManager.changeState('introduce');
-    }).onSubscribe('gamestart', function() {
-        gameStateManager.changeState('game');
-    }).onSubscribe('restart', function() {
-        gameStateManager.changeState('introduce');
+        MessageCenter.onSubscribe('loading', function() {
+            gameStateManager.changeState('loading');
+        }).onSubscribe('introduce', function() {
+            gameStateManager.changeState('introduce');
+        }).onSubscribe('gamestart', function() {
+            gameStateManager.changeState('game');
+        }).onSubscribe('restart', function() {
+            gameStateManager.changeState('introduce');
+        });
+        app.run();
+
     });
-    app.run();
 }
 
 function supportKnife(layer, knife) {
