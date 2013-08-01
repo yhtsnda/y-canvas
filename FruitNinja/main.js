@@ -57,9 +57,6 @@ function particle(img, pos) {
             this.alpha -= 0.05;
             if (this.scale <= 0) {
                 this.remove();
-                if (sys.children && sys.children() && sys.children().length == 0) {
-                    sys.remove();
-                }
             }
         };
     }
