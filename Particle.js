@@ -54,6 +54,7 @@ Particle.prototype.update = function(ctx) {
 Particle.prototype._render = function(ctx) {
     //ctx.save();
     //ctx.globalAlpha = this.alpha;
+    this.scale = Math.max(0, this.scale);
     ctx.translate(this.position().x, this.position().y);
     ctx.rotate(this.rotation);
     ctx.scale(this.scale, this.scale);
