@@ -5,27 +5,16 @@ var audioPool = function Factory(create) {
     var me = this;
     var obj = {
         get: function(audio) {
-            var _audio;
-            if(factory[audio.src] && factory[audio.src].length){
-                _audio = factory[audio.src].pop();
-                console.log('pop ' + _audio.src + '\t' + _audio.tag)
-            }else{
-                _audio = isFirefox ? audio : audio.cloneNode(true);
-                _audio.tag = parseInt(Math.random()  * 100)
-                console.log('clone ' + _audio.src + '\t' + _audio.tag)
-            }
-            addEventHandler(_audio, 'ended', function(){
-                console.log('ended ' + this.src + '\t' + this.tag);
-            });
-            removeEventHandler(_audio, 'ended', collect);
-            addEventHandler(_audio, 'ended', collect);
-            return _audio;
+            return (factory[audio.src] && factory[audio.src].length) ? factory[audio.src].pop() : (function() {
+                audio = isFirefox ? audio : audio.cloneNode(true);
+                removeEventHandler(audio, 'ended', collect);
+                addEventHandler(audio, 'ended', collect);
+                return audio;
+            })(audio);
         },
         collect: function(audio) {
-            removeEventHandler(audio, 'ended', collect);
             factory[audio.src] = factory[audio.src] || [];
             factory[audio.src].push(audio);
-            console.log("push:" + audio.src + '\t' + factory[audio.src].length + '\t'  + '\t' + audio.tag);
         },
         see: function() {
             return factory;
