@@ -15,17 +15,13 @@ function Particle(pos, life, img) {
     this.alpha = 1;
 }
 Particle.prototype.render = function(ctx) {
-    //this.onRender(ctx);
+    this.onRender(ctx);
     if (this.image()) {
         this._render(ctx);
     } else {
         this.draw(ctx);
     }
-    //this.afterRender(ctx);
-};
-
-Particle.prototype.renderGL = function(ctx) {
-    
+    this.afterRender(ctx);
 };
 Particle.prototype.update = function(ctx) {
     if (this.life() <= 0) {
@@ -80,12 +76,11 @@ Particle.prototype.remove = function(){
     }
 };
 Particle.prototype.draw =
-//Particle.prototype.afterRender =
-//Particle.prototype.onRender =
-//Particle.prototype.onUpdate =
-//Particle.prototype._update =
-//Particle.prototype.afterUpdate = 
-function() {};
+Particle.prototype.afterRender =
+Particle.prototype.onRender =
+Particle.prototype.onUpdate =
+Particle.prototype._update =
+Particle.prototype.afterUpdate = function() {};
 Particle.prototype.reset = function() {
     this.position().reset();
     this.velocity().reset(); //速度
