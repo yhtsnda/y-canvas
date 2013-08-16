@@ -1,13 +1,7 @@
 function GameScene() {
     var layer = new Layer,
         bg = new Sprite(asserts.bg),
-        score = new Sprite({
-            position: PointMake(20, 30),
-            images: {
-                img: 'images/score.png'
-            },
-            zIndex: 1
-        }),
+        score = new Sprite(asserts.score),
         cutted = new Sprite({
             position: PointMake(60, 30),
             zIndex: 2
@@ -59,7 +53,7 @@ function GameScene() {
         animation = setTimeRequest(createFruit, 40);
     }
     animation = setTimeRequest(createFruit, 40);
-    cutted.position();
+    //cutted.position();
     cutted.draw = function(ctx) {
         ctx.fillStyle = "#af7c05";
         ctx.font = "34px Tahoma bold";
@@ -71,12 +65,8 @@ function GameScene() {
         cuttedNum++;
     });
     layer.subscribe('missfruit', function(x) {
-        var miss = new Sprite({
-            images: {
-                img: 'images/xxxf.png'
-            },
-            position: PointMake(x, 500)
-        });
+        var miss = new Sprite(asserts.miss);
+        miss.position().reset(x, 500);
         this.addChild(miss);
         miss.runAction(new Sequence(new MoveBy(PointMake(0, -80), 1000), new Delay(500), new FadeOut(1000, function() {
             miss.remove();

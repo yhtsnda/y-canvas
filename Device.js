@@ -1,12 +1,12 @@
 var device = {};
 var start = function(callback) {
     domReady(function() {
-        device.resolution = PointMake(document.body.clientWidth, document.body.clientHeight);
+        device.resolution = PointMake(640,480);//PointMake(document.body.clientWidth, document.body.clientHeight);
         var dom = document.createElement('canvas');
         dom.id = 'app';
         document.body.appendChild(dom);
-        dom.width = 640;//device.resolution.x;
-        dom.height = 480;//device.resolution.y;
+        dom.width = device.resolution.x;
+        dom.height = device.resolution.y;
         callback && callback(dom);
         /*
         var resizeTimeout;

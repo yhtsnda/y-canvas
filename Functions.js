@@ -4,6 +4,7 @@ function singleton(fn) {
         return returnVal = fn();
     };
 }
+
 function mixIn(a, b, modifyA) {
     if (modifyA) {
         for (var p in b) {
@@ -78,14 +79,10 @@ currying('exec', 'exec', BaseObject.prototype);
 function setCallback(callback) {
     this.callback = this.callback || [];
     if (callback) {
-        if (isArray(callback)) {
-            var me = this;
-            forEach(callback, function(fn) {
-                fn && me.callback.push(fn);
-            });
-        } else {
-            this.callback.push(callback);
-        }
+        var me = this;
+        forEachWithMe(callback, function(fn) {
+            fn && me.callback.push(fn);
+        });
     }
 }
 
@@ -94,7 +91,7 @@ function emitCallback() {
     forEach(me.callback, function(fn) {
         fn && fn.call(me);
     });
-    me.callback = [];
+    me.callback.length = 0;
 }
 
 function prop(defaultValue) {
@@ -122,8 +119,9 @@ function propArray(defaultValue) {
         }
     })();
 }
-function proxy(fn,context){
-    return function(){
-        fn.apply(context,arguments);
+
+function proxy(fn, context) {
+    return function() {
+        fn.apply(context, arguments);
     };
 }

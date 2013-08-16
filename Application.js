@@ -18,10 +18,10 @@ Application.prototype.init = function(dom) {
     window.app = this;
 };
 Application.prototype.getContext = function() {
-    return this.dom.getContext(this.supportOpenGLES() ? 'opengles' : '2d');
+    return this.dom.getContext(this.supportWebGL() ? 'webgl' : '2d');
 };
-Application.prototype.supportOpenGLES = function() {
-    return false;
+Application.prototype.supportWebGL = function() {
+    return true;
 };
 Application.prototype.run = function() {
     this.resume();
@@ -33,7 +33,7 @@ Application.prototype.pause = function(pause) {
         forEach(this.children(), function(scene, index) {
             exec(scene, 'pause', pause);
         });
-        exec(this.nextScene, 'pause', pause);
+        //exec(this.nextScene, 'pause', pause);
         return this._paused = pause;
     }).call(this, pause) : this._paused;
 };
@@ -47,7 +47,7 @@ Application.prototype.clear = function() {
     forEach(this.children(), function(scene, index) {
         exec(scene, 'clear');
     });
-    exec(this.nextScene, 'clear');
+    //exec(this.nextScene, 'clear');
     this.clear();
 };
 Application.prototype.update = function(context) {
@@ -57,7 +57,7 @@ Application.prototype.update = function(context) {
     forEach(this.children(), function(scene, index) {
         exec(scene, 'update', context);
     });
-    exec(me.nextScene, 'update', context);
+    //exec(me.nextScene, 'update', context);
     //me.handleEvents();
     me.showFPS(context);
     EventSystem.deallingEvents(false);
@@ -67,9 +67,10 @@ Application.prototype.update = function(context) {
     });
 };
 Application.prototype.clearCanvas = function(context) {
-    context.clearRect(0, 0, this.dom.width, this.dom.height);
+    this.supportWebGL() ? context.clear(context.COLOR_BUFFER_BIT) : context.clearRect(0, 0, this.dom.width, this.dom.height);
 };
 Application.prototype.showFPS = function(context) {
+    return;
     this._currentFrameCount = this._currentFrameCount || 0;
     if (this._currentFrameCount % 10 === 0) {
         var now = (new Date).valueOf();
