@@ -12,7 +12,7 @@ ActionManager.prototype.init = function(target) {
 };
 ActionManager.prototype.clear = function() {
     this.exec('onClear');
-    this.exec('removeActionManagerSupport');
+    this.removeActionManagerSupport();
     this.exec('afterClear');
     return this;
 };

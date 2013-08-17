@@ -13,7 +13,7 @@ function GameScene() {
     function createFruit() {
         if (Math.random() > 0.5) {
             var fruit = fruitFactory.get()._init(asserts[(function() {
-                return fruits[parseInt(Math.random() * 5)];
+                return fruits[parseInt(Math.random() * fruits.length)];
             })()]).reset();
             fruit.zIndex(22);
             fruit.position(PointMake(100 + Math.random() * 440, 480));
@@ -50,9 +50,9 @@ function GameScene() {
             layer.addChild(fruit);
             AudioEngine.play('sounds/throw');
         }
-        animation = setTimeRequest(createFruit, 40);
+        animation = setTimeRequest(createFruit, 10);
     }
-    animation = setTimeRequest(createFruit, 40);
+    animation = setTimeRequest(createFruit, 10);
     //cutted.position();
     cutted.draw = function(ctx) {
         ctx.fillStyle = "#af7c05";
@@ -71,7 +71,7 @@ function GameScene() {
         miss.runAction(new Sequence(new MoveBy(PointMake(0, -80), 1000), new Delay(500), new FadeOut(1000, function() {
             miss.remove();
         })));
-        if (++missed == 3) {
+        if (++missed == 100) {
             layer.unSubscribe('missfruit');
             cancelAnimFrame(animation.timeRequest);
             this.publish('gameover');

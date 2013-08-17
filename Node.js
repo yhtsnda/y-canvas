@@ -35,7 +35,8 @@ function Node() {
     forEach(["mousedown", "mousemove", "mouseup", "mouseover", "mouseout", "mouseenter", "mouseleave", "keydown", "keypress", "keyup", "touchstart", "touchmove", "touchend", "touchcancel"], function(e) {
         this['on' + e] = [];
     }, this);
-    arguments.length ? exec(this, 'init', arguments) : exec(this, 'init');
+    this.init.apply(this, arguments);
+    //arguments.length ? exec(this, 'init', arguments) : exec(this, 'init');
 }
 Node.prototype = new BaseObject;
 
@@ -46,7 +47,8 @@ Node.prototype.resume = function() {
     this.pause(false);
 };
 Node.prototype.runAction = function() {
-    exec(this.actionManager, 'runAction', arguments);
+    this.actionManager.runAction.apply(this.actionManager, arguments);
+    //exec(this.actionManager, 'runAction', arguments);
 };
 Node.prototype.clear = function() {
     this.unSubscribe();

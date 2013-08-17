@@ -16,6 +16,7 @@ var audioPool = function Factory(create) {
         collect: function(audio) {
             factory[audio.src] = factory[audio.src] || [];
             factory[audio.src].push(audio);
+                audio.volume = 0.5;
         },
         see: function() {
             return factory;
