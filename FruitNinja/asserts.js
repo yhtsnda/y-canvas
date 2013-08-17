@@ -221,16 +221,14 @@ var reset = function() {
                 img: 'images/fruit/basaha-l.png'
             },
             width: 68,
-            height: 72,
-            position: PointMake(0, 0)
+            height: 72
         },
         basahaRight: {
             images: {
                 img: 'images/fruit/basaha-r.png'
             },
             width: 68,
-            height: 72,
-            position: PointMake(0, 0)
+            height: 72
         },
         sandia: {
             images: {
