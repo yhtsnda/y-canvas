@@ -74,13 +74,8 @@ forEach(['Array', 'Object', 'Function', 'Arguments', 'Number', 'Date', 'Boolean'
         return toStr(obj) === '[object ' + v + ']';
     };
 });
-//currying('exec', 'exec', BaseObject.prototype);
+currying('exec', 'exec', BaseObject.prototype);
 
-function exec(host, func){
-    if(!!host && !!host[func]){
-        host[func].apply(host, Array.prototype.slice.call(arguments, 2));
-    }
-}
 function setCallback(callback) {
     this.callback = this.callback || [];
     if (callback) {

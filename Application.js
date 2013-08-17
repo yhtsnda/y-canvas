@@ -21,7 +21,7 @@ Application.prototype.getContext = function() {
     return this.dom.getContext(this.supportWebGL() ? 'webgl' : '2d');
 };
 Application.prototype.supportWebGL = function() {
-    return false;
+    return true;
 };
 Application.prototype.run = function() {
     this.resume();
