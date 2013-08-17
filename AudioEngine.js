@@ -9,6 +9,7 @@ var audioPool = function Factory(create) {
                 audio = isFirefox ? audio : audio.cloneNode(true);
                 removeEventHandler(audio, 'ended', collect);
                 addEventHandler(audio, 'ended', collect);
+                audio.volume = 0.5;
                 return audio;
             })(audio);
         },
