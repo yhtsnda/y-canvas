@@ -48,19 +48,29 @@ var reset = function() {
                 this.pattern = this.pattern || ctx.createPattern(ImageEngine.get('images/background.jpg'), "repeat");
                 ctx.fillStyle = this.pattern;
                 ctx.fillRect(0,0,getDom().width,getDom().height);
-            }
+            },
+            images: {
+                img: 'images/background.jpg'
+            },
+            position: PointMake(0, 0),
+            width: 640,
+            height: 480
         },
         logo: {
             images: {
                 img: 'images/logo.png'
             },
-            position: PointMake(20, 0)
+            position: PointMake(20, 0),
+            width: 288,
+            height: 135
         },
         mask: {
             images: {
                 img: 'images/home-mask.png'
             },
-            position: PointMake(0, -200)
+            position: PointMake(0, -200),
+            width: 640,
+            height: 183
         },
         ninja: {
             images: {
@@ -74,7 +84,9 @@ var reset = function() {
             images: {
                 img: 'images/home-desc.png'
             },
-            position: PointMake(-200, 130)
+            position: PointMake(-200, 130),
+            width: 161,
+            height: 91
         },
         dojo: {
             images: {
@@ -254,6 +266,22 @@ var reset = function() {
             },
             width: 98,
             height: 85
+        },
+        score: {
+            position: PointMake(20, 30),
+            images: {
+                img: 'images/score.png'
+            },
+            zIndex: 1,
+            width: 29,
+            height: 31
+        },
+        miss: {
+            images: {
+                img: 'images/xxxf.png'
+            },
+            width: 32,
+            height: 32
         },
         gameover: {
             images: {
