@@ -7,9 +7,10 @@ function Knife() {
         if (this.parts && this.parts.length > 1) {
             var len = this.parts.length;
             for(var d = 0; d < len; d++){
-                if(!--this.parts[d].life){
-                    len--;
+                if(this.parts[d].life){
+                    break;
                 }
+                len--;
             }
             if(this.parts.length > len){
                 this.parts.splice(0, this.parts.length - len).forEach(function(part, index){
@@ -21,10 +22,11 @@ function Knife() {
     };
     knife.draw = function(ctx) {
         if (this.parts && this.parts.length > 1) {
+            ctx.save();
             ctx.beginPath();
             ctx.strokeStyle = "#00ff00";
-            for (var d = this.parts.length - 1; d >= 0; d--) {
-                //this.parts[d].life--;
+            for (var d = this.parts.length - 2; d >= 0; d--) {
+                this.parts[d].life--;
                 if (d === this.parts.length - 1) {
                     continue;
                 }
@@ -51,6 +53,7 @@ function Knife() {
             }
             ctx.closePath();
 
+            ctx.restore();
         }
     };
     knife.subscribe('gameover', function(){
