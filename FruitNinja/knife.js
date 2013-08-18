@@ -3,17 +3,17 @@ function Knife() {
         innerWidth = 8,
         outerWidth = 12;
     knife.onUpdate = function(){
+
         if (this.parts && this.parts.length > 1) {
-            for (var d = this.parts.length - 1; d >= 0; d--) {
-                this.parts[d].life--;
-                if (d === this.parts.length - 1) {
-                    continue;
-                }
-                var from = this.parts[d + 1];
-                if (from.life <= 0) {
-                    knifeFactory.collect(this.parts.splice(d, 1)[0]);
+            var len = this.parts.length;
+            for(var d = 0; d < len; d++){
+                if(!--this.parts[d].life){
+                    len--;
                 }
             }
+            forEach(this.parts.splice(0, this.parts.length - len), function(part, index){
+                knifeFactory.collect(part);
+            });
             !this.sleep && this.publish('knifeslice', this.parts);
         }
     };
