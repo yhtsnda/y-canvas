@@ -68,7 +68,7 @@ BaseObject.prototype.removeChild = function(toRemove, clear) {
     forEach(this.children(), function(child, index, children) {
         if (child === toRemove) {
             exec(child, 'parent', null);
-            delete children[index];
+            children[index] = null;
             clear && exec(toRemove, 'clear');
             return true;
         }
@@ -77,7 +77,6 @@ BaseObject.prototype.removeChild = function(toRemove, clear) {
 };
 BaseObject.prototype.removeChildAt = function(index, clear) {
     this.removeChild(this.children()[index], clear);
-    delete this.children()[index];
     return this;
 };
 BaseObject.prototype.resetChildren = function() {

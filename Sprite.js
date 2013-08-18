@@ -123,6 +123,26 @@ function init(gl) {
         }
         var program = createProgram(gl);
         gl.useProgram(program);
+
+
+
+
+//
+
+    program.vertexPositionAttribute = gl.getAttribLocation(program, "pos");
+    gl.enableVertexAttribArray(program.vertexPositionAttribute);
+
+    program.textureCoordAttribute = gl.getAttribLocation(program, "aTextureCoord");
+    gl.enableVertexAttribArray(program.textureCoordAttribute);
+    
+    program.colorAttribute = gl.getAttribLocation(program, "aColor");
+    gl.enableVertexAttribArray(program.colorAttribute);
+
+
+    program.mvMatrixUniform = gl.getUniformLocation(program, "uMVMatrix");
+    program.samplerUniform = gl.getUniformLocation(program, "tex");
+//
+/*
         gl.positionAttri = gl.getAttribLocation(program, "pos");
         gl.colorAttri = gl.getAttribLocation(program, 'vertexColor');
 
@@ -135,7 +155,7 @@ function init(gl) {
         gl.rotate = gl.getUniformLocation(program, "rotate");
         gl.translate = gl.getUniformLocation(program, 'translate');
         gl.anchor = gl.getUniformLocation(program, 'anchor');
-        gl.scale = gl.getUniformLocation(program, 'scale');
+        gl.scale = gl.getUniformLocation(program, 'scale');*/
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
         gl.enable(gl.BLEND);
 

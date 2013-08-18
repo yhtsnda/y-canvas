@@ -131,10 +131,10 @@ function supportKnife(layer, knife) {
     });
     layer.onmouseup.push(function(e) {
         indrag = false;
-        knife.parts = [];
         forEach(knife.parts, function(part) {
             knifeFactory.collect(part);
         });
+        knife.parts = [];
     });
     layer.ontouchstart = layer.onmousedown;
     layer.ontouchmove = layer.onmousemove;

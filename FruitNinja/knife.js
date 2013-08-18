@@ -11,9 +11,11 @@ function Knife() {
                     len--;
                 }
             }
-            forEach(this.parts.splice(0, this.parts.length - len), function(part, index){
-                knifeFactory.collect(part);
-            });
+            if(this.parts.length > len){
+                this.parts.splice(0, this.parts.length - len).forEach(function(part, index){
+                    knifeFactory.collect(part);
+                });
+            }
             !this.sleep && this.publish('knifeslice', this.parts);
         }
     };

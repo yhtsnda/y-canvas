@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-    <script type="text/plain" id='vs'>
+    <script type="text/plain" id='avs'>
     attribute vec2 pos;
     attribute vec2 vertexColor;
     varying vec2 color;
@@ -37,12 +37,36 @@
         gl_Position = vec4(translatedPos, 0, 1);
     }
     </script>
-    <script type="text/plain" id='fs'>
+    <script type="text/plain" id='afs'>
     varying lowp vec2 color;
     uniform sampler2D tex;
     void main(){
         gl_FragColor = texture2D(tex, color);//vec4(0, 0.8, 0, 1);
     }
+    </script>
+    <script type='text/plain' id='fs'>
+        precision mediump float;
+        varying vec2 vTextureCoord;
+        varying float vColor;
+        uniform sampler2D tex;
+        void main(void) {
+            gl_FragColor = texture2D(tex, vec2(vTextureCoord.x, vTextureCoord.y));
+            gl_FragColor = gl_FragColor * vColor;
+        }
+    </script>
+
+    <script type="text/plain" id='vs'>
+        attribute vec2 pos;
+        attribute vec2 aTextureCoord;
+        attribute float aColor;
+        uniform mat4 uMVMatrix;
+        varying vec2 vTextureCoord;
+        varying float vColor;
+        void main(void) {
+            gl_Position = uMVMatrix * vec4(pos, 1.0, 1.0);
+            vTextureCoord = aTextureCoord;
+            vColor = aColor;
+        }
     </script>
     <script src="../Global.js"></script>
     <script src="../Point.js"></script>
