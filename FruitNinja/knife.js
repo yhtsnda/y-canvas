@@ -22,6 +22,7 @@ function Knife() {
     };
     knife.draw = function(ctx) {
         if (this.parts && this.parts.length > 1) {
+            this.parts.splice(0, this.parts.length - 10);
             ctx.save();
             ctx.beginPath();
             ctx.strokeStyle = "#00ff00";
