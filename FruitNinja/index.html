@@ -15,6 +15,59 @@
     </style>
 </head>
 <body>
+    <script type="text/plain" id='avs'>
+    attribute vec2 pos;
+    attribute vec2 vertexColor;
+    varying vec2 color;
+    //画布尺寸
+    //uniform vec2 resolution;
+    uniform vec2 rotate;
+    uniform vec2 translate;
+    uniform vec2 scale;
+    uniform vec2 skew;
+    uniform vec2 anchor;
+    void main(){
+        vec2 scaledPos = (pos - anchor)* scale;
+        vec2 rotatedPos = vec2(
+            scaledPos.x * rotate.y + scaledPos.y * rotate.x,
+            scaledPos.y * rotate.y - scaledPos.x * rotate.x
+        );
+        vec2 translatedPos = rotatedPos + translate + anchor;
+        color = vertexColor;
+        gl_Position = vec4(translatedPos, 0, 1);
+    }
+    </script>
+    <script type="text/plain" id='afs'>
+    varying lowp vec2 color;
+    uniform sampler2D tex;
+    void main(){
+        gl_FragColor = texture2D(tex, color);//vec4(0, 0.8, 0, 1);
+    }
+    </script>
+    <script type='text/plain' id='fs'>
+        precision mediump float;
+        varying vec2 vTextureCoord;
+        varying float vColor;
+        uniform sampler2D tex;
+        void main(void) {
+            gl_FragColor = texture2D(tex, vec2(vTextureCoord.x, vTextureCoord.y));
+            gl_FragColor = gl_FragColor * vColor;
+        }
+    </script>
+
+    <script type="text/plain" id='vs'>
+        attribute vec2 pos;
+        attribute vec2 aTextureCoord;
+        attribute float aColor;
+        uniform mat4 uMVMatrix;
+        varying vec2 vTextureCoord;
+        varying float vColor;
+        void main(void) {
+            gl_Position = uMVMatrix * vec4(pos, 1.0, 1.0);
+            vTextureCoord = aTextureCoord;
+            vColor = aColor;
+        }
+    </script>
     <script src="../Global.js"></script>
     <script src="../Point.js"></script>
     <script src="../Size.js"></script>
