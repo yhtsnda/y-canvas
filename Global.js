@@ -66,7 +66,10 @@ var requestAnimFrame = (function() {
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame ||
         window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame;
+        window.msRequestAnimationFrame ||
+        function (c) {
+            window.setTimeout(c, 16.67);
+        };
 })(),
     cancelAnimFrame = (function() {
         return window.cancelAnimationFrame ||
