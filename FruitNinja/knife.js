@@ -3,8 +3,8 @@ function Knife() {
         innerWidth = 8,
         outerWidth = 12;
     knife.onUpdate = function(){
-
         if (this.parts && this.parts.length > 1) {
+            this.parts.splice(0, this.parts.length - 10);
             var len = this.parts.length;
             for(var d = 0; d < len; d++){
                 if(this.parts[d].life){
@@ -22,7 +22,6 @@ function Knife() {
     };
     knife.draw = function(ctx) {
         if (this.parts && this.parts.length > 1) {
-            this.parts.splice(0, this.parts.length - 10);
             ctx.save();
             ctx.beginPath();
             ctx.strokeStyle = "#00ff00";
