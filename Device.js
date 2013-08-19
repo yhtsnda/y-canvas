@@ -22,17 +22,17 @@ var start = function(callback) {
     });
 }
 
-    function disablePageMove() {
-        addEventHandler(document, 'touchstart', function(e) {
-            e.preventDefault();
-            return false;
-        });
-        addEventHandler(document, 'touchmove', function(e) {
-            e.preventDefault();
-            return false;
-        });
-        addEventHandler(document, 'touchend', function(e) {
-            e.preventDefault();
-            return false;
-        });
-    }
+function disablePageMove() {
+    addEventHandler(document, 'touchstart', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    addEventHandler(document, 'touchmove', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    addEventHandler(document, 'touchend', function(e) {
+        e.preventDefault();
+        return false;
+    });
+}

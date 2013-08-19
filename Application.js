@@ -59,7 +59,7 @@ Application.prototype.update = function(context) {
     });
     //exec(me.nextScene, 'update', context);
     //me.handleEvents();
-    me.showFPS(context);
+    this.supportWebGL() || me.showFPS(context);
     EventSystem.deallingEvents(false);
     EventSystem.resetEvents();
     requestAnimFrame(function() {

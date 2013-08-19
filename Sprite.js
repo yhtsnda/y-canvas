@@ -101,7 +101,7 @@ Sprite.prototype.performAction = function(ctx) {
     exec(this.actionManager, 'update');
 };
 function init(gl) {
-    if (!gl.program) {
+    if (!gl.textureProgram) {
         function createShader(str, type,gl){
             var shader = gl.createShader(type);
             gl.shaderSource(shader, str);
@@ -124,25 +124,6 @@ function init(gl) {
         var program = createProgram(gl);
         gl.useProgram(program);
 
-
-
-/*
-//
-
-    program.vertexPositionAttribute = gl.getAttribLocation(program, "pos");
-    gl.enableVertexAttribArray(program.vertexPositionAttribute);
-
-    program.textureCoordAttribute = gl.getAttribLocation(program, "aTextureCoord");
-    gl.enableVertexAttribArray(program.textureCoordAttribute);
-    
-    program.colorAttribute = gl.getAttribLocation(program, "aColor");
-    gl.enableVertexAttribArray(program.colorAttribute);
-
-
-    program.mvMatrixUniform = gl.getUniformLocation(program, "uMVMatrix");
-    program.samplerUniform = gl.getUniformLocation(program, "tex");
-//
-*/
         gl.positionAttri = gl.getAttribLocation(program, "pos");
         gl.colorAttri = gl.getAttribLocation(program, 'vertexColor');
 
@@ -163,9 +144,9 @@ function init(gl) {
         gl.enable(gl.BLEND);
 
         gl.activeTexture(gl.TEXTURE0);
-        gl.program = program;
+        gl.textureProgram = program;
     }
-    return gl.program;
+    return gl.textureProgram;
 }
 
 function createTextureFromImage(gl, image) {

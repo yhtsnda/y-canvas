@@ -67,6 +67,7 @@ function particle(img, pos) {
 }
 
 function FruitNinja() {
+    disablePageMove();
     start(function(dom) {
         var app = new Application(dom);
 
@@ -126,8 +127,14 @@ function supportKnife(layer, knife) {
         if (!indrag) {
             return;
         }
+        layer.prev = layer.prev || {};
         knife.parts = knife.parts || [];
-        knife.parts.push(knifeFactory.get().reset(e.position.x, e.position.y, 15));
+        if(layer.prev.x != e.position.x || layer.prev.y != e.position.y){
+            knife.parts.push(knifeFactory.get().reset(e.position.x, e.position.y, 15));
+            //console.log(layer.prev.x);
+        };
+        layer.prev.x = e.position.x;
+        layer.prev.y = e.position.y;
     });
     layer.onmouseup.push(function(e) {
         indrag = false;
@@ -139,6 +146,7 @@ function supportKnife(layer, knife) {
     layer.ontouchstart = layer.onmousedown;
     layer.ontouchmove = layer.onmousemove;
     layer.ontouchend = layer.onmouseup;
+    //layer.onmousedown = layer.onmouseup = layer.onmousemove = null;
     return layer;
 }
 
