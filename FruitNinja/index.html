@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-    <script type="text/plain" id='avs'>
+    <script type="text/plain" id='vs'>
     attribute vec2 pos;
     attribute vec2 vertexColor;
     varying vec2 color;
@@ -26,25 +26,27 @@
     uniform vec2 scale;
     uniform vec2 skew;
     uniform vec2 anchor;
+    uniform vec2 resolution;
     void main(){
-        vec2 scaledPos = (pos - anchor)* scale;
+        vec2 scaledPos = (pos - anchor) * scale;
         vec2 rotatedPos = vec2(
             scaledPos.x * rotate.y + scaledPos.y * rotate.x,
             scaledPos.y * rotate.y - scaledPos.x * rotate.x
         );
-        vec2 translatedPos = rotatedPos + translate + anchor;
+        vec2 trans = vec2(-resolution.x + translate.x, resolution.y - translate.y);
+        vec2 translatedPos = rotatedPos + trans + anchor;
         color = vertexColor;
-        gl_Position = vec4(translatedPos, 0, 1);
+        gl_Position = vec4(translatedPos / resolution, 0, 1);
     }
     </script>
-    <script type="text/plain" id='afs'>
+    <script type="text/plain" id='fs'>
     varying lowp vec2 color;
     uniform sampler2D tex;
     void main(){
         gl_FragColor = texture2D(tex, color);//vec4(0, 0.8, 0, 1);
     }
     </script>
-    <script type='text/plain' id='fs'>
+    <!--<script type='text/plain' id='fs'>
         precision mediump float;
         varying vec2 vTextureCoord;
         varying float vColor;
@@ -67,7 +69,7 @@
             vTextureCoord = aTextureCoord;
             vColor = aColor;
         }
-    </script>
+    </script>-->
     <script src="../Global.js"></script>
     <script src="../Point.js"></script>
     <script src="../Size.js"></script>

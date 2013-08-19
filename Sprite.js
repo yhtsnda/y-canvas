@@ -126,7 +126,7 @@ function init(gl) {
 
 
 
-
+/*
 //
 
     program.vertexPositionAttribute = gl.getAttribLocation(program, "pos");
@@ -142,7 +142,7 @@ function init(gl) {
     program.mvMatrixUniform = gl.getUniformLocation(program, "uMVMatrix");
     program.samplerUniform = gl.getUniformLocation(program, "tex");
 //
-/*
+*/
         gl.positionAttri = gl.getAttribLocation(program, "pos");
         gl.colorAttri = gl.getAttribLocation(program, 'vertexColor');
 
@@ -155,7 +155,10 @@ function init(gl) {
         gl.rotate = gl.getUniformLocation(program, "rotate");
         gl.translate = gl.getUniformLocation(program, 'translate');
         gl.anchor = gl.getUniformLocation(program, 'anchor');
-        gl.scale = gl.getUniformLocation(program, 'scale');*/
+        gl.scale = gl.getUniformLocation(program, 'scale');
+        gl.resolution = gl.getUniformLocation(program, 'resolution');
+
+
         gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
         gl.enable(gl.BLEND);
 
@@ -217,10 +220,10 @@ Sprite.prototype.drawWithImageGL = function(gl, image) {
             size[0] / img.width, size[1] / img.height + size[3] * 2 / img.height,
             size[0] / img.width + size[2] * 2 / img.width, size[1] / img.height + size[3] * 2 / img.height
         ] : [
-            0, this.height() * 2 / getDom().height,
-            this.width() * 2 / getDom().width, this.height() * 2 / getDom().height,
+            0, this.height() * 2,
+            this.width() * 2, this.height() * 2,
             0, 0,
-            this.width() * 2 / getDom().width, 0
+            this.width() * 2, 0
         ]), gl.STATIC_DRAW);
 
     gl.vertexAttribPointer(gl.positionAttri, 2, gl.FLOAT, false, 0, 0);
@@ -234,20 +237,23 @@ Sprite.prototype.drawWithImageGL = function(gl, image) {
     this.texture = createTextureFromImage(gl, img);
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-
+    gl.uniform2f(
+        gl.resolution,
+        getDom().width,
+        getDom().height
+    );
     gl.uniform2f(
         gl.anchor,
-        this.width() * 2 * this.anchor().x / getDom().width,
-        this.height() * 2 * this.anchor().y / getDom().height
+        this.width() * 2 * this.anchor().x,
+        this.height() * 2 * this.anchor().y
     );
     gl.uniform2f(gl.scale, this.scale().x, this.scale().y);
     gl.uniform2f(gl.rotate, Math.sin(this.rotate()), Math.cos(this.rotate()));
-    gl.uniform2f(gl.translate, -1 + this.actualPosition().x * 2 / getDom().width,
-        1 - (this.actualPosition().y * 2 + this.height() * 2) / getDom().height // - this.height()  /getDom().height - (this.actualPosition().y + (this.anchor().y + 0.5)* this.height())/ getDom().height
+    gl.uniform2f(gl.translate, this.actualPosition().x * 2,
+        this.actualPosition().y * 2 + this.height() * 2
     );
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
 };
 Sprite.prototype.drawWithImage = function(ctx, image) {
     var size = image.size, //this.imageSizes()[this.imageIndex()],
