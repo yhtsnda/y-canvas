@@ -39,7 +39,7 @@ var ParticleSystem = function() {
         return particlePool.get();
     };
     ParticleSystem.prototype.update = function(ctx) {
-        ctx.save();
+        //ctx.save();
         var particles = this.children();
         var len = particles.length;
         while (len-- > 0) {
@@ -51,7 +51,7 @@ var ParticleSystem = function() {
         forEach(particles, function(particle) {
             particle.update(ctx);
         });
-        ctx.restore();
+        //ctx.restore();
     };
     ParticleSystem.prototype.clear = function() {
         this.parent().removeChild(this);

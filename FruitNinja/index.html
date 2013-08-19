@@ -42,8 +42,9 @@
     <script type="text/plain" id='fs'>
     varying lowp vec2 color;
     uniform sampler2D tex;
+    uniform lowp float alpha;
     void main(){
-        gl_FragColor = texture2D(tex, color);// / vec4(color,0,1)  * vec4(color,0,1) / vec4(0, 0.8, 0, 1);
+        gl_FragColor = texture2D(tex, color) * alpha;// / vec4(color,0,1)  * vec4(color,0,1) / vec4(0, 0.8, 0, 1);
     }
     </script>
     <!--<script type='text/plain' id='fs'>
@@ -100,6 +101,7 @@
     <script src="../Physics.js"></script>
     <script src="../Particle.js"></script>
     <script src="../ParticleSystem.js"></script>
+    <script src="../WebGLUtil.js"></script>
     <script src="asserts.js"></script>
     <script src="lineInEllipse.js"></script>
     <script src="knife.js"></script>

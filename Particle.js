@@ -13,13 +13,14 @@ function Particle(pos, life, img) {
     this.scale = 1;
     this.rotation = 0;
     this.alpha = 1;
+    this.anchor = prop(PointMake(0.5, 0.5));
 }
 Particle.prototype.render = function(ctx) {
     this.onRender(ctx);
     if (this.image()) {
-        this._render(ctx);
+        this['drawWithImage' + (ctx instanceof CanvasRenderingContext2D ? '' : 'GL')](ctx, this.image());
     } else {
-        this.draw(ctx);
+        this['draw' + (ctx instanceof CanvasRenderingContext2D ? '' : 'GL')](ctx);
     }
     this.afterRender(ctx);
 };
@@ -27,6 +28,7 @@ Particle.prototype.update = function(ctx) {
     if (this.life() <= 0) {
         return;
     }
+    var gl = ctx instanceof CanvasRenderingContext2D ? '' : 'GL';
     this.onUpdate(ctx);
     this._update(ctx);
     this.afterUpdate(ctx);
@@ -51,22 +53,24 @@ Particle.prototype.update = function(ctx) {
     this.render(ctx);
     this.life(this.life() - 1);
 };
-Particle.prototype._render = function(ctx) {
-    //ctx.save();
-    //ctx.globalAlpha = this.alpha;
+Particle.prototype.drawWithImage = function(ctx, image){
+    var img = ImageEngine.get(image.img);
     this.scale = Math.max(0, this.scale);
     ctx.translate(this.position().x, this.position().y);
     ctx.rotate(this.rotation);
     ctx.scale(this.scale, this.scale);
-    var size = this.image().size;
+    ctx.globalAlpha = Math.max(0, this.alpha);
+    var size = image.size;
     if (size) {
-        ctx.drawImage(this.image().img, size[0], size[1], size[2], size[3], 0, 0, size[2], size[3]);
+        ctx.drawImage(img, size[0], size[1], size[2], size[3], 0, 0, size[2], size[3]);
     } else {
-        ctx.drawImage(this.image().img, 0, 0);
+        ctx.drawImage(img, 0, 0);
     }
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    //ctx.globalAlpha = 1;
-    //ctx.restore();
+    ctx.globalAlpha = 1;
+};
+Particle.prototype.drawWithImageGL = function(gl, image){
+    WebGLUtil.render(gl, this, this.alpha, image.img, image.size, this.anchor(), this.position(), 0, 0, {x:this.scale,y:this.scale});
 };
 Particle.prototype.remove = function(){
     try{

@@ -39,6 +39,8 @@ function particle(img, pos) {
     var sys = new ParticleSystem;
     sys.zIndex(50);
     var gravity = new Gravity(0.2);
+    var velocity = -4 -3 * Math.random();
+    var random = Math.random() > 0.5;
     for (var i = 0; i < 12; i++) {
         var particle = sys.getParticle().reset();
         particle.image({
@@ -47,14 +49,14 @@ function particle(img, pos) {
         particle.position().reset(pos.x, pos.y);
         particle.scale = 1; // + Math.random() * 0.3;
         particle.damp().reset(0, 0);
-        particle.velocity().reset(0, -4);
+        particle.velocity().reset(0, velocity * (random ? Math.random() : 1));
         particle.velocity().rotate(i / 12 * Math.PI * 2);
         particle.forcesMap().push(gravity);
         particle.alpha = 1; // + Math.random() * 0.5;
         sys.addChild(particle);
         particle.onUpdate = function() {
             this.scale -= 0.02;
-            this.alpha -= 0.05;
+            this.alpha -= 0.01;
             if (this.scale <= 0) {
                 this.remove();
                 if (this.parent().children().length == 0) {

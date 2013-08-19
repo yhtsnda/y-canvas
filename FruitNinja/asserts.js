@@ -31,7 +31,7 @@ var reset = function() {
             right = FruitPartFactory.getFruitPart(this.type + 'Right');
         left.position().reset(0, 0);
         right.position().reset(0, 0);
-        this.parent().addChild(particle(ImageEngine.get(this.juice), PointMake(this.actualPosition().x, this.actualPosition().y)));
+        this.parent().addChild(particle(this.juice, PointMake(this.actualPosition().x, this.actualPosition().y)));
         left.onUpdate = function() {
             this.position().x -= 2;
         }
@@ -58,7 +58,8 @@ var reset = function() {
         },
         logo: {
             images: {
-                img: 'images/logo.png'
+                img: 'images/logo.png',
+                size: [0, 0, 288, 135]
             },
             position: PointMake(20, 0),
             width: 288,

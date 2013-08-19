@@ -12,7 +12,6 @@ function Node() {
         };
     });
     this.images = propArray();
-    this.imageSizes = propArray();
     this.imageIndex = prop(0);
     this.zIndex = prop(0);
     this.alpha = (function(){

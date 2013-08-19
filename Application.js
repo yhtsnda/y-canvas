@@ -13,8 +13,6 @@ Application.prototype = new BaseObject;
 Application.prototype.init = function(dom) {
     this.dom = dom;
     this.children = prop([]);
-    //this.nextScene = null;
-    //this.scenes = [];
     window.app = this;
 };
 Application.prototype.getContext = function() {
@@ -70,6 +68,7 @@ Application.prototype.clearCanvas = function(context) {
     this.supportWebGL() ? context.clear(context.COLOR_BUFFER_BIT) : context.clearRect(0, 0, this.dom.width, this.dom.height);
 };
 Application.prototype.showFPS = function(context) {
+    this.supportWebGL() && (context = getDom().getContext('2d'));
     this._currentFrameCount = this._currentFrameCount || 0;
     if (this._currentFrameCount % 10 === 0) {
         var now = (new Date).valueOf();
