@@ -7,7 +7,7 @@ function Knife() {
             this.parts.splice(0, this.parts.length - 10);
             var len = this.parts.length;
             for(var d = 0; d < len; d++){
-                if(this.parts[d].life){
+                if(--this.parts[d].life){
                     break;
                 }
                 len--;
@@ -26,7 +26,6 @@ function Knife() {
             ctx.beginPath();
             ctx.strokeStyle = "#00ff00";
             for (var d = this.parts.length - 2; d >= 0; d--) {
-                this.parts[d].life--;
                 if (d === this.parts.length - 1) {
                     continue;
                 }
