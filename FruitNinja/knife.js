@@ -34,7 +34,7 @@ function Knife() {
                 var from = this.parts[d + 1],
                     to = this.parts[d];
                 if (from.life > 0) {
-                    ctx.lineWidth = parseInt(outerWidth * to.life / 15);
+                    ctx.lineWidth = parseInt(outerWidth * to.life / 1.5) /10;
                     ctx.moveTo(from.x, from.y);
                     ctx.lineTo(to.x, to.y);
                     ctx.stroke();
@@ -47,7 +47,7 @@ function Knife() {
             for (var d = this.parts.length - 2; d >= 0; d--) {
                 var from = this.parts[d + 1],
                     to = this.parts[d];
-                ctx.lineWidth = parseInt(innerWidth * to.life / 15);
+                ctx.lineWidth = parseInt(innerWidth * to.life / 1.5) / 10;
                 ctx.moveTo(from.x, from.y);
                 ctx.lineTo(to.x, to.y);
                 ctx.stroke();
