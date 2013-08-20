@@ -3,7 +3,7 @@ function Knife() {
         innerWidth = 8,
         outerWidth = 12;
     knife.onUpdate = function(){
-        if (this.parts && this.parts.length > 1) {
+        if (this.parts) {
             this.parts.splice(0, this.parts.length - 10);
             var len = this.parts.length;
             for(var d = 0; d < len; d++){
@@ -23,7 +23,7 @@ function Knife() {
         WebGLUtil.render(gl, this, 1, null, null, {x:0,y:0}, {x:0,y:0}, 0, 0, {x:1,y:1});
     };
     knife.draw = function(ctx) {
-        if (this.parts && this.parts.length > 1) {
+        if (this.parts) {
             ctx.save();
             ctx.beginPath();
             ctx.strokeStyle = "#00ff00";
