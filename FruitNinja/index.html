@@ -13,6 +13,28 @@
     </style>
 </head>
 <body>
+
+    <script type="text/plain" id='ovs'>
+    attribute vec2 pos;
+    attribute vec4 vertexColor;
+    varying vec4 color;
+    //varying vec2 texturePos;
+    uniform vec2 resolution;
+    void main(){
+        color = vertexColor;
+        vec2 trans = vec2(-resolution.x + pos.x, -resolution.y + pos.y);
+        gl_Position = vec4(trans/ resolution, 0, 1);
+    }
+    </script>
+    <script type="text/plain" id='ofs'>
+    //varying lowp vec2 texturePos;
+    varying lowp vec4 color;
+    //uniform sampler2D tex;
+    void main(){
+        gl_FragColor = color;//vec4(0.5,0.5,0.5,1);//color;
+    }
+    </script>
+
     <script type="text/plain" id='vs'>
     attribute vec2 pos;
     attribute vec2 texVertex;

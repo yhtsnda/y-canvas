@@ -39,9 +39,9 @@ Sprite.prototype.update = function(ctx) {
     this._update(ctx);
     this.render(ctx);
     this.afterUpdate(ctx);
+    ctx instanceof CanvasRenderingContext2D && ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.updateChildren(ctx);
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1;
 };
 Sprite.prototype.render = function(ctx) {
@@ -62,6 +62,11 @@ Sprite.prototype.performTransform = function(ctx) {
     d = ScaleY    e = TranslateX    f = TranslateY
      */
     ctx.globalAlpha = this.alpha();
+    /*
+    ctx.translate(320, 240);
+    ctx.rotate(Math.PI / 2);
+
+    ctx.translate(-240, -160);*/
     /*var matrix = new Matrix([
     [1,0,this.actualPosition().x + this.width() * this.anchor().x],[0,1,this.actualPosition().y + this.height() * this.anchor().y],[0,0,1]]);*/
     ctx.translate(this.actualPosition().x + this.width() * this.anchor().x, this.actualPosition().y + this.height() * this.anchor().y);

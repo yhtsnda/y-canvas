@@ -50,9 +50,9 @@ function GameScene() {
             layer.addChild(fruit);
             AudioEngine.play('sounds/throw');
         }
-        animation = setTimeRequest(createFruit, 10);
+        animation = setTimeRequest(createFruit, 50);
     }
-    animation = setTimeRequest(createFruit, 10);
+    animation = setTimeRequest(createFruit, 50);
     //cutted.position();
     cutted.draw = function(ctx) {
         ctx.fillStyle = "#af7c05";
