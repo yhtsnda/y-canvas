@@ -40,16 +40,16 @@ function Knife() {
                 var deltax = to.life * (sino) * k;
                 var deltay = to.life * (coso) ;
 
-                this.pointsArr.push(from.x *2 - deltax, 480-from.y *2 + 480 - deltay);
-                this.pointsArr.push(from.x *2 + deltax, 480-from.y *2 + 480 + deltay);
-                this.pointsArr.push(to.x *2 - deltax, 480-to.y *2 + 480 - deltay);
-                this.pointsArr.push(to.x *2 + deltax, 480-to.y *2 + 480 + deltay);
+                this.pointsArr.push(from.x *2 - deltax, -from.y *2 - deltay);
+                this.pointsArr.push(from.x *2 + deltax, -from.y *2 + deltay);
+                this.pointsArr.push(to.x *2 - deltax, -to.y *2 - deltay);
+                this.pointsArr.push(to.x *2 + deltax, -to.y *2 + deltay);
 
-                this.pointsOuterArr.push(from.x *2 - deltax*0.5, 480-from.y *2 + 480 - deltay*0.5);
-                this.pointsOuterArr.push(from.x *2 + deltax*0.5, 480-from.y *2 + 480 + deltay*0.5);
+                this.pointsOuterArr.push(from.x *2 - deltax*0.5, -from.y *2 - deltay*0.5);
+                this.pointsOuterArr.push(from.x *2 + deltax*0.5, -from.y *2 + deltay*0.5);
 
-                this.pointsOuterArr.push(to.x *2 - deltax*0.5, 480-to.y *2 + 480 - deltay*0.5);
-                this.pointsOuterArr.push(to.x *2 + deltax*0.5, 480-to.y *2 + 480 + deltay*0.5);
+                this.pointsOuterArr.push(to.x *2 - deltax*0.5, -to.y *2 - deltay*0.5);
+                this.pointsOuterArr.push(to.x *2 + deltax*0.5, -to.y *2 + deltay*0.5);
 
                 this.colorArr.push(0, 1, 0, 1);
                 this.colorArr.push(0, 1, 0, 1);

@@ -58,7 +58,7 @@ var WebGLUtil = {
                 return program;
             }
             var program = createProgram(gl);
-
+            gl.useProgram(program);
             gl.positionAttri = gl.getAttribLocation(program, "pos");
             gl.colorAttri = gl.getAttribLocation(program, 'vertexColor');
             gl.texVertexAttri = gl.getAttribLocation(program, 'texVertex');
@@ -129,28 +129,47 @@ var WebGLUtil = {
         //a. obj.getImage()
         //b. obj.verticles
         if (!img) {
-            var program = this.init2(gl);
+            var program = this.init(gl);
 
-            gl.useProgram(program);
+            //gl.useProgram(program);
             
-            gl.bindBuffer(gl.ARRAY_BUFFER, gl.cBuffer);
+            gl.bindBuffer(gl.ARRAY_BUFFER, gl.colorBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
                 colors
             ), gl.STATIC_DRAW);
-            gl.vertexAttribPointer(gl.cAttri, 4, gl.FLOAT, false, 0, 0);
+            gl.vertexAttribPointer(gl.colorAttri, 4, gl.FLOAT, false, 0, 0);
             
-            gl.bindBuffer(gl.ARRAY_BUFFER, gl.pBuffer);
+            gl.bindBuffer(gl.ARRAY_BUFFER, gl.positionBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
                 points
             ), gl.STATIC_DRAW);
 
-            gl.vertexAttribPointer(gl.pAttri, 2, gl.FLOAT, false, 0, 0);
+            gl.vertexAttribPointer(gl.positionAttri, 2, gl.FLOAT, false, 0, 0);
 
+            gl.bindBuffer(gl.ARRAY_BUFFER, gl.texVertexBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.STATIC_DRAW);
+
+            gl.vertexAttribPointer(gl.texVertexAttri, 2, gl.FLOAT, false, 0, 0);
+
+            gl.bindTexture(gl.TEXTURE_2D, null);
+
+            gl.uniform1i(gl.usetexture, 0);
             gl.uniform2f(
-                gl.colorresolution,
+                gl.resolution,
                 getDom().width,
                 getDom().height
             );
+            gl.uniform1f(gl.alpha, alpha);
+            
+            gl.uniform2f(
+                gl.anchor,
+                0,
+                0
+            );
+            gl.uniform2f(gl.scale, 1, 1);
+            gl.uniform2f(gl.rotate, Math.sin(rotate), Math.cos(rotate));
+            gl.uniform2f(gl.translate, 0, 0);/*
+            gl.uniform1f(gl.alpha, alpha);*/
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
         } else {
             img = ImageEngine.get(img);
@@ -158,7 +177,7 @@ var WebGLUtil = {
             height = height || (size ? size[3] : img.height);
             var program = this.init(gl);
 
-            gl.useProgram(program);
+            //gl.useProgram(program);
             /* 图片在原图中的裁剪位置 position buffer*/
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.positionBuffer);
             //左上 右上 左下 右下
