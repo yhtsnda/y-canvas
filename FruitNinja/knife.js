@@ -71,6 +71,7 @@ function Knife() {
             this.pointsArr.length = 0;
         if (this.parts && this.parts.length > 1) {
 
+            /*
             ctx.save();
             ctx.beginPath();
             ctx.fillStyle = '#00ff00';
@@ -83,8 +84,8 @@ function Knife() {
 
                 var coso = Math.sqrt(w * w / (w * w + h * h));
                 var sino = Math.sqrt(h * h / (w * w + h * h));
-                var deltax = to.life * (sino) * k /2;
-                var deltay = to.life * (coso) / 2;
+                var deltax = to.life * (sino) * k;
+                var deltay = to.life * (coso);
                 this.pointsArr.push(
                     from.x - deltax *0.5, from.y - deltay *0.5,
                     from.x + deltax  *0.5, from.y + deltay *0.5,
@@ -113,12 +114,8 @@ function Knife() {
             };
             ctx.fill();
             ctx.closePath();
-            ctx.restore();
-            /*
+            ctx.restore();*/
             ctx.save();
-            ctx.translate(320, 240);
-            ctx.rotate(-Math.PI / 2);
-            ctx.translate(-240, -320);
             ctx.beginPath();
             ctx.strokeStyle = "#00ff00";
             for (var d = this.parts.length - 2; d >= 0; d--) {
@@ -145,7 +142,7 @@ function Knife() {
             }
             ctx.closePath();
 
-            ctx.restore();*/
+            ctx.restore();
         }
     };
     knife.subscribe('gameover', function(){
