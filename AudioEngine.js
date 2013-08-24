@@ -35,7 +35,7 @@ var audioPool = function Factory(create) {
     return obj;
 }();
 var AudioEngine = function() {
-    var isIOS = navigator.userAgent.indexOf('iPad') != -1 && navigator.userAgent.indexOf('iPhone') != -1,
+    var isIOS = navigator.userAgent.indexOf('iPad') != -1 || navigator.userAgent.indexOf('iPhone') != -1,
         isIE = navigator.userAgent.indexOf('MSIE') != -1,
         isSafari = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1,
         isFirefox = navigator.userAgent.indexOf('Firefox') != -1,

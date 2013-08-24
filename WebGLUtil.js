@@ -1,40 +1,4 @@
 var WebGLUtil = {
-    init2: function(gl) {
-        if (!gl.drawProgram) {
-            function createShader(str, type, gl) {
-                var shader = gl.createShader(type);
-                gl.shaderSource(shader, str);
-                gl.compileShader(shader);
-                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                    alert("Error compiling shader: " + gl.getShaderInfoLog(shader));
-                }
-                return shader;
-            }
-
-            function createProgram(gl) {
-                var program = gl.createProgram();
-                gl.attachShader(program, createShader(document.getElementById('ovs').textContent, gl.VERTEX_SHADER, gl));
-                gl.attachShader(program, createShader(document.getElementById('ofs').textContent, gl.FRAGMENT_SHADER, gl));
-                gl.linkProgram(program);
-                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-                    alert("Unable to initialize the shader program.");
-                }
-                return program;
-            }
-            var program = createProgram(gl);
-
-            gl.pAttri = gl.getAttribLocation(program, "pos");
-            gl.cAttri = gl.getAttribLocation(program, 'vertexColor');
-            gl.colorresolution = gl.getUniformLocation(program, 'resolution');
-            gl.enableVertexAttribArray(gl.pAttri);
-            gl.enableVertexAttribArray(gl.cAttri);
-
-            gl.pBuffer = gl.createBuffer();
-            gl.cBuffer = gl.createBuffer();
-            gl.drawProgram = program;
-        }
-        return gl.drawProgram;
-    },
     init: function(gl) {
         if (!gl.textureProgram) {
             function createShader(str, type, gl) {
@@ -132,13 +96,13 @@ var WebGLUtil = {
             var program = this.init(gl);
 
             //gl.useProgram(program);
-            
+
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.colorBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
                 colors
             ), gl.STATIC_DRAW);
             gl.vertexAttribPointer(gl.colorAttri, 4, gl.FLOAT, false, 0, 0);
-            
+
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.positionBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
                 points
@@ -160,7 +124,7 @@ var WebGLUtil = {
                 getDom().height
             );
             gl.uniform1f(gl.alpha, alpha);
-            
+
             gl.uniform2f(
                 gl.anchor,
                 0,
@@ -168,8 +132,9 @@ var WebGLUtil = {
             );
             gl.uniform2f(gl.scale, 1, 1);
             gl.uniform2f(gl.rotate, Math.sin(rotate), Math.cos(rotate));
-            gl.uniform2f(gl.translate, 0, 0);/*
-            gl.uniform1f(gl.alpha, alpha);*/
+            gl.uniform2f(gl.translate, 0, 0);
+
+            gl.uniform1f(gl.alpha, alpha);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
         } else {
             img = ImageEngine.get(img);
