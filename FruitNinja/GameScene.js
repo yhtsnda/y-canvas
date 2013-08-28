@@ -60,6 +60,14 @@ function GameScene() {
         ctx.textBaseline = "top";
         ctx.fillText(cuttedNum, this.actualPosition().x, this.actualPosition().y);
     };
+    cutted.drawGL = function(gl){
+        //gl, clear, obj, text, style, pos, width, height
+        WebGLUtil.drawText(gl, true, this, cuttedNum, {
+            fillStyle : "#af7c05",
+            font : "34px Tahoma bold",
+            textBaseline : "top"
+        }, this.actualPosition());
+    };
     var missed = 0;
     layer.subscribe('depart', function() {
         cuttedNum++;

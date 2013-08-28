@@ -18,9 +18,12 @@ Application.prototype.init = function(dom) {
 Application.prototype.getContext = function() {
     return this.dom.getContext(this.supportWebGL() ? 'webgl' : '2d');
 };
-Application.prototype.supportWebGL = function() {
-    return false;
-};
+Application.prototype.supportWebGL = (function() {
+    var support = ( function () { try { return !! window.WebGLRenderingContext && !! document.createElement( 'canvas' ).getContext( 'experimental-webgl' ); } catch( e ) { return false; } } )();
+    return function(){
+        return support;
+    }
+})();
 Application.prototype.run = function() {
     this.resume();
     EventSystem.init();

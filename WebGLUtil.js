@@ -53,12 +53,13 @@ var WebGLUtil = {
         }
         return gl.textureProgram;
     },
-    createTextureFromImage: function(gl, image) {
+    updateTexture: function(gl, image, texture){
         gl.textures = gl.textures || {};
-        if (gl.textures[image.src]) {
-            return gl.textures[image.src];
+        var texture = texture || gl.textures[image.src];
+        if(!texture){
+            this.createTextureFromImage(gl, image);
+            return;
         }
-        var texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
@@ -68,8 +69,47 @@ var WebGLUtil = {
 
         //gl.generateMipmap(gl.TEXTURE_2D);
         gl.bindTexture(gl.TEXTURE_2D, null);
+    },
+    createTextureFromImage: function(gl, image) {
+        gl.textures = gl.textures || {};
+        if (gl.textures[image.src]) {
+            return gl.textures[image.src];
+        }
+        var texture = gl.createTexture();
         gl.textures[image.src] = texture;
+        this.updateTexture(gl, image, texture);
         return texture;
+    },
+    drawText: function(gl, clear, obj, text, style, pos, maxWidth, maxHeight){
+        obj.textCanvas = obj.textCanvas || (function(){
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            canvas.src = Math.random();
+            //document.body.appendChild(canvas);
+            return canvas;
+        })();
+        var canvas = obj.textCanvas;
+        var ctx = canvas.getContext('2d');
+        if(clear){
+            ctx.clearRect(0, 0, obj.textCanvas.width, obj.textCanvas.height);
+        }
+        for(var prop in style){
+            ctx[prop] = style[prop];
+        }
+        var width = Math.ceil(ctx.measureText(text).width);
+        var lineHeight = /(\d+)px/ig.exec(ctx.font)[1];
+        var lines = maxWidth ? Math.ceil(width / maxWidth) : 1;
+        width = maxWidth || width;
+        if(canvas.width != width){
+            canvas.width = width;
+        }
+        height = maxHeight || lines * lineHeight;
+        if(canvas.height != height){
+            canvas.height = height;
+        }
+        ctx.fillText(text, 0, 0);
+        this.updateTexture(gl, obj.textCanvas);
+        this.render(gl, obj, obj.alpha(), obj.textCanvas, null, obj.anchor(), pos, obj.rotate(), null, obj.scale(), obj.textCanvas.width, obj.textCanvas.height, null, null);
     },
     render: function(gl, obj, alpha, img, size, anchor, pos, rotate, translate, scale, width, height, points, colors) {
         /*
@@ -90,28 +130,24 @@ var WebGLUtil = {
 
         */
 
-        //a. obj.getImage()
-        //b. obj.verticles
         if (!img) {
             var program = this.init(gl);
-
-            //gl.useProgram(program);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.colorBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
                 colors
-            ), gl.STATIC_DRAW);
+            ), gl.DYNAMIC_DRAW);
             gl.vertexAttribPointer(gl.colorAttri, 4, gl.FLOAT, false, 0, 0);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.positionBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
                 points
-            ), gl.STATIC_DRAW);
+            ), gl.DYNAMIC_DRAW);
 
             gl.vertexAttribPointer(gl.positionAttri, 2, gl.FLOAT, false, 0, 0);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.texVertexBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.STATIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.DYNAMIC_DRAW);
 
             gl.vertexAttribPointer(gl.texVertexAttri, 2, gl.FLOAT, false, 0, 0);
 
@@ -137,12 +173,10 @@ var WebGLUtil = {
             gl.uniform1f(gl.alpha, alpha);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
         } else {
-            img = ImageEngine.get(img);
             width = width || (size ? size[2] : img.width);
             height = height || (size ? size[3] : img.height);
             var program = this.init(gl);
 
-            //gl.useProgram(program);
             /* 图片在原图中的裁剪位置 position buffer*/
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.positionBuffer);
             //左上 右上 左下 右下
@@ -161,14 +195,14 @@ var WebGLUtil = {
                     0, 0,
                     //右下
                     width * 2, 0
-                ]), gl.STATIC_DRAW);
+                ]), gl.DYNAMIC_DRAW);
 
             gl.vertexAttribPointer(gl.positionAttri, 2, gl.FLOAT, false, 0, 0);
 
             /* color buffer*/
             gl.bindBuffer(gl.ARRAY_BUFFER, gl.colorBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
-                [0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1]), gl.STATIC_DRAW);
+                [0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1]), gl.DYNAMIC_DRAW);
 
             gl.vertexAttribPointer(gl.colorAttri, 4, gl.FLOAT, false, 0, 0);
 
@@ -179,11 +213,12 @@ var WebGLUtil = {
                     size[0] / img.width, size[1] / img.height, (size[0] + size[2]) / img.width, size[1] / img.height,
                     size[0] / img.width, (size[1] + size[3]) / img.height, (size[0] + size[2]) / img.width, (size[1] + size[3]) / img.height
                 ] :
-                [0, 0, 1, 0, 0, 1, 1, 1]), gl.STATIC_DRAW);
+                [0, 0, 1, 0, 0, 1, 1, 1]), gl.DYNAMIC_DRAW);
 
             gl.vertexAttribPointer(gl.texVertexAttri, 2, gl.FLOAT, false, 0, 0);
 
             obj.texture = this.createTextureFromImage(gl, img);
+            //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
             gl.bindTexture(gl.TEXTURE_2D, obj.texture);
             gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
             gl.uniform1i(gl.usetexture, 1);
@@ -203,6 +238,7 @@ var WebGLUtil = {
             gl.uniform1f(gl.alpha, alpha);
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);
         }
     }
 };

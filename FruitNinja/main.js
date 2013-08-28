@@ -68,6 +68,23 @@ function particle(img, pos) {
     return sys;
 }
 
+function TestScene(){
+    var scene = new Scene;
+    var layer = new Layer;
+    var sprite = new Sprite;
+    //sprite.position().x = 100;
+    //sprite.position().y = 100;
+    sprite.drawGL = function(gl){
+        WebGLUtil.drawText(gl, true, this, Math.random(), {
+            fillStyle : "#af7c05",
+            font : "34px Tahoma bold",
+            textBaseline : "top"
+        }, this.actualPosition(), 200, 34);
+    };
+    scene.addChild(layer);
+    layer.addChild(sprite);
+    return scene;
+}
 function FruitNinja() {
     disablePageMove();
     start(function(dom) {
@@ -76,6 +93,9 @@ function FruitNinja() {
         var gameStateManager = (function() {
             var scenes = app.children(),
                 states = {
+                    'test': function(){
+                        app.addChildAt(TestScene(),0);
+                    },
                     'loading': function() {
                         app.addChildAt(LoadingScene(), 0);
                     },

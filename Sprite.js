@@ -106,7 +106,7 @@ Sprite.prototype.performAction = function(ctx) {
     exec(this.actionManager, 'update');
 };
 Sprite.prototype.drawWithImageGL = function(gl, image) {
-    WebGLUtil.render(gl, this, this.alpha(), image.img, image.size, this.anchor(), this.actualPosition(), this.rotate(), 0, this.scale(), this.width(), this.height());
+    WebGLUtil.render(gl, this, this.alpha(), ImageEngine.get(image.img), image.size, this.anchor(), this.actualPosition(), this.rotate(), 0, this.scale(), this.width(), this.height());
 };
 Sprite.prototype.drawWithImage = function(ctx, image) {
     var size = image.size, //this.imageSizes()[this.imageIndex()],

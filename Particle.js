@@ -70,7 +70,7 @@ Particle.prototype.drawWithImage = function(ctx, image){
     ctx.globalAlpha = 1;
 };
 Particle.prototype.drawWithImageGL = function(gl, image){
-    WebGLUtil.render(gl, this, this.alpha, image.img, image.size, this.anchor(), this.position(), 0, 0, {x:this.scale,y:this.scale});
+    WebGLUtil.render(gl, this, this.alpha, ImageEngine.get(image.img), image.size, this.anchor(), this.position(), 0, 0, {x:this.scale,y:this.scale});
 };
 Particle.prototype.remove = function(){
     try{
