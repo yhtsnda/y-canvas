@@ -104,9 +104,9 @@ BaseObject.prototype.updateChildren = function(context) {
     if (!children) {
         return;
     }
-    /*children.sort(function(a, b) {
+    children.sort(function(a, b) {
         return a.zIndex() - b.zIndex();
-    });*/
+    });
     for (var i = 0; i < children.length; i++) {
         try {
             children[i].update(context);
