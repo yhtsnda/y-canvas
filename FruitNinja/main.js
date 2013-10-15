@@ -126,7 +126,7 @@ function FruitNinja() {
         MessageCenter.onSubscribe('loading', function() {
             gameStateManager.changeState('loading');
         }).onSubscribe('introduce', function() {
-            gameStateManager.changeState('game');
+            gameStateManager.changeState('introduce');
         }).onSubscribe('gamestart', function() {
             gameStateManager.changeState('game');
         }).onSubscribe('restart', function() {

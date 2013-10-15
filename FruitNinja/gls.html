@@ -1,0 +1,108 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title></title>
+    <meta name="viewport" content="user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <style type="text/css">
+    body{
+        width:100%;
+        height:100%;
+        overflow:hidden;
+    }
+    </style>
+</head>
+<body>
+<script>
+    
+function createShader(id, type,gl){
+    var shader = gl.createShader(type);
+    gl.shaderSource(shader, document.getElementById(id).textContent);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      alert( "Error compiling shader: " + gl.getShaderInfoLog(shader));
+    }
+    return shader;
+}
+function createProgram(gl){
+    var program = gl.createProgram();
+    gl.attachShader(program, createShader('vs', gl.VERTEX_SHADER,gl));
+    gl.attachShader(program, createShader('fs', gl.FRAGMENT_SHADER,gl));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      alert("Unable to initialize the shader program.");
+    }
+    return program;
+}
+    
+</script>
+    <script type="text/plain" id='vs'>
+    attribute vec2 pos;
+    attribute vec2 vertexColor;
+    varying vec2 color;
+    //画布尺寸
+    //uniform vec2 resolution;
+    uniform vec2 rotate;
+    uniform vec2 translate;
+    uniform vec2 scale;
+    uniform vec2 skew;
+    uniform vec2 anchor;
+    void main(){
+        vec2 scaledPos = (pos - anchor)* scale;
+        vec2 rotatedPos = vec2(
+            scaledPos.x * rotate.y + scaledPos.y * rotate.x,
+            scaledPos.y * rotate.y - scaledPos.x * rotate.x
+        );
+        vec2 translatedPos = rotatedPos + translate + anchor;
+        color = vertexColor;
+        gl_Position = vec4(translatedPos, 0, 1);
+    }
+    </script>
+    <script type="text/plain" id='fs'>
+    varying lowp vec2 color;
+    uniform sampler2D tex;
+    void main(){
+        gl_FragColor = texture2D(tex, color);//vec4(0, 0.8, 0, 1);
+    }
+    </script>
+    <script src="../Global.js"></script>
+    <script src="../Point.js"></script>
+    <script src="../Size.js"></script>
+    <script src="../Rect.js"></script>
+    <script src="../Debugger.js"></script>
+    <script src="../ArrayUtil.js"></script>
+    <script src="../Device.js"></script>
+    <script src="../BaseObject.js"></script>
+    <script src="../Factory.js"></script>
+    <script src="../Functions.js"></script>
+    <script src="../Node.js"></script>
+    <script src="../Application.js"></script>
+    <script src="../Scene.js"></script>
+    <script src="../Layer.js"></script>
+    <script src="../Sprite.js"></script>
+    <script src="../ActionManager.js"></script>
+    <script src="../Action.js"></script>
+    <script src="../Easing.js"></script>
+    <script src="../EventSystem.js"></script>
+    <script src="../MessageCenter.js"></script>
+    <script src="../Matrix.js"></script>
+    <script src="../base64-binary.js"></script>
+    <script src="../AudioLoad.js"></script>
+    <script src="../WebAudioLoad.js"></script>
+    <script src="../ScriptLoad.js"></script>
+    <script src="../AudioEngine.js"></script>
+    <script src="../ImageEngine.js"></script>
+    <script src="../Physics.js"></script>
+    <script src="../Particle.js"></script>
+    <script src="../ParticleSystem.js"></script>
+    <script src="asserts.js"></script>
+    <script src="lineInEllipse.js"></script>
+    <script src="knife.js"></script>
+    <script src="LoadingScene.js"></script>
+    <script src="LaunchScene.js"></script>
+    <script src="GameScene.js"></script>
+    <script src="gl.js"></script>
+</body>
+</html>

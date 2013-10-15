@@ -42,6 +42,9 @@ Point.prototype.sum = function (to) {
 Point.prototype.multi = function (n) {
     return PointMake(this.x * n, this.y * n);
 };
+Point.prototype.multiply = function (b) {
+    return PointMake(this.x * b.x, this.y * b.y);
+};
 Point.prototype.devide = function (n) {
     return PointMake(this.x / n, this.y / n);
 };

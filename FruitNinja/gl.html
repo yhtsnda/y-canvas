@@ -1,0 +1,94 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title></title>
+    <meta name="viewport" content="user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <style type="text/css">
+    body{
+        width:100%;
+        height:100%;
+        overflow:hidden;
+    }
+    </style>
+</head>
+<body>
+    <script type="text/plain" id='vs'>
+    attribute vec2 pos;
+    attribute vec2 texVertex;
+    attribute vec4 vertexColor;
+    varying vec4 color;
+    varying vec2 texturePos;
+    //画布尺寸
+    uniform vec2 resolution;
+    uniform vec2 rotate;
+    uniform vec2 translate;
+    uniform vec2 scale;
+    uniform vec2 skew;
+    uniform vec2 anchor;
+    uniform vec2 size;
+    void main(){
+        vec2 a = pos + vec2(size.x * anchor.x, size.y * anchor.y);//(pos - anchor) * scale;
+        vec2 rotatedPos = vec2(
+            a.x * rotate.y + a.y * rotate.x,
+            a.y * rotate.y - a.x * rotate.x
+        );
+        vec2 s = rotatedPos * scale;
+        vec2 trans = vec2(-resolution.x + translate.x, resolution.y - translate.y);
+        vec2 translatedPos = s + trans - vec2(size.x * anchor.x, size.y * anchor.y);
+        color = vertexColor;
+        texturePos = texVertex;
+        gl_Position = vec4((s - vec2(size.x * anchor.x, size.y * anchor.y)) / resolution, 0, 1);
+    }
+    </script>
+    <script type="text/plain" id='fs'>
+    varying lowp vec4 color;
+    varying lowp vec2 texturePos;
+    uniform sampler2D tex;
+    uniform int useTexture;
+    uniform lowp float alpha;
+    void main(){
+        if(useTexture == 1){
+            gl_FragColor = texture2D(tex, texturePos) * alpha;
+        }else{
+            gl_FragColor = color * alpha;
+        }
+    }
+    </script>
+    <script src="../Global.js"></script>
+    <script src="../Point.js"></script>
+    <script src="../Size.js"></script>
+    <script src="../Rect.js"></script>
+    <script src="../Debugger.js"></script>
+    <script src="../ArrayUtil.js"></script>
+    <script src="../Device.js"></script>
+    <script src="../BaseObject.js"></script>
+    <script src="../Factory.js"></script>
+    <script src="../Functions.js"></script>
+    <script src="../Node.js"></script>
+    <script src="../Application.js"></script>
+    <script src="../Scene.js"></script>
+    <script src="../Layer.js"></script>
+    <script src="../Sprite.js"></script>
+    <script src="../ActionManager.js"></script>
+    <script src="../Action.js"></script>
+    <script src="../Easing.js"></script>
+    <script src="../EventSystem.js"></script>
+    <script src="../MessageCenter.js"></script>
+    <script src="../Matrix.js"></script>
+    <script src="../base64-binary.js"></script>
+    <script src="../AudioLoad.js"></script>
+    <script src="../WebAudioLoad.js"></script>
+    <script src="../ScriptLoad.js"></script>
+    <script src="../AudioEngine.js"></script>
+    <script src="../ImageEngine.js"></script>
+    <script src="../Physics.js"></script>
+    <script src="../Particle.js"></script>
+    <script src="../ParticleSystem.js"></script>
+    <script src="../WebGLUtil.js"></script>
+    
+    <script src="gl.js"></script>
+</body>
+</html>

@@ -44,6 +44,7 @@ var WebGLUtil = {
             gl.usetexture = gl.getUniformLocation(program, 'useTexture');
             gl.alpha = gl.getUniformLocation(program, 'alpha');
             gl.position = gl.getUniformLocation(program, 'position');
+            gl.size = gl.getUniformLocation(program, 'size');
 
             gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
             gl.enable(gl.BLEND);
@@ -171,6 +172,7 @@ var WebGLUtil = {
             gl.uniform2f(gl.translate, 0, 0);
 
             gl.uniform1f(gl.alpha, alpha);
+            gl.uniform2f(gl.size, width, height);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
         } else {
             width = width || (size ? size[2] : img.width);
@@ -236,6 +238,7 @@ var WebGLUtil = {
             gl.uniform2f(gl.rotate, Math.sin(rotate), Math.cos(rotate));
             gl.uniform2f(gl.translate, pos.x * 2, pos.y * 2 + height * 2);
             gl.uniform1f(gl.alpha, alpha);
+            gl.uniform2f(gl.size, width, height);
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, null);

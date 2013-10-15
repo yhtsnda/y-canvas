@@ -1,0 +1,83 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title></title>
+    <meta name="viewport" content="user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <style type="text/css">
+    body{
+        width:100%;
+        height:100%;
+        overflow:hidden;
+    }
+    </style>
+</head>
+<body>
+    <script src="../Global.js"></script>
+    <script src="../Point.js"></script>
+    <script src="../Size.js"></script>
+    <script src="../Rect.js"></script>
+    <script src="../Debugger.js"></script>
+    <script src="../ArrayUtil.js"></script>
+    <script src="../Device.js"></script>
+    <script src="../BaseObject.js"></script>
+    <script src="../Factory.js"></script>
+    <script src="../Functions.js"></script>
+    <script src="../Node.js"></script>
+    <script src="../Application.js"></script>
+    <script src="../Scene.js"></script>
+    <script src="../Layer.js"></script>
+    <script src="../Sprite.js"></script>
+    <script src="../ActionManager.js"></script>
+    <script src="../Action.js"></script>
+    <script src="../Easing.js"></script>
+    <script src="../EventSystem.js"></script>
+    <script src="../MessageCenter.js"></script>
+    <script src="../Matrix.js"></script>
+    <script src="../base64-binary.js"></script>
+    <script src="../AudioLoad.js"></script>
+    <script src="../WebAudioLoad.js"></script>
+    <script src="../ScriptLoad.js"></script>
+    <script src="../AudioEngine.js"></script>
+    <script src="../ImageEngine.js"></script>
+    <script src="../Physics.js"></script>
+    <script src="../Particle.js"></script>
+    <script src="../ParticleSystem.js"></script>
+    <script>
+    domReady(function(){
+        var sys = new ParticleSystem;
+        sys.zIndex(50);
+        var gravity = new Gravity(0.1);
+        for (var i = 0; i < 1; i++) {
+            var particle = sys.getParticle().reset();
+            particle.position().reset(400, 400);
+            particle.scale = 1; // + Math.random() * 0.3;
+            particle.damp().reset(0, 0);
+            particle.velocity().reset(0, -4);
+            //particle.velocity().rotate(i / 12 * Math.PI * 2);
+            particle.forcesMap().push(gravity);
+            particle.alpha = 1; // + Math.random() * 0.5;
+            sys.addChild(particle);
+            particle.onUpdate = function() {
+                console.log(this.position());
+                this.scale -= 0.02;
+                this.alpha -= 0.05;
+                if (this.scale <= 0) {
+                    this.remove();
+                    if (this.parent().children().length == 0) {
+                        this.parent().remove();
+                    }
+                }
+            };
+        }
+        requestAnimFrame(function update(){
+            sys.update();
+            requestAnimFrame(update);
+        });
+    })
+
+    </script>
+</body>
+</html>

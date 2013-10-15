@@ -14,7 +14,7 @@ function Factory(create) {
             factory = [];
         },
         destroy: function() {
-            factory = null;
+            factory = undefined;
         }
     }
 }
