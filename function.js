@@ -159,25 +159,4 @@ define(function() {
             }
         }
     });
-    /*
-    currying('exec', 'exec', BaseObject.prototype);
-
-    function setCallback(callback) {
-        this.callback = this.callback || [];
-        if (callback) {
-            var me = this;
-            forEachWithMe(callback, function(fn) {
-                fn && me.callback.push(fn);
-            });
-        }
-    }
-
-    function emitCallback() {
-        var me = this;
-        forEach(me.callback, function(fn) {
-            fn && fn.call(me);
-        });
-        me.callback.length = 0;
-    }
-    */
 });

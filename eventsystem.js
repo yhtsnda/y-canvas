@@ -4,7 +4,7 @@ define('eventsystem', ['proxy'], function(proxy) {
         "keydown", "keypress", "keyup",
         "touchstart", "touchmove", "touchend", "touchcancel"
     ];
-    return EventSystem = {
+    return {
         init: function(dom) {
             for (var i = 0; i < eventTypes.length; i++) {
                 dom.addEventListener(eventTypes[i], proxy(this.filterEvent, this));

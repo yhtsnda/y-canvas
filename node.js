@@ -1,4 +1,4 @@
-define(['prop', 'point', 'base', 'tree', 'actionManager', 'foreach', 'mix', 'exec', 'propArray'], function(prop, Point, BaseObject, TreeObject, ActionManager, forEach, mix, exec, propArray) {
+define('node', ['prop', 'point', 'base', 'tree', 'actionManager', 'foreach', 'mix', 'exec', 'propArray'], function(prop, Point, BaseObject, TreeObject, ActionManager, forEach, mix, exec, propArray) {
     var globaluuid = 0;
     function Node() {
         this.id = ++globaluuid;

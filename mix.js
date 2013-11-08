@@ -1,4 +1,4 @@
-define([], function() {
+define('mix', [], function() {
     module.exports = function mix() {
         var obj = {};
         for (var i = 0; i < arguments.length; i++) {
