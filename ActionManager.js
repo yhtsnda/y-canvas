@@ -1,64 +1,49 @@
-function ActionManager() {
-    this.init.apply(this, arguments);
-}
-ActionManager.prototype = new BaseObject;
-ActionManager.prototype.init = function(target) {
-    this.exec('onInit');
-    this.target = target;
-    this.addActionManagerSupport();
-    this.exec('_init');
-    this.exec('afterInit');
-    return this;
-};
-ActionManager.prototype.clear = function() {
-    this.exec('onClear');
-    this.removeActionManagerSupport();
-    this.exec('afterClear');
-    return this;
-};
-ActionManager.prototype.removeActionManagerSupport = function() {
-    forEach(this.actions(),function(action){
-        exec(action, 'clear');
-    });
-    this.actions(null);
-    for (var prop in this) {
-        if(this.hasOwnProperty(prop)){
-            delete this[prop];
-        }
+define('actionManager', ['base', 'mix', 'prop'], function(BaseObject, mix, prop) {
+    function ActionManager() {
+        this.init.apply(this, arguments);
     }
-};
-ActionManager.prototype.addActionManagerSupport = function() {
-    this.actions = prop([]);
-    this.actionsWithoutEmpty = function() {
-        return this.actions() && this.actions().removeNullVal();
-    };
-    this.addAction = function(action) {
-        return (this.actions() || this.resetActions()).push(action),
-        this.actions();
-    };
-    this.resetActions = function() {
-        return this.actions([]);
-    };
-    this.runAction = function(action) {
-        this.actions().push(action);
-        action.startWithTarget(this.target);
-    };
-    this.actionIndex = prop(0);
-};
-ActionManager.prototype.update = function() {
-    var hasNull = false;
-    forEach(this.actions(), function(action, index, actions) {
-        if (!action.done()) {
-            action.step(1000 / 60);
-            return true;
-        } else {
-            exec(action, 'emitCallback');
-            exec(action, 'clear');
-            actions[index] = null;
-            hasNull = true;
+    ActionManager.prototype = mix(BaseObject, {
+        init: function(target){
+            this.target = target;
+            this.actions = [];
+            this.actionIndex = 0;
+            return this;
+        },
+        addAction: function(action) {
+            this.actions.push(action);
+            return this;
+        },
+        removeAction: function(action){
+            var actions = this.actions;
+            for (var i = 0; i < actions.length; i++) {
+                var existed = actions[i];
+                if(existed === action){
+                    actions.splice(i, 1);
+                    existed.target = null;
+                    break;
+                }
+            };
+        },
+        resetActions: function(){
+            this.actions.length = 0;
+            return this;
+        },
+        runAction: function(action){
+            this.addAction(action);
+            action.startWith(this.target);
+            return this;
+        },
+        update: function(time){
+            for (var i = 0; i < this.actions.length; i++) {
+                var action = this.actions[i];
+                if(!action || action.done){
+                    action && action.finish();
+                    continue;
+                }else{
+                    action.step(time || 1000 / 60);
+                }
+            }
         }
     });
-    if (hasNull) {
-        this.actions().removeNullVal();
-    }
-};
+    return ActionManager;
+});

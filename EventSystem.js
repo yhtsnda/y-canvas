@@ -1,106 +1,88 @@
-var EventSystem = {
-    //blur focus focusin focusout load resize scroll unload click dblclick
-    //mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave
-    //change select submit keydown keypress keyup error contextmenu
-    //touchstart touchmove touchend touchcancel
-    init: function() {
-        var me = this,
-            eventsType = [
-                ["mousedown", "mouseup", "mousemove", "mouseover", "mouseout", "mouseenter", "mouseleave"],
-                ["keydown", "keypress", "keyup"],
-                ["touchstart", "touchmove", "touchend", "touchcancel"]
-            ],
-            dom = getDom(),
-            handler = proxy(me.filterEvent, me);
-
-        eventsType.forEach(function(eventTypes) {
-            eventTypes.forEach(function(eventType) {
-                addEventHandler(dom, eventType, handler);
-            });
-        });
-        this.resetEvents();
-    },
-    gainEvent: {
-        'mouse': function(e) {
-            e.position = {
-                x: e.offsetX !== undefined ? e.offsetX : e.pageX - e.target.offsetLeft,
-                y: e.offsetY !== undefined ? e.offsetY : e.pageY - e.target.offsetTop
+define('eventsystem', ['proxy'], function(proxy) {
+    var eventTypes = [
+        "mousedown", "mouseup", "mousemove", "mouseover", "mouseout", "mouseenter", "mouseleave",
+        "keydown", "keypress", "keyup",
+        "touchstart", "touchmove", "touchend", "touchcancel"
+    ];
+    return EventSystem = {
+        init: function(dom) {
+            for (var i = 0; i < eventTypes.length; i++) {
+                dom.addEventListener(eventTypes[i], proxy(this.filterEvent, this));
             };
-            this.events()[0].push(e);
+            this.reset();
         },
-        'key': function(e) {
-            //var code = e.keyCode || e.which;
+        gainEvent: {
+            'mouse': function(e) {
+                e.pos = {
+                    x: e.offsetX !== undefined ? e.offsetX : e.pageX - e.target.offsetLeft,
+                    y: e.offsetY !== undefined ? e.offsetY : e.pageY - e.target.offsetTop
+                };
+                this.events.mouse.push(e);
+            },
+            'key': function(e) {
+                console.error('this function need to be implmented');
+            },
+            'touch': function(e) {
+                var touch = e.touches[0];
+                e.pos = {
+                    x: touch ? (touch.pageX - touch.target.offsetLeft) : 0,
+                    y: touch ? (touch.pageY - touch.target.offsetTop) : 0
+                };
+                this.events.touch.push(e);
+            }
+        },
+        filterEvent: function(e) {
+            if (!e || this.isBusy)
+                return;
+            var match = e.type.match(/mouse|key|touch/);
+            if (match) {
+                this.gainEvent[match[0]].apply(this, arguments);
+            }
+        },
+        isBusy: false,
+        events: {
+            mouse: [],
+            key: [],
+            touch: []
+        },
+        reset: function() {
+            this.events.mouse.length = 0;
+            this.events.key.length = 0;
+            this.events.touch.length = 0;
+            this.isBusy = false;
+            return this;
+        },
+        handle: function(target) {
+            var pos = target.pos(),
+                w = target.width,
+                h = target.height;
 
-            //_addEvent(me._keyboardEvents, e);
-            Debugger.error('this function need to be implmented');
-        },
-        'touch': function(e) {
-            var touch = e.touches[0];
-            e.position = {
-                x: touch ? (touch.pageX - touch.target.offsetLeft) : 0,
-                y: touch ? (touch.pageY - touch.target.offsetTop) : 0
-            };
-            this.events()[2].push(e);
-        }
-    },
-    filterEvent: function(e) {
-        if (!e || this.deallingEvents())
-            return;
-        var match = e.type.match(/mouse|key|touch/);
-        if (match) {
-            this.gainEvent[match[0]].apply(this, arguments);
-        }
-    },/*
-    removeEvent: function(e) {
-        this.events().some(function(eventsArray, index, events) {
-            return eventsArray.some(function(event, index, originalEventsArray) {
-                if (event === e) {
-                    originalEventsArray.splice(index, 1);
-                    return true;
+            for (var i = 0; i < this.events.mouse.length; i++) {
+                var event = this.events.mouse[i];
+                if (event.pos.x >= pos.x &&
+                    event.pos.x <= pos.x + w &&
+                    event.pos.y >= pos.y &&
+                    event.pos.y <= pos.y + h) {
+                    var handle = target['on' + event.type];
+                    for (var i = 0; i < handle.length; i++) {
+                        handle[i].call(target, event);
+                    };
                 }
-            });
-        });
-    },*/
-    events: prop([
-        [],
-        [],
-        []
-    ]),
-    deallingEvents: prop(),
-    resetEvents: function() {
-        this.events([
-            [],
-            [],
-            []
-        ]);
-        this.deallingEvents(false);
-    },
-    handleEventWithTarget: function(target) {
-        //mouse event
-        forEach(this.events()[0], function(event) {
-            var pos = target.actualPosition();
-            if (event.position.x >= pos.x &&
-                event.position.x <= pos.x + target.width() &&
-                event.position.y >= pos.y &&
-                event.position.y <= pos.y + target.height()) {
-                forEach(target['on' + event.type], function(handle) {
-                    handle.call(target, event);
-                });
             }
-        });
-        //key event
-        forEach(this.events()[1], function(event) {});
-        //touch event
-        forEach(this.events()[2], function(event) {
-            var pos = target.actualPosition();
-            if (event.position.x >= pos.x &&
-                event.position.x <= pos.x + target.width() &&
-                event.position.y >= pos.y &&
-                event.position.y <= pos.y + target.height()) {
-                forEach(target['on' + event.type], function(handle) {
-                    handle.call(target, event);
-                });
+
+            for (var i = 0; i < this.events.touch.length; i++) {
+                var event = this.events.touch[i];
+                if (event.pos.x >= pos.x &&
+                    event.pos.x <= pos.x + w &&
+                    event.pos.y >= pos.y &&
+                    event.pos.y <= pos.y + h) {
+                    var handle = target['on' + event.type];
+                    for (var i = 0; i < handle.length; i++) {
+                        handle[i].call(target, event);
+                    };
+                }
             }
-        });
-    }
-};
+            return this;
+        }
+    };
+});

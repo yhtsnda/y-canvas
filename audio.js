@@ -1,8 +1,7 @@
-var audioPool = function Factory(create) {
+define('audiopool', [], function() {
     var factory = {};
     var isFirefox = navigator.userAgent.indexOf('Firefox') != -1;
 
-    var me = this;
     var obj = {
         get: function(audio) {
             return (factory[audio.src] && factory[audio.src].length) ? factory[audio.src].pop() : (function() {
@@ -16,7 +15,7 @@ var audioPool = function Factory(create) {
         collect: function(audio) {
             factory[audio.src] = factory[audio.src] || [];
             factory[audio.src].push(audio);
-                audio.volume = 0.5;
+            audio.volume = 0.5;
         },
         see: function() {
             return factory;
@@ -33,8 +32,22 @@ var audioPool = function Factory(create) {
         obj.collect(this);
     };
     return obj;
-}();
-var AudioEngine = function() {
+});
+define('audioload', [], function() {
+    return function AudioLoad(src, callback) {
+        var audio = document.createElement("audio");
+        audio.autoplay = false;
+        audio.preload = "auto";
+        audio.src = src;
+        audio.addEventHandler("canplaythrough", function() {
+            this.loaded = true;
+            //emitCallback.call(this);
+        });
+        //setCallback.call(audio, callback);
+        return audio;
+    }
+});
+define('audio', ['audiopool', 'foreachwithself'], function(audioPool, forEachWithMe) {
     var isIOS = navigator.userAgent.indexOf('iPad') != -1 || navigator.userAgent.indexOf('iPhone') != -1,
         isIE = navigator.userAgent.indexOf('MSIE') != -1,
         isSafari = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1,
@@ -66,6 +79,7 @@ var AudioEngine = function() {
             });
         }
     };
+
     return {
         canPlayMP3: (function() {
             return isIE || isSafari && !isIOS;
@@ -93,4 +107,4 @@ var AudioEngine = function() {
             });
         }
     };
-}();
+});

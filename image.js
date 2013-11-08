@@ -1,4 +1,4 @@
-var ImageEngine = function() {
+define('image', ['foreachwithself', 'foreach'], function(forEachWithMe, forEach) {
     var caches = [];
     return {
         get: function(url) {
@@ -31,4 +31,5 @@ var ImageEngine = function() {
             }
         }
     };
-}();
+
+})
