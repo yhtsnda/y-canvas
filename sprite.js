@@ -1,4 +1,3 @@
-
 function Sprite() {
     Node.apply(this, arguments);
 }
