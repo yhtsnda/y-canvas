@@ -1,53 +1,50 @@
-function RectMakeBy2Points(pointA, pointB) {
-    return RectMakeByPointAndSize(
-        PointMake(Math.min(pointA.x, pointB.x), Math.min(pointA.y, pointB.y)),
-        SizeMake(Math.abs(pointA.x - pointB.x), Math.abs(pointA.y - pointB.y)));
-}
-function RectMake(x, y, w, h) {
-    /*return {
-        x : x,
-        y : y,
-        w : w,
-        h : h
-    }*/
-    return new Rect(leftTopPoint.x, leftTopPoint.y, size.w, size.h);
-}
-function RectMakeByPointAndSize(leftTopPoint, size) {
-    /* return {
-        x : leftTopPoint.x,
-        y : leftTopPoint.y,
-        w : size.w,
-        h : size.h
-    } */
-    return new Rect(leftTopPoint.x, leftTopPoint.y, size.w, size.h);
-}
-function RectZero() {
-    return RectMake(0, 0, 0, 0);
-}
-function getRectMidPoint(rect) {
-    return PointMake(rect.x + rect.w / 2, rect.y + rect.h / 2);
-}
-function RectEqual(rectA, rectB) {
-    return rectA.x === rectB.x &&
-    rectA.y === rectB.y &&
-    rectA.w === rectB.w &&
-    rectA.h === rectB.h;
-}
-function Rect(x, y, w, h){
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
+function Rect() {
+    this.reset.apply(this, arguments);
 };
-Rect.prototype.right = function(){
-    return this.x + this.w;
+Rect.prototype = {
+    reset: function(x, y, w, h) {
+        this.x = x || 0;
+        this.y = y || 0;
+        this.w = w || 0;
+        this.h = h || 0;
+        return this;
+    },
+    mid: function() {
+        return new Point(this.x + this.w / 2, this.y + this.h / 2);
+    },
+    right: function() {
+        return this.x + this.w;
+    },
+    left: function() {
+        return this.x;
+    },
+    top: function() {
+        return this.y;
+    },
+    bottom: function() {
+        return this.y + this.h;
+    },
+    equal: function(to) {
+        return this === to ||
+            (
+            this.x === to.x &&
+            this.y === to.y &&
+            this.w === to.w &&
+            this.h === to.h
+        );
+    }
 };
-Rect.prototype.left = function(){
-    return this.x;
+Rect.byPoints = function(from, to) {
+    var x = Math.min(from.x, to.x),
+        y = Math.min(from.y, to.y),
+        w = Math.abs(from.x - to.x),
+        h = Math.abs(from.y - to.y);
+    return new Rect(x, y, w, h);
 };
-Rect.prototype.top = function(){
-    return this.y;
-};
-Rect.prototype.bottom = function(){
-    return this.y + this.h;
+Rect.byPointSize = function(point, size) {
+    var x = point.x,
+        y = point.y,
+        w = size.w,
+        h = size.h;
+    return new Rect(x, y, w, h);
 };

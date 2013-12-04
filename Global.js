@@ -62,15 +62,15 @@ function visibilityChange(callback) {
     return true;
 }
 var requestAnimFrame = (function() {
-    return window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function (c) {
-            window.setTimeout(c, 16.67);
-        };
-})(),
+        return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function (c) {
+                window.setTimeout(c, 16.67);
+            };
+    })(),
     cancelAnimFrame = (function() {
         return window.cancelAnimationFrame ||
             window.webkitCancelRequestAnimationFrame ||

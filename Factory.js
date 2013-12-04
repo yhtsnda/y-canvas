@@ -6,15 +6,14 @@ function Factory(create) {
         },
         collect: function(element) {
             factory.push(element);
+            return factory;
         },
         see: function() {
             return factory;
         },
         clear: function() {
-            factory = [];
-        },
-        destroy: function() {
-            factory = undefined;
+            factory.length = 0;
+            return factory;
         }
     }
 }

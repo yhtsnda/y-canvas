@@ -4,47 +4,38 @@ function singleton(fn) {
         return returnVal = fn();
     };
 }
-
-function mixIn(a, b, modifyA) {
-    if (modifyA) {
-        for (var p in b) {
-            a[p] = b[p];
+function mix() {
+    var obj = {};
+    for (var i = 0; i < arguments.length; i++) {
+        var arg = arguments[i];
+        for(var prop in arg){
+            //if(arg.hasOwnProperty(prop)){
+                obj[prop] = arg[prop];
+            //}
         }
-        return a;
-    } else {
-        var ret = {};
-        for (var p in a) {
-            ret[p] = a[p];
-        }
-        for (var p in b) {
-            ret[p] = b[p];
-        }
-        return ret;
-    }
+    };
+    return obj;
 }
 
 function forEach(obj, fn, host) {
     if (obj === undefined || obj === null) {
         return;
     }
-    //fn(v,k,obj)
-    /* if (obj.some) {
-        return obj.some.apply(obj, Array.prototype.slice.call(arguments, 1));
-    } else */
-    if (obj.length !== undefined) {
+    if (obj.hasOwnProperty('length')) {
         for (var i = 0; i < obj.length; i++) {
             if (fn.call(host || window, obj[i], i, obj) === true) {
                 return true;
             }
         }
-    } else { // if(isObject(obj) || isArguments(obj) || isFunction(obj)) {
+    } else {
         for (var i in obj) {
-            if (fn.call(host || window, obj[i], i, obj) === true) {
+            if (obj.hasOwnProperty(i) && fn.call(host || window, obj[i], i, obj) === true) {
                 return true;
             }
         }
     }
 }
+
 
 function forEachWithMe(obj, fn) {
     if (isArray(obj)) {
@@ -54,74 +45,78 @@ function forEachWithMe(obj, fn) {
     }
 }
 
-function currying(fromFunc, toFunc, source, context) {
-    (context || this)[toFunc] = function(obj, fun) {
+function currying(fname, source, newFuncName, context) {
+    var fn = source[fname];
+    return (context || this)[newFuncName || fname] = function() {
+        var obj = Array.prototype.shift.call(arguments);
         if (obj === null || obj === undefined) {
             return;
         }
-        return arguments.length > 1 ? source[fromFunc].apply(obj, Array.prototype.slice.call(arguments, 1)) : source[fromFunc].call(obj);
+        for (var i = arguments.length - 1; i >= 0; i--) {
+            if(arguments[i] !== undefined || arguments[i] !== null){
+                break;
+            }
+            Array.prototype.pop.call(arguments);
+        };
+        return fn.apply(obj, arguments);
     }
 }
-forEach(['push', 'pop', 'slice', 'splice', 'concat', 'shift', 'unshift', 'sort', 'reverse', 'join'], function(v, k) {
-    currying(v, v, Array.prototype);
-});
-currying('toString', 'toStr', Object.prototype);
-forEach(['apply', 'call'], function(v, k) {
-    currying(v, v, Function.prototype);
-});
+
+(function(){
+    var arr = ['push', 'pop', 'slice', 'splice', 'concat', 'shift', 'unshift', 'sort', 'reverse', 'join'];
+    for (var i = 0; i < arr.length; i++) {
+        currying(arr[i], Array.prototype);
+    };
+})();
+
+currying('toString', 'toStr', 'toStr', Object.prototype);
+
 forEach(['Array', 'Object', 'Function', 'Arguments', 'Number', 'Date', 'Boolean', 'String', 'RegExp'], function(v, k) {
     window['is' + v] = function(obj) {
         return toStr(obj) === '[object ' + v + ']';
     };
 });
-currying('exec', 'exec', BaseObject.prototype);
 
-function setCallback(callback) {
-    this.callback = this.callback || [];
-    if (callback) {
-        var me = this;
-        forEachWithMe(callback, function(fn) {
-            fn && me.callback.push(fn);
-        });
+function forEachWithMe(obj, fn) {
+    if (isArray(obj)) {
+        forEach.apply(obj, arguments);
+    } else {
+        fn && fn(obj);
     }
 }
 
-function emitCallback() {
-    var me = this;
-    forEach(me.callback, function(fn) {
-        fn && fn.call(me);
-    });
-    me.callback.length = 0;
+function exec(){
+    var host = shift(arguments),
+        fn = shift(arguments);
+    if(host && fn && host[fn]){
+        return host[fn].apply(host, arguments);
+    }
 }
 
-function prop(defaultValue) {
-    return (function() {
-        var _value = defaultValue;
-        return function(value) {
-            return value === undefined ? _value : _value = value;
-        };
-    })();
-}
+function prop(def) {
+    var val = def;
+    return function(value) {
+        return value === undefined ? val : val = value;
+    };
+};
 
-function propArray(defaultValue) {
-    return (function() {
-        var _value = defaultValue || [];
-        return function(value) {
-            if (value === undefined) {
-                return _value;
-            } else if (isArray(value)) {
-                return _value = value;
-            } else {
-                _value = defaultValue || [];
-                _value.push(value);
-                return _value;
-            }
+function propArray(def) {
+    var arr = def || [];
+    return function(value) {
+        if (value === undefined) {
+            return arr;
+        } else if (isArray(value)) {
+            return arr = value;
+        } else {
+            arr = def || [];
+            arr.push(value);
+            return arr;
         }
-    })();
-}
+    }
+};
 
 function proxy(fn, context) {
     return function() {
-        fn.apply(context, arguments);
+        return fn.apply(context, arguments);
     };
 }
