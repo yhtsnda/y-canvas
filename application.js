@@ -1,4 +1,4 @@
-define('application', ['base', 'tree', 'eventsystem', 'mix', 'prop', 'foreach', 'exec', 'requestAnimFrame'], function(BaseObject, TreeObject, EventSystem, mix, prop, forEach, exec, requestAnimFrame) {
+define('application', ['base', 'tree', 'eventsystem', 'mix', 'prop', 'foreach', 'exec', 'requestAnimFrame', 'proxy'], function(BaseObject, TreeObject, EventSystem, mix, prop, forEach, exec, requestAnimFrame, proxy) {
     /*
     var supportWebGL = (function() {
         (function() {
@@ -17,6 +17,7 @@ define('application', ['base', 'tree', 'eventsystem', 'mix', 'prop', 'foreach', 
         init: function(dom) {
             this.dom = dom;
             this.context = this.dom.getContext('2d');
+            this.update = proxy(this.update, this);
             return this;
         },
         run: function(){
@@ -47,18 +48,16 @@ define('application', ['base', 'tree', 'eventsystem', 'mix', 'prop', 'foreach', 
             });
             this.clear();
         },
-        update: function(context) {
-            var me = this;
+        update: function() {
+            var context = this.context;
             this.clearCanvas(context);
             EventSystem.isBusy = true;
             for (var i = 0; i < this.children.length; i++) {
                 this.children[i].update(context);
             };
-            me.showFPS(context);
+            this.showFPS(context);
             EventSystem.reset();
-            requestAnimFrame(function() {
-                me.update(context);
-            });
+            requestAnimFrame(this.update);
         },
         clearCanvas: function(context) {
             context.clearRect(0, 0, this.dom.width, this.dom.height);

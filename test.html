@@ -11,8 +11,11 @@
         baseUrl: './',
         callback: function() {
             require(['function', 'dom'],function(functions, dom){
-            	require(['base', 'application', 'scene', 'layer', 'sprite', 'image', 'action/spawn',  'action/moveto', 'action/moveby', 'action/delay', 'point', 'size', 'rect', 'factory', 'audio'], function(Base, App, Scene, Layer, Sprite, ImageEngine, Sequence, MoveTo, MoveBy, Delay, Point){
-                    var app = new App(document.getElementById('can')),
+                require(['base', 'application', 'scene', 'layer', 'sprite', 'image', 'action/spawn',  'action/moveto', 'action/moveby', 'action/delay', 'point', 'size', 'rect', 'factory', 'audio'], function(Base, App, Scene, Layer, Sprite, ImageEngine, Sequence, MoveTo, MoveBy, Delay, Point){
+                    require(['FruitNinja/scene/loading', 'FruitNinja/main'], function (argument) {
+                        require(['fruit/main'])
+                    })
+                    /*var app = new App(document.getElementById('can')),
                         scene = new Scene,
                         layer = new Layer,
                         sprite = new Sprite({
@@ -40,7 +43,7 @@
                     ], function (argument) {
                         console.log('done');
                     }));
-                    app.addChild(scene.addChild(layer.addChild(sprite))).run()
+                    app.addChild(scene.addChild(layer.addChild(sprite))).run()*/
                 });
             });
         },

@@ -114,31 +114,27 @@ define(function() {
 
     define('prop', [], function(){
         return function prop(def) {
-            return (function() {
-                var val = def;
-                return function(value) {
-                    return value === undefined ? val : val = value;
-                };
-            })();
+            var val = def;
+            return function(value) {
+                return value === undefined ? val : val = value;
+            };
         };
     });
 
     define('propArray', ['isArray'], function(isArray){
         return function propArray(def) {
-            return (function() {
-                var arr = def || [];
-                return function(value) {
-                    if (value === undefined) {
-                        return arr;
-                    } else if (isArray(value)) {
-                        return arr = value;
-                    } else {
-                        arr = def || [];
-                        arr.push(value);
-                        return arr;
-                    }
+            var arr = def || [];
+            return function(value) {
+                if (value === undefined) {
+                    return arr;
+                } else if (isArray(value)) {
+                    return arr = value;
+                } else {
+                    arr = def || [];
+                    arr.push(value);
+                    return arr;
                 }
-            })();
+            }
         };
     });
 

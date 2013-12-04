@@ -18,7 +18,7 @@ define('pubsub', [], function() {
                     host['_private' + key] = true;
                 };
             }
-            memory[key].length = 0;
+            mmory[key].length = 0;
         }
         return this;
     };
@@ -64,7 +64,7 @@ define('pubsub', [], function() {
     };
 
     var emit = function(key){
-        console.log('pub ' + key + '\t' + arguments[1]);
+        console.log('pub ' + key);
         if(key.indexOf('memory:') === 0){
             key = key.slice('memory:'.length);
             memory[key] = memory[key] || [];
