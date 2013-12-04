@@ -1,4 +1,4 @@
-var ImageEngine = function() {
+var image = (function() {
     var caches = [];
     return {
         get: function(url) {
