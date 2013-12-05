@@ -1,4 +1,4 @@
-var Base = {
+var BaseObject = {
     pub: function() {
         return pubsub.pub.apply(pubsub, arguments);
     },

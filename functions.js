@@ -69,11 +69,11 @@ function currying(fname, source, newFuncName, context) {
     };
 })();
 
-currying('toString', 'toStr', 'toStr', Object.prototype);
+//currying('toString', 'toStr', 'toStr', Object.prototype);
 
 forEach(['Array', 'Object', 'Function', 'Arguments', 'Number', 'Date', 'Boolean', 'String', 'RegExp'], function(v, k) {
     window['is' + v] = function(obj) {
-        return toStr(obj) === '[object ' + v + ']';
+        return Object.prototype.toString.call(obj) === '[object ' + v + ']';
     };
 });
 

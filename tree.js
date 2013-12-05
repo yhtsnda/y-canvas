@@ -1,4 +1,4 @@
-var Tree = {
+var TreeObject = {
     init: function() {
         this.children = [];
         this.parent = null;

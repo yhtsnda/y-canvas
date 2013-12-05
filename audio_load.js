@@ -3,10 +3,10 @@ function AudioLoad(src, callback) {
     audio.autoplay = false;
     audio.preload = "auto";
     audio.src = src;
-    addEventHandler(audio, "canplaythrough", function () {
+    audio.addEventHandler("canplaythrough", function() {
         this.loaded = true;
-        emitCallback.call(this);
+        //emitCallback.call(this);
     });
-    setCallback.call(audio, callback);
+    //setCallback.call(audio, callback);
     return audio;
 }

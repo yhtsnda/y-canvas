@@ -1,0 +1,93 @@
+<!DOCTYPE>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Framework Test</title>
+</head>
+<body>
+    <canvas width=1024 height=768 id='can'></canvas>
+    <script src="dom.js"></script>
+    <script src="functions.js"></script>
+
+    <script src="pubsub.js"></script>
+    <script src="event_system.js"></script>
+
+    <script src="point.js"></script>
+
+
+    <script src="base.js"></script>
+    <script src="tree.js"></script>
+    <script src="node.js"></script>
+
+
+    <script src="action.js"></script>
+    <script src="action_manager.js"></script>
+
+    <script src="application.js"></script>
+    <script src="scene.js"></script>
+    <script src="layer.js"></script>
+    <script src="sprite.js"></script>
+    <script src="image.js"></script>
+    <script src="action.js"></script>
+    <script src="FruitNinja/scene/loading.js"></script>
+    <script src="FruitNinja/main.js"></script><!--
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script src=""></script>
+    <script>
+    var require = {
+        baseUrl: './',
+        callback: function() {
+            require(['function', 'dom'],function(functions, dom){
+                require(['base', 'application', 'scene', 'layer', 'sprite', 'image', 'action/spawn',  'action/moveto', 'action/moveby', 'action/delay', 'point', 'size', 'rect', 'factory', 'audio'], function(Base, App, Scene, Layer, Sprite, ImageEngine, Sequence, MoveTo, MoveBy, Delay, Point){
+                    require(['FruitNinja/scene/loading', 'FruitNinja/main'], function (argument) {
+                        require(['fruit/main'])
+                    })
+                    /*var app = new App(document.getElementById('can')),
+                        scene = new Scene,
+                        layer = new Layer,
+                        sprite = new Sprite({
+                            width: 68,
+                            height: 66
+                        });
+                    ImageEngine.load('FruitNinja/images/boom.png')
+                    sprite.images.push({
+                        img: 'FruitNinja/images/boom.png'
+                    });
+                    sprite.runAction(new Sequence([
+                        new MoveTo(new Point(100, 100), 5000, function (argument) {
+                            console.log(1)
+                        }, function (argument) {
+                            console.log(2)
+                        }),
+                        new Delay(1000, function (argument) {
+                            console.log('delay');
+                        }),
+                        new MoveBy(new Point(100, -100), 3000, function (argument) {
+                            console.log(3)
+                        }, function (argument) {
+                            console.log(4)
+                        })
+                    ], function (argument) {
+                        console.log('done');
+                    }));
+                    app.addChild(scene.addChild(layer.addChild(sprite))).run()*/
+                });
+            });
+        },
+        catchError:true
+    };
+    </script>
+	<script src="require.js"></script>-->
+</body>
+</html>
